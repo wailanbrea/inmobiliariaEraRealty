@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Modules\Settings\Services\SettingsService;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\ServiceProvider;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -23,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        // Los modelos viven en app/Modules/*/Models, no en app/Models, asi que
+        // la resolucion automatica de Laravel construye un nombre de factory
+        // que no existe. Se mapea por el nombre corto de la clase.
+        Factory::guessFactoryNamesUsing(
+            fn (string $modelName) => 'Database\\Factories\\'.class_basename($modelName).'Factory'
+        );
     }
 }

@@ -12,9 +12,9 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             AdminUserSeeder::class,
             SettingsSeeder::class,
+            PropertyTypeSeeder::class,
+            LocationSeeder::class,
+            AmenitySeeder::class,
         ]);
-
-        // Los catalogos (tipos de propiedad, ubicaciones, amenidades) se
-        // anaden en la Fase 2.
     }
 }
