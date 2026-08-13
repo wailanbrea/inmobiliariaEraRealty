@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Compare\Controllers\Public\CompareController;
 use App\Modules\Pages\Controllers\Public\HomeController;
 use App\Modules\Pages\Controllers\Public\PlaceholderController;
 use App\Modules\Properties\Controllers\Public\PropertyController;
@@ -36,8 +37,17 @@ foreach (Locale::codes() as $locale) {
             Route::get($seg('properties').'/{slug}', [PropertyController::class, 'show'])
                 ->name('properties.show');
 
-            Route::get($seg('compare'), [PlaceholderController::class, 'compare'])
+            Route::get($seg('compare'), [CompareController::class, 'index'])
                 ->name('compare.index');
+
+            // POST y no GET: cambian estado, y un prefetch del navegador
+            // dispararia un GET solo.
+            Route::post($seg('compare').'/{property}', [CompareController::class, 'toggle'])
+                ->name('compare.toggle');
+            Route::post($seg('compare').'/{property}/quitar', [CompareController::class, 'remove'])
+                ->name('compare.remove');
+            Route::post($seg('compare').'-vaciar', [CompareController::class, 'clear'])
+                ->name('compare.clear');
 
             Route::get($seg('invest'), [PlaceholderController::class, 'invest'])
                 ->name('invest.index');

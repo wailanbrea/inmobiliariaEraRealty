@@ -261,6 +261,7 @@
     </div>
 </footer>
 
+<x-compare-bar />
 <x-whatsapp-float />
 
 </body>

@@ -1,4 +1,4 @@
-@props(['property', 'eager' => false])
+@props(['property', 'eager' => false, 'compare' => true])
 
 {{--
     Tarjeta de propiedad — la pieza central del diseño.
@@ -93,4 +93,12 @@
             </dl>
         </div>
     </a>
+
+    {{-- El botón de comparar va FUERA del enlace: un formulario dentro de un
+         <a> es HTML inválido y el navegador lo desanida de forma impredecible. --}}
+    @if ($compare)
+        <div class="border-t border-surface-variant px-sm py-xs">
+            <x-compare-toggle :property="$property" />
+        </div>
+    @endif
 </article>
