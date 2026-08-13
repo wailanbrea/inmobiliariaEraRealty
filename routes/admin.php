@@ -4,6 +4,7 @@ use App\Modules\Auth\Controllers\LoginController;
 use App\Modules\Dashboard\Controllers\DashboardController;
 use App\Modules\Locations\Controllers\Admin\LocationLookupController;
 use App\Modules\Properties\Controllers\Admin\PropertyController;
+use App\Modules\PropertyTypes\Controllers\Admin\CatalogController;
 use App\Modules\Settings\Controllers\Admin\SettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -75,7 +76,13 @@ Route::middleware('auth')->group(function () {
         Route::get('sectores/{city:id}', [LocationLookupController::class, 'sectors'])->name('sectors');
     });
 
-    // Fase 2 (resto): CRUD de tipos y ubicaciones
+    // --- Catalogos ---
+    Route::prefix('catalogo')->name('catalog.')->group(function () {
+        Route::get('tipos', [CatalogController::class, 'propertyTypes'])->name('types');
+        Route::get('amenidades', [CatalogController::class, 'amenities'])->name('amenities');
+        Route::get('ubicaciones', [CatalogController::class, 'locations'])->name('locations');
+    });
+
     // Fase 3: imagenes, media
     // Fase 5: leads
     // Fase 6: noticias

@@ -45,7 +45,7 @@
                 ['article',        'Noticias',      null,              false, null],
                 ['contact_page',   'Leads',         null,              false, null],
                 ['badge',          'Agentes',       null,              false, null],
-                ['location_on',    'Ubicaciones',   null,              false, null],
+                ['category',       'Catálogo',      'admin.catalog.types', true, 'admin.catalog.*'],
                 ['description',    'Páginas',       null,              false, null],
                 ['bar_chart',      'Reportes',      null,              false, null],
                 ['history',        'Auditoría',     null,              false, null],

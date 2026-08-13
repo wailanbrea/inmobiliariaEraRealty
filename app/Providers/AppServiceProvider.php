@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Modules\Locations\Livewire\LocationManager;
 use App\Modules\Properties\Livewire\PropertyIndex;
 use App\Modules\Properties\Models\Property;
 use App\Modules\Properties\Policies\PropertyPolicy;
+use App\Modules\PropertyTypes\Livewire\CatalogManager;
 use App\Modules\Settings\Services\SettingsService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Gate;
@@ -42,5 +44,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Livewire tampoco descubre componentes fuera de app/Livewire.
         Livewire::component('property-index', PropertyIndex::class);
+        Livewire::component('catalog-manager', CatalogManager::class);
+        Livewire::component('location-manager', LocationManager::class);
     }
 }
