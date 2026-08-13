@@ -61,7 +61,7 @@ class PropertyController extends Controller
     {
         $this->authorize('update', $property);
 
-        $property->load(['translations', 'amenities']);
+        $property->load(['translations', 'amenities', 'images']);
 
         return view('admin.properties.form', $this->formData($property));
     }

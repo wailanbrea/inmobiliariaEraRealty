@@ -351,12 +351,21 @@
                 type="url" :value="$property->virtual_tour_url" placeholder="https://" />
         </div>
 
-        <div class="rounded-lg border border-dashed border-outline-variant p-md text-center">
-            <span class="material-symbols-outlined text-[32px] text-outline-variant">photo_library</span>
-            <p class="mt-xs text-body-md text-on-surface-variant">
-                La subida de imágenes llega en la Fase 3.
-            </p>
-        </div>
+        @if ($property->exists)
+            <x-admin.image-uploader :property="$property" />
+        @else
+            {{-- La subida es inmediata, asi que la propiedad tiene que existir
+                 antes. Se explica en vez de mostrar un uploader que fallaria. --}}
+            <div class="rounded-lg border border-dashed border-outline-variant p-md text-center">
+                <span class="material-symbols-outlined text-[32px] text-outline-variant">photo_library</span>
+                <p class="mt-xs text-body-md text-on-surface">
+                    {{ __('admin/images.save_first') }}
+                </p>
+                <p class="mt-1 text-caption text-on-surface-variant">
+                    {{ __('admin/images.save_first_help') }}
+                </p>
+            </div>
+        @endif
     </section>
 
     {{-- ---------------- Agente y propietario ---------------- --}}

@@ -1,4 +1,8 @@
 import Alpine from 'alpinejs'
+import uploader from './uploader'
+
+// Componentes Alpine registrados antes de arrancar.
+Alpine.data('uploader', uploader)
 
 window.Alpine = Alpine
 Alpine.start()

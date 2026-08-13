@@ -11,6 +11,7 @@ use App\Modules\Agents\Models\Agent;
 use App\Modules\Locations\Models\City;
 use App\Modules\Locations\Models\Province;
 use App\Modules\Locations\Models\Sector;
+use App\Modules\PropertyImages\Models\PropertyImage;
 use App\Modules\PropertyTypes\Models\PropertyType;
 use App\Support\Locale;
 use Illuminate\Database\Eloquent\Builder;
@@ -125,6 +126,16 @@ class Property extends Model
     public function amenities(): BelongsToMany
     {
         return $this->belongsToMany(Amenity::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(PropertyImage::class)->orderBy('sort_order');
+    }
+
+    public function mainImage(): HasOne
+    {
+        return $this->hasOne(PropertyImage::class)->where('is_main', true);
     }
 
     public function createdBy(): BelongsTo
@@ -286,7 +297,7 @@ class Property extends Model
      */
     public function scopeForListing(Builder $query): Builder
     {
-        return $query->with(['translations', 'type', 'city', 'sector', 'province']);
+        return $query->with(['translations', 'type', 'city', 'sector', 'province', 'mainImage']);
     }
 
     public function getRouteKeyName(): string

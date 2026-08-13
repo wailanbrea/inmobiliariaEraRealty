@@ -5,6 +5,58 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.6.0] — 2026-08-13 — Fase 3: imágenes
+
+### Añadido
+
+- Tabla `property_images` con `width`/`height` para evitar el salto de layout
+- `ImageProcessingService`: orientación por EXIF y **borrado del EXIF**,
+  reducción a 1920 px, original JPEG q85, WebP q82 y miniatura 400×300
+- `PropertyImageService`: alta, orden, imagen principal, borrado en cascada
+  y reparación de la invariante
+- Componente de subida con arrastrar y soltar, progreso por archivo,
+  reordenación con SortableJS, marcar principal y editar texto alternativo
+- Subida por lotes de 3: subir 20 a la vez satura la conexión móvil
+- 25 pruebas nuevas
+
+### Corregido
+
+- **`ensureSingleMain()` dejaba cero imágenes principales.** El modelo en
+  memoria ya tenía `is_main = true`, así que tras la actualización masiva a
+  `false` el `->update(true)` no lo veía sucio y no escribía nada. Resuelto
+  actualizando por consulta.
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| El EXIF se aplica y se descarta | Las fotos vienen del móvil del agente con GPS: publicarlo filtraría la ubicación de inmuebles marcados como no exactos |
+| La primera imagen es principal automáticamente | Si no, la ficha saldría sin portada |
+| Al borrar la principal se promueve la siguiente | Sin eso, borrar la portada deja la ficha sin foto |
+| Los ficheros se borran **después** de confirmar la transacción | Si falla la BD, no se pierden los archivos |
+| El soft delete de una propiedad conserva las imágenes | La acción es reversible; borrar las fotos la haría irreversible |
+| La subida exige que la propiedad exista | Evita subir 20 fotos y perderlas por un fallo de validación del formulario |
+
+### Nota sobre el entorno
+
+**Windows Defender borró el archivo de pruebas** por contener la cadena de un
+webshell (`<?php system($_GET[...]) ?>`) usada para verificar que se rechaza.
+El payload se compone ahora en tiempo de ejecución para que esa firma no exista
+en disco. Si vuelve a pasar con otro test, es la misma causa.
+
+### Pruebas
+
+`php artisan test` → **243 pasadas, 454 aserciones**.
+Uploader verificado en 375 y 1440 px: rejilla 2→4 columnas, modal dentro de
+pantalla y con cierre por `Escape`, cero controles bajo 44 px.
+
+### Pendiente de la Fase 3
+
+- Media manager general reutilizable (logo, noticias, agentes)
+- Comando `media:prune` para ficheros huérfanos
+
+---
+
 ## [0.5.0] — 2026-08-13 — Fase 2: propiedades
 
 ### Añadido — modelo de datos

@@ -4,6 +4,7 @@ use App\Modules\Auth\Controllers\LoginController;
 use App\Modules\Dashboard\Controllers\DashboardController;
 use App\Modules\Locations\Controllers\Admin\LocationLookupController;
 use App\Modules\Properties\Controllers\Admin\PropertyController;
+use App\Modules\PropertyImages\Controllers\Admin\PropertyImageController;
 use App\Modules\PropertyTypes\Controllers\Admin\CatalogController;
 use App\Modules\Settings\Controllers\Admin\SettingsController;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +69,15 @@ Route::middleware('auth')->group(function () {
         Route::post('{property:id}/pausar', [PropertyController::class, 'pause'])->name('pause');
         Route::post('{property:id}/estado', [PropertyController::class, 'changeStatus'])->name('status');
         Route::get('{property:id}/vista-previa', [PropertyController::class, 'preview'])->name('preview');
+
+        // --- Imagenes ---
+        Route::prefix('{property:id}/imagenes')->name('images.')->group(function () {
+            Route::post('/', [PropertyImageController::class, 'store'])->name('store');
+            Route::post('orden', [PropertyImageController::class, 'reorder'])->name('reorder');
+            Route::post('{image:id}/principal', [PropertyImageController::class, 'setMain'])->name('main');
+            Route::patch('{image:id}', [PropertyImageController::class, 'update'])->name('update');
+            Route::delete('{image:id}', [PropertyImageController::class, 'destroy'])->name('destroy');
+        });
     });
 
     // --- Ubicaciones: alimentan los selects encadenados ---
