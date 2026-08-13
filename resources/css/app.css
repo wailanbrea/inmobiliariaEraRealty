@@ -244,6 +244,17 @@
     [role='button'] {
       min-width: 44px;
     }
+
+    /* Las casillas y los radios se quedan en su tamano visual: uno de 44px
+       se ve absurdo. Lo que crece es su ETIQUETA, que es lo que el dedo
+       toca de verdad. Cubre todas las casillas del proyecto, presentes y
+       futuras, sin tener que acordarse en cada formulario. */
+    label:has(> input[type='checkbox']),
+    label:has(> input[type='radio']) {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
   }
 
   /* iOS hace zoom automatico al enfocar un input de menos de 16px.

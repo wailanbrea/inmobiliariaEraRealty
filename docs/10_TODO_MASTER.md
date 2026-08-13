@@ -1,6 +1,6 @@
 # 10 — TODO maestro
 
-**Actualizado:** 2026-08-13 · **Fase actual:** 1 · **Progreso: 18 / 216 tareas**
+**Actualizado:** 2026-08-13 · **Fase actual:** 2 · **Progreso: 34 / 218 tareas** · **133 pruebas en verde**
 
 > Este documento se actualiza **después de cada módulo**, junto con [11_CHANGELOG.md](11_CHANGELOG.md). Es obligación del prompt maestro (§2).
 
@@ -134,24 +134,28 @@ El espacio en `Era Realty` complica comandos en Windows. Renombrar ahora cuesta 
 **Pendiente de decisión:** renombrado de la carpeta (Pregunta 9) — no ejecutado
 porque es el directorio de trabajo de la sesión.
 
-## FASE 1 — Configuración general (0/16)
+## FASE 1 — Configuración general (16/18) ✅ prácticamente completa
 
-- [ ] Migración + modelo `Setting` con cast por `type`
-- [ ] `SettingsService` con caché e invalidación
-- [ ] `SettingsSeeder` (~40 claves)
-- [ ] Middleware `SetPublicSettings`
-- [ ] Layout admin (sidebar, topbar, responsive)
-- [ ] Pantalla Configuración → General
-- [ ] Subida de logo, logo oscuro y favicon
-- [ ] Teléfono, email, dirección, horario
-- [ ] Redes sociales
-- [ ] Pestaña WhatsApp + `WhatsappService`
-- [ ] Vista previa en vivo del link `wa.me`
-- [ ] Pestaña Correo + `MailConfigService` (contraseña cifrada)
-- [ ] Botón "Enviar correo de prueba" con validación previa al guardado
-- [ ] Pestaña SEO global
-- [ ] Dashboard con métricas y accesos rápidos
-- [ ] Tests de settings, WhatsApp y correo
+- [x] Migración + modelo `Setting` con cast por `type`
+- [x] `SettingsService` con caché e invalidación
+- [x] `SettingsSeeder` (**42 claves**, idempotente)
+- [x] Helpers `setting()` y `whatsapp()` (en vez de middleware: más simple en Blade)
+- [x] Layout admin (sidebar, topbar, responsive)
+- [x] Pantalla Configuración → General
+- [x] Subida de logo, logo oscuro y favicon (+ imagen OG)
+- [x] Teléfono, email, dirección, horario
+- [x] Redes sociales
+- [x] Pestaña WhatsApp + `WhatsappService`
+- [x] Vista previa del link `wa.me` en la pantalla
+- [x] Pestaña Correo + `MailConfigService` (contraseña cifrada)
+- [x] Botón "Enviar correo de prueba" con validación previa al guardado
+- [x] Pestaña SEO global
+- [x] Campos traducibles ES/EN con pestañas de idioma
+- [x] Tasa de cambio USD→DOP editable
+- [x] Regla `RealImage` + saneado de SVG
+- [x] Tests de settings, WhatsApp, correo e imágenes (76 pruebas)
+- [ ] Dashboard con métricas reales (espera a la Fase 2: aún no hay propiedades)
+- [ ] Recuperación de contraseña del panel
 
 ## FASE 2 — Propiedades (0/22)
 

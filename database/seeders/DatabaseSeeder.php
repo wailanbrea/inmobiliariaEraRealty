@@ -11,9 +11,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolePermissionSeeder::class,
             AdminUserSeeder::class,
+            SettingsSeeder::class,
         ]);
 
-        // Los seeders de catalogos (tipos, ubicaciones, amenidades, settings)
-        // se anaden en la Fase 1 y 2.
+        // Los catalogos (tipos de propiedad, ubicaciones, amenidades) se
+        // anaden en la Fase 2.
     }
 }

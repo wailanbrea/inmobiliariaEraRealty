@@ -37,30 +37,32 @@
         @php
             // Los módulos aún no implementados se muestran deshabilitados en vez
             // de ocultarse: el cliente ve el alcance completo desde el día uno.
+            // [icono, etiqueta, ruta, activo, patrón para marcar la sección]
             $nav = [
-                ['dashboard',      'Dashboard',     'admin.dashboard', true],
-                ['home_work',      'Propiedades',   null,              false],
-                ['photo_library',  'Media',         null,              false],
-                ['article',        'Noticias',      null,              false],
-                ['contact_page',   'Leads',         null,              false],
-                ['badge',          'Agentes',       null,              false],
-                ['location_on',    'Ubicaciones',   null,              false],
-                ['description',    'Páginas',       null,              false],
-                ['bar_chart',      'Reportes',      null,              false],
-                ['history',        'Auditoría',     null,              false],
-                ['settings',       'Configuración', null,              false],
+                ['dashboard',      'Dashboard',     'admin.dashboard', true,  'admin.dashboard'],
+                ['home_work',      'Propiedades',   null,              false, null],
+                ['photo_library',  'Media',         null,              false, null],
+                ['article',        'Noticias',      null,              false, null],
+                ['contact_page',   'Leads',         null,              false, null],
+                ['badge',          'Agentes',       null,              false, null],
+                ['location_on',    'Ubicaciones',   null,              false, null],
+                ['description',    'Páginas',       null,              false, null],
+                ['bar_chart',      'Reportes',      null,              false, null],
+                ['history',        'Auditoría',     null,              false, null],
+                ['settings',       'Configuración', 'admin.settings.general', true, 'admin.settings.*'],
             ];
         @endphp
 
-        @foreach ($nav as [$icon, $label, $route, $enabled])
+        @foreach ($nav as [$icon, $label, $route, $enabled, $pattern])
             @if ($enabled)
+                @php $activo = request()->routeIs($pattern); @endphp
                 <a href="{{ route($route) }}"
                    @class([
                        'flex items-center gap-xs rounded-lg px-xs py-xs text-label-md transition-colors',
-                       'bg-on-primary-fixed-variant/30 text-on-secondary-container font-semibold' => request()->routeIs($route),
-                       'text-on-primary-container hover:bg-on-primary-fixed-variant/20 hover:text-on-secondary-container' => ! request()->routeIs($route),
+                       'bg-on-primary-fixed-variant/30 text-on-secondary-container font-semibold' => $activo,
+                       'text-on-primary-container hover:bg-on-primary-fixed-variant/20 hover:text-on-secondary-container' => ! $activo,
                    ])
-                   @if (request()->routeIs($route)) aria-current="page" @endif>
+                   @if ($activo) aria-current="page" @endif>
                     <span class="material-symbols-outlined text-[20px]">{{ $icon }}</span>
                     {{ $label }}
                 </a>

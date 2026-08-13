@@ -74,6 +74,7 @@ costó un diagnóstico en falso.
 | `/admin/login` | ✅ | ✅ | — | ✅ | 2026-08-13 | Panel izquierdo oculto < 1024. Controles a 44 px |
 | `/admin` (dashboard) | ✅ | ✅ | — | ✅ | 2026-08-13 | Drawer OK. Tarjetas 2→2→4 columnas |
 | Layout público (`/invierte`, `/en/invest`) | ✅ | ✅ | — | ✅ | 2026-08-13 | Nav → drawer < 1024. Selector de idioma en ambas variantes. Contenedor a 1280 px. Footer 4 columnas |
+| Configuración × 4 pestañas | ✅ | — | — | ✅ | 2026-08-13 | Grids 1→2/3 columnas. Pestañas con scroll interno. Barra de guardar sticky. Cero controles < 44 px |
 
 ---
 
@@ -101,6 +102,15 @@ Botones a 40 px e inputs a 42 px.
 **Solución:** regla base bajo `@media (pointer: coarse)` que lleva todo control
 interactivo a 44 px. Se limita a punteros gruesos para no engordar las tablas
 densas del panel cuando se usa ratón.
+
+### 5.4 Objetivo táctil de las casillas 🟠
+
+Las casillas de verificación medían 16 px. Agrandarlas a 44 px se ve absurdo;
+lo que tiene que crecer es **su etiqueta**, que es lo que el dedo toca.
+
+**Solución:** regla base con `label:has(> input[type="checkbox"])` bajo
+`@media (pointer: coarse)`. Cubre todas las casillas del proyecto, presentes y
+futuras, sin tener que acordarse en cada formulario.
 
 ### 5.3 Alternancia frágil del drawer 🟡
 

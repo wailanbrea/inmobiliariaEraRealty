@@ -5,6 +5,64 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.4.0] — 2026-08-13 — Fase 1: configuración general
+
+### Añadido
+
+- Tabla `settings` (42 claves) con `is_public`, `is_translatable` e `is_encrypted`
+- `SettingsService` con caché invalidada al guardar y resolución por idioma
+- `WhatsappService`: normalización de números, generación de `wa.me`,
+  mensajes con variables, botón flotante
+- `SettingsImageService`: subida de logo, logo oscuro, favicon e imagen OG
+- `MailConfigService`: SMTP desde el panel, con precedencia sobre `.env`
+- `MailTestService`: envío de prueba **antes** de guardar
+- Regla de validación `RealImage` (capa 3 de `docs/05_MEDIA_UPLOADS.md`)
+- Panel de configuración con 4 pestañas: General, WhatsApp, Correo, SEO
+- Componentes de formulario: `x-admin.field`, `x-admin.translatable-field`
+  (pestañas ES/EN), `x-admin.image-field` (con vista previa)
+- Componente `x-whatsapp-float`
+- Helpers `setting()` y `whatsapp()`
+- Layout público conectado a datos reales: logo, contacto, redes, pie
+- 76 pruebas nuevas
+
+### Corregido
+
+- **Un `.php` renombrado a `.png` reventaba el panel con un error 500.**
+  Las reglas `image`/`mimes` de Laravel se fían del tipo declarado; la capa
+  que mira el contenido real estaba documentada pero no implementada.
+  Añadida `RealImage`, que valida en memoria con `getimagesizefromstring()`.
+- **SVG con `<script>` o `onload` se aceptaban como logo.** Ahora se rechazan
+  en validación y, además, se sanean al guardar.
+- **Objetivo táctil de las casillas: 16 px.** Agrandar la casilla se ve mal;
+  lo que crece es su etiqueta. Regla base con `:has()` que cubre todas las
+  casillas del proyecto, presentes y futuras.
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| El enlace de WhatsApp **no** se almacena | Un enlace guardado se desincroniza en cuanto cambie el número |
+| `ImageManager` inyectado, sin `intervention/image-laravel` | Evita una dependencia entera solo por un facade |
+| El seeder no crea claves desde el formulario | Un typo en un campo no debe ensuciar la tabla con claves fantasma |
+| Contraseña SMTP cifrada y nunca devuelta al formulario | Vacía = conservar la actual |
+| Si el correo de prueba falla, **no se guarda nada** | Exigencia del prompt maestro §7 |
+| Tasa USD→DOP editable a mano | El sitio opera en ambas monedas; una fuente automática de tasas no estaba en el alcance |
+
+### Pruebas
+
+`php artisan test` → **133 pasadas, 251 aserciones**.
+Responsive verificado en 375, 768 y 1440 px en las cuatro pantallas de
+configuración: cero controles por debajo de 44 px y sin scroll horizontal.
+
+### Pendiente
+
+- Recuperación de contraseña del panel
+- Middleware que aplique `MailConfigService::apply()` en cada envío (Fase 5,
+  cuando existan correos reales que enviar)
+- Reinicio de Apache para tomar los límites de subida (requiere elevación)
+
+---
+
 ## [0.3.0] — 2026-08-13 — Sitio bilingüe español / inglés
 
 El cliente confirma que el sitio será en ambos idiomas con selector visible.

@@ -56,10 +56,15 @@
                 px-margin-mobile md:px-gutter">
 
         <a href="{{ lroute('home') }}" class="group flex items-center gap-xs">
-            <span class="material-symbols-outlined text-[32px] text-secondary transition-transform group-hover:scale-110">
-                real_estate_agent
-            </span>
-            <span class="text-title-lg font-bold text-secondary">{{ config('app.name') }}</span>
+            @if (setting('site_logo'))
+                <img src="{{ Storage::url(setting('site_logo')) }}"
+                     alt="{{ setting('site_name') }}" class="h-10 w-auto">
+            @else
+                <span class="material-symbols-outlined text-[32px] text-secondary transition-transform group-hover:scale-110">
+                    real_estate_agent
+                </span>
+                <span class="text-title-lg font-bold text-secondary">{{ setting('site_name') }}</span>
+            @endif
         </a>
 
         <nav class="hidden items-center gap-md lg:flex" aria-label="{{ __('common.nav.menu') }}">
@@ -146,11 +151,37 @@
         <div>
             <div class="mb-sm flex items-center gap-xs text-headline-md-mobile text-on-secondary-container">
                 <span class="material-symbols-outlined text-[32px]">real_estate_agent</span>
-                {{ config('app.name') }}
+                {{ setting('site_name') }}
             </div>
-            <p class="max-w-xs text-body-md text-on-primary-container/80">
-                {{ __('common.footer.tagline') }}
+            <p class="mb-md max-w-xs text-body-md text-on-primary-container/80">
+                {{ setting('footer_text') }}
             </p>
+
+            @php
+                $redes = collect([
+                    'social_facebook' => 'Facebook',
+                    'social_instagram' => 'Instagram',
+                    'social_youtube' => 'YouTube',
+                    'social_tiktok' => 'TikTok',
+                    'social_linkedin' => 'LinkedIn',
+                ])->filter(fn ($n, $k) => filled(setting($k)));
+            @endphp
+
+            @if ($redes->isNotEmpty())
+                <ul class="flex gap-xs">
+                    @foreach ($redes as $key => $nombre)
+                        <li>
+                            <a href="{{ setting($key) }}" target="_blank" rel="noopener noreferrer"
+                               aria-label="{{ $nombre }}"
+                               class="flex size-10 items-center justify-center rounded-full
+                                      bg-on-primary-fixed-variant/20 transition-colors
+                                      hover:bg-on-primary-fixed-variant/40">
+                                <span class="material-symbols-outlined text-on-secondary-container">link</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </div>
 
         <div>
@@ -183,30 +214,48 @@
 
         <div>
             <h2 class="mb-sm text-title-lg text-on-secondary-container">{{ __('common.footer.contact') }}</h2>
-            {{-- Fase 1: estos datos salen de settings, no del codigo. --}}
             <ul class="space-y-sm text-body-md text-on-primary-container/80">
-                <li class="flex items-start gap-xs">
-                    <span class="material-symbols-outlined mt-1 text-[20px]">location_on</span>
-                    <span>Av. Winston Churchill, Santo Domingo, Rep. Dom.</span>
-                </li>
-                <li class="flex items-center gap-xs">
-                    <span class="material-symbols-outlined text-[20px]">mail</span>
-                    <span>info@erarealtyrd.com</span>
-                </li>
-                <li class="flex items-center gap-xs">
-                    <span class="material-symbols-outlined text-[20px]">call</span>
-                    <span>+1 (809) 555-0100</span>
-                </li>
+                @if (setting('contact_address'))
+                    <li class="flex items-start gap-xs">
+                        <span class="material-symbols-outlined mt-1 text-[20px]">location_on</span>
+                        <span>{{ setting('contact_address') }}</span>
+                    </li>
+                @endif
+                @if (setting('contact_email'))
+                    <li class="flex items-center gap-xs">
+                        <span class="material-symbols-outlined text-[20px]">mail</span>
+                        <a href="mailto:{{ setting('contact_email') }}" class="hover:text-on-primary-container">
+                            {{ setting('contact_email') }}
+                        </a>
+                    </li>
+                @endif
+                @if (setting('contact_phone'))
+                    <li class="flex items-center gap-xs">
+                        <span class="material-symbols-outlined text-[20px]">call</span>
+                        <a href="tel:{{ preg_replace('/\D+/', '', setting('contact_phone')) }}"
+                           class="hover:text-on-primary-container">
+                            {{ setting('contact_phone') }}
+                        </a>
+                    </li>
+                @endif
+                @if (setting('contact_schedule'))
+                    <li class="flex items-start gap-xs">
+                        <span class="material-symbols-outlined mt-1 text-[20px]">schedule</span>
+                        <span>{{ setting('contact_schedule') }}</span>
+                    </li>
+                @endif
             </ul>
         </div>
     </div>
 
     <div class="border-t border-on-primary-container/20 px-margin-mobile py-sm text-center md:px-gutter">
         <p class="text-body-md text-on-primary-container/60">
-            &copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('common.footer.rights') }}
+            &copy; {{ date('Y') }} {{ setting('site_name') }}. {{ setting('footer_copyright') }}
         </p>
     </div>
 </footer>
+
+<x-whatsapp-float />
 
 </body>
 </html>

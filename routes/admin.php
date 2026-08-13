@@ -2,6 +2,7 @@
 
 use App\Modules\Auth\Controllers\LoginController;
 use App\Modules\Dashboard\Controllers\DashboardController;
+use App\Modules\Settings\Controllers\Admin\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,7 +32,25 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Fase 1: configuracion (general, whatsapp, correo, seo)
+    // --- Configuracion ---
+    Route::prefix('configuracion')->name('settings.')->group(function () {
+        Route::get('general', [SettingsController::class, 'general'])->name('general');
+        Route::put('general', [SettingsController::class, 'updateGeneral'])->name('general.update');
+
+        Route::get('whatsapp', [SettingsController::class, 'whatsapp'])->name('whatsapp');
+        Route::put('whatsapp', [SettingsController::class, 'updateWhatsapp'])->name('whatsapp.update');
+
+        Route::get('correo', [SettingsController::class, 'mail'])->name('mail');
+        Route::put('correo', [SettingsController::class, 'updateMail'])
+            ->name('mail.update')
+            ->middleware('throttle:10,1');   // el envio de prueba toca red
+
+        Route::get('seo', [SettingsController::class, 'seo'])->name('seo');
+        Route::put('seo', [SettingsController::class, 'updateSeo'])->name('seo.update');
+
+        Route::delete('imagen/{key}', [SettingsController::class, 'removeImage'])->name('image.remove');
+    });
+
     // Fase 2: propiedades, tipos, ubicaciones
     // Fase 3: imagenes, media
     // Fase 5: leads
