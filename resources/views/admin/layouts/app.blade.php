@@ -46,7 +46,7 @@
                 ['contact_page',   'Leads',         null,              false, null],
                 ['badge',          'Agentes',       null,              false, null],
                 ['category',       'Catálogo',      'admin.catalog.types', true, 'admin.catalog.*'],
-                ['description',    'Páginas',       null,              false, null],
+                ['description',    'Contenido',     'admin.content.index', true, 'admin.content.*'],
                 ['bar_chart',      'Reportes',      null,              false, null],
                 ['history',        'Auditoría',     null,              false, null],
                 ['settings',       'Configuración', 'admin.settings.general', true, 'admin.settings.*'],

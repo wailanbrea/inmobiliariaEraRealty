@@ -41,7 +41,19 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            /*
+             * URL RELATIVA al host, no absoluta desde APP_URL.
+             *
+             * Con la absoluta, cualquier entorno cuyo host no coincida con
+             * APP_URL sirve las imagenes desde un dominio que no resuelve y
+             * salen todas rotas: pasa al abrir el sitio por 127.0.0.1, por
+             * localhost o desde otro equipo de la red.
+             *
+             * Relativa funciona en los tres casos y en produccion sin tocar
+             * nada. Si algun dia las imagenes van a un CDN, se pone aqui su
+             * dominio a proposito.
+             */
+            'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

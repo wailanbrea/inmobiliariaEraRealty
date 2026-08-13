@@ -98,6 +98,40 @@ class SettingsImageService
         return $path;
     }
 
+    /**
+     * Guarda una imagen en una carpeta arbitraria y devuelve su ruta relativa.
+     *
+     * No toca settings: lo usa quien guarda la ruta en otra tabla, como los
+     * bloques de contenido del inicio.
+     *
+     * @throws ValidationException
+     */
+    public function storeFor(string $folder, UploadedFile $file, int $maxWidth = 1920): string
+    {
+        $name = Str::random(16);
+
+        try {
+            $image = $this->images->read($file->getRealPath());
+        } catch (\Throwable) {
+            throw ValidationException::withMessages([
+                'image' => 'No se pudo procesar la imagen. Prueba con otro archivo.',
+            ]);
+        }
+
+        // Orientar por EXIF y descartarlo, igual que en el resto del sistema.
+        $image->orient();
+
+        if ($image->width() > $maxWidth) {
+            $image->scaleDown(width: $maxWidth);
+        }
+
+        $path = "{$folder}/{$name}.webp";
+
+        Storage::disk(self::DISK)->put($path, (string) $image->toWebp(quality: 82));
+
+        return $path;
+    }
+
     public function remove(string $key): void
     {
         $anterior = $this->settings->get($key);
