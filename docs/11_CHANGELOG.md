@@ -5,6 +5,63 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.7.0] — 2026-08-14 — Fase 4 (parcial): inicio, listado y detalle
+
+### Añadido
+
+- Tablas `pages`, `page_translations`, `content_sections` y
+  `content_section_translations`: los textos del inicio se editan desde el
+  panel en vez de estar en el Blade
+- `PropertySearchService` con 18 filtros, orden y similares
+- Componentes `<x-property-card>`, `<x-status-chip>`, `<x-search-bar>`,
+  `<x-property-gallery>`
+- **Inicio**: hero de 85 vh con buscador de cristal, destacadas, estadísticas,
+  inversión y CTA final
+- **Listado**: filtros en columna sticky (desplegable en móvil), orden,
+  paginación con filtros persistidos, estado vacío diferenciado
+- **Detalle**: galería con miniaturas, meta-grid de 4, amenidades en bento,
+  ficha técnica, similares, sidebar sticky y barra de contacto fija en móvil
+- JSON-LD `RealEstateListing` con geolocalización condicionada
+- 34 pruebas nuevas
+
+### Corregido
+
+Tres defectos que solo aparecen al mirar la página renderizada:
+
+- **`@section('description', null)` dejaba un buffer de salida abierto.**
+  Blade interpreta el `null` como una sección que *se abre*, llama a
+  `ob_start()` y espera un `@endsection` que nunca llega. Ocurría en cualquier
+  propiedad sin descripción corta ni meta propia. Hay una prueba que lo vigila.
+- **El panel de cristal no aplicaba desenfoque.** Al escribir el prefijo
+  `-webkit-` a mano, Lightning CSS colapsaba las dos declaraciones y emitía
+  solo la prefijada, que Chrome ya no admite. Se declara solo la estándar.
+- **Los chips de estado salían sin color.** Tailwind 4 purgó los tokens
+  `--color-status-*` porque solo se referencian desde un `style=""` inline,
+  que su escáner no lee. Movidos a `@theme static`.
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| Los textos del inicio en `content_sections` | El prompt maestro exige que todo contenido importante sea administrable |
+| El filtro de precio convierte el *límite*, no los precios | Así el índice `(currency, price)` sigue sirviendo |
+| Las amenidades filtran con AND, no con OR | Marcar «piscina» y «gimnasio» busca las que tengan ambas |
+| Listado filtrado con `noindex` | Miles de URL casi duplicadas arruinarían el presupuesto de rastreo |
+| Vendido y alquilado: visibles pero sin contacto ni indexación | Prueba social sin competir en Google |
+| Vista de detalle sin sesión para borradores | Solo con enlace firmado de 30 min |
+
+### Pruebas
+
+`php artisan test` → **300 pasadas, 566 aserciones**, sin tests marcados como
+«risky». Verificado en 375 y 1440 px.
+
+### Pendiente de la Fase 4
+
+- Comparador, Invierte, Sobre nosotros, Contáctanos y Publica tu propiedad
+- Formularios de contacto (dependen de la Fase 5)
+
+---
+
 ## [0.6.0] — 2026-08-13 — Fase 3: imágenes
 
 ### Añadido

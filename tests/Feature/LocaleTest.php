@@ -105,9 +105,21 @@ it('Locale::alternateUrl devuelve el equivalente en el otro idioma', function ()
     expect(Locale::alternateUrl('en'))->toContain('/en/about-us');
 });
 
-it('resuelve rutas con parametro conservando el slug', function () {
-    $this->get('/propiedades/villa-cap-cana')->assertOk();
-    $this->get('/en/properties/cap-cana-villa')->assertOk();
+it('registra las rutas con parametro en ambos idiomas', function () {
+    // Ya no se comprueba con un 200: desde la Fase 4 el detalle es real y
+    // devuelve 404 si el slug no existe. Lo que importa aqui es que la RUTA
+    // exista y resuelva en los dos idiomas.
+    expect(Route::has('es.properties.show'))->toBeTrue()
+        ->and(Route::has('en.properties.show'))->toBeTrue()
+        ->and(lroute('properties.show', ['slug' => 'villa-cap-cana'], 'es'))
+        ->toEndWith('/propiedades/villa-cap-cana')
+        ->and(lroute('properties.show', ['slug' => 'cap-cana-villa'], 'en'))
+        ->toEndWith('/en/properties/cap-cana-villa');
+});
+
+it('devuelve 404 en un slug de propiedad inexistente', function () {
+    $this->get('/propiedades/no-existe')->assertNotFound();
+    $this->get('/en/properties/does-not-exist')->assertNotFound();
 });
 
 it('no deja ninguna clave de traduccion sin resolver', function (string $url) {

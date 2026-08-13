@@ -2,6 +2,7 @@
 
 use App\Modules\Pages\Controllers\Public\HomeController;
 use App\Modules\Pages\Controllers\Public\PlaceholderController;
+use App\Modules\Properties\Controllers\Public\PropertyController;
 use App\Support\Locale;
 use Illuminate\Support\Facades\Route;
 
@@ -29,11 +30,10 @@ foreach (Locale::codes() as $locale) {
 
             Route::get('/', [HomeController::class, 'index'])->name('home');
 
-            // Fase 4: listado y detalle reales.
-            Route::get($seg('properties'), [PlaceholderController::class, 'properties'])
+            Route::get($seg('properties'), [PropertyController::class, 'index'])
                 ->name('properties.index');
 
-            Route::get($seg('properties').'/{slug}', [PlaceholderController::class, 'propertyDetail'])
+            Route::get($seg('properties').'/{slug}', [PropertyController::class, 'show'])
                 ->name('properties.show');
 
             Route::get($seg('compare'), [PlaceholderController::class, 'compare'])

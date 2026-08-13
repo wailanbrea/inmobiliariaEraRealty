@@ -36,6 +36,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @if (setting('seo_google_site_verification'))
+        <meta name="google-site-verification" content="{{ setting('seo_google_site_verification') }}">
+    @endif
+
+    @stack('head')
 </head>
 <body class="flex min-h-full flex-col bg-background font-body text-on-background"
       x-data="{ menuOpen: false }">

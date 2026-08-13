@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             PropertyTypeSeeder::class,
             LocationSeeder::class,
             AmenitySeeder::class,
+            ContentSectionSeeder::class,
         ]);
     }
 }

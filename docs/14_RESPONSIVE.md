@@ -77,6 +77,9 @@ costó un diagnóstico en falso.
 | Configuración × 4 pestañas | ✅ | — | — | ✅ | 2026-08-13 | Grids 1→2/3 columnas. Pestañas con scroll interno. Barra de guardar sticky. Cero controles < 44 px |
 | Listado de propiedades | ✅ | — | — | ✅ | 2026-08-13 | **La tabla scrollea dentro de su contenedor, no la página.** Filtros 1→4 columnas |
 | Formulario de propiedad | ✅ | — | — | ✅ | 2026-08-13 | 9 pestañas con scroll interno, una sección visible a la vez. Selects encadenados. Pestañas ES/EN |
+| Inicio público | — | — | — | ✅ | 2026-08-14 | Hero 85vh, buscador de cristal, tarjetas 1→3 columnas, contenedor 1280 px |
+| Listado público | — | — | — | ✅ | 2026-08-14 | Filtros en columna sticky (escritorio) / desplegable (móvil). Tarjetas 1→2→3 |
+| Detalle público | ✅ | — | — | ✅ | 2026-08-14 | Meta-grid 2→4 columnas. Barra de contacto fija en móvil. Sidebar sticky |
 
 ---
 
