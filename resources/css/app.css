@@ -141,6 +141,28 @@
   --spacing-margin-mobile: 16px;
   --spacing-container-max: 1280px;
 
+  /* --- Anchos maximos ---
+     OJO, trampa importante: DESIGN.md nombra el espaciado xs/sm/md/lg/xl, y
+     esos mismos nombres los usa Tailwind para max-w-*. Al declarar
+     --spacing-sm: 16px, la clase max-w-sm pasaba a valer 16px en vez de 24rem,
+     rompiendo cualquier contenedor centrado (se detecto en el login a 375px).
+     Declarar el namespace --max-width-* explicitamente le devuelve la
+     precedencia. No borrar: sin esto, max-w-xs/sm/md/lg/xl quedan rotos en
+     todo el sitio, y las maquetas de Stitch usan varias de ellas. */
+  --max-width-3xs:  16rem;
+  --max-width-2xs:  18rem;
+  --max-width-xs:   20rem;
+  --max-width-sm:   24rem;
+  --max-width-md:   28rem;
+  --max-width-lg:   32rem;
+  --max-width-xl:   36rem;
+  --max-width-2xl:  42rem;
+  --max-width-3xl:  48rem;
+  --max-width-4xl:  56rem;
+  --max-width-5xl:  64rem;
+  --max-width-6xl:  72rem;
+  --max-width-7xl:  80rem;
+
   /* --- Radios ---
      Ojo: DESIGN.md define lg=1rem, pero las maquetas usan rounded-xl (12px)
      en las tarjetas y rounded-lg (8px) en botones e inputs. Mandan las maquetas,
@@ -201,6 +223,37 @@
     outline: 2px solid var(--color-secondary);
     outline-offset: 2px;
     border-radius: var(--radius-sm);
+  }
+
+  /* --- Objetivos tactiles ---
+     En dispositivos tactiles, todo control interactivo mide al menos 44px
+     (minimo de WCAG 2.5.5 / Apple HIG). Se aplica con (pointer: coarse) para
+     no engordar las tablas densas del panel cuando se usa raton.
+     Sin esto, los botones quedaban en 40px y los inputs en 42px. */
+  @media (pointer: coarse) {
+    button,
+    [role='button'],
+    input:not([type='checkbox']):not([type='radio']):not([type='hidden']),
+    select,
+    textarea,
+    a[data-touch-target] {
+      min-height: 44px;
+    }
+
+    button,
+    [role='button'] {
+      min-width: 44px;
+    }
+  }
+
+  /* iOS hace zoom automatico al enfocar un input de menos de 16px.
+     Se fuerza el minimo para que el movil no salte al escribir. */
+  @media (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: max(16px, var(--text-body-md));
+    }
   }
 }
 

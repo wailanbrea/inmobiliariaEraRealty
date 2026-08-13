@@ -5,9 +5,89 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
-## [Sin publicar]
+## [0.2.0] — 2026-08-13 — Fase 0: base del proyecto
 
-Nada implementado todavía. El proyecto está en Fase 0, a la espera de confirmación del plan.
+Plan confirmado por el cliente: **Blade + Livewire**, diseños derivados de los
+tokens existentes, **USD y DOP** ambos.
+
+### Añadido
+
+- Laravel 12.66.0 sobre PHP 8.2.33 / MariaDB 11.4.12
+- Paquetes: Livewire 3.5, Intervention Image 3.9, spatie/laravel-permission 6.9,
+  spatie/laravel-sitemap 7.3, mews/purifier 3.4, Pest 3
+- Design tokens de `estate_elite/DESIGN.md` trasladados a `resources/css/app.css`
+  (Tailwind 4, configuración CSS-first)
+- Estructura `app/Modules/` con los 18 módulos
+- Autenticación del panel: login, recordar sesión, cierre de sesión,
+  bloqueo de usuarios desactivados, doble limitador de intentos
+- `RolePermissionSeeder`: 4 roles, 11 permisos
+- `AdminUserSeeder`: contraseña aleatoria mostrada una sola vez, con
+  `must_change_password` para forzar el cambio
+- Layout del panel con sidebar/drawer y layout de acceso
+- Dashboard provisional con el alcance de fases visible
+- 14 pruebas Pest (37 aserciones), todas en verde
+- `docs/14_RESPONSIVE.md` — requisito de responsive como condición de cierre de cada fase
+
+### Modificado
+
+- `php.ini` (**respaldado antes** en `php.ini.bak-2026-08-13-era-realty`):
+  extensión `exif` activada; `upload_max_filesize` 2M→10M; `post_max_size` 8M→60M;
+  `max_file_uploads` 20→30; `max_execution_time` 30→120
+
+### Corregido
+
+- **Colisión de la escala de espaciado con `max-w-*`.** Los nombres `xs/sm/md/lg/xl`
+  de `DESIGN.md` ganaban sobre la escala de anchos de Tailwind 4: `max-w-sm` valía
+  16 px en vez de 24 rem. Habría roto contenedores en todo el sitio. Resuelto
+  declarando el namespace `--max-width-*` completo.
+- **Objetivos táctiles insuficientes** (botones 40 px, inputs 42 px). Regla base
+  bajo `@media (pointer: coarse)` que lleva todo control a 44 px.
+- **Alternancia frágil del drawer**: dos clases de transform coexistiendo.
+  Sustituido por ternario.
+
+### Seguridad
+
+- `.env` fuera del control de versiones desde el primer commit (verificado)
+- Mensajes de login genéricos: no permiten enumerar correos existentes
+- Dos limitadores con funciones distintas: 5 intentos por correo+IP con mensaje
+  útil, y 20 por IP como tope contra el rociado de correos
+- El panel completo va con `noindex, nofollow`
+- Contraseña del administrador nunca escrita en código ni en el repositorio
+
+### Decisiones
+
+| Decisión | Alternativa | Motivo |
+|---|---|---|
+| **Tailwind 4** (CSS-first) | Tailwind 3 con `tailwind.config.js`, como decía el plan | Es lo que trae el scaffolding de Laravel 12; pelearse con el default costaba más de lo que aportaba |
+| Contraseña admin aleatoria en consola | Contraseña fija en el seeder | Una contraseña en el repositorio acaba llegando a producción |
+
+### Comandos ejecutados
+
+```
+git init
+composer create-project laravel/laravel:^12.0
+composer require livewire/livewire intervention/image spatie/laravel-permission spatie/laravel-sitemap mews/purifier
+composer require --dev pestphp/pest pestphp/pest-plugin-laravel
+npm install -D tailwindcss@4 @tailwindcss/forms @tailwindcss/typography
+npm install alpinejs gsap lenis sortablejs
+php artisan key:generate · storage:link · migrate · db:seed
+npx vite build
+php artisan test
+./vendor/bin/pint
+```
+
+### Pruebas
+
+`php artisan test` → **14 pasadas, 37 aserciones**.
+Responsive verificado por medición en navegador en 375, 768 y 1440 px para
+login y dashboard. Registro en [14_RESPONSIVE.md](14_RESPONSIVE.md) §4.
+
+### Pendiente
+
+- Recuperación de contraseña (se hará en Fase 1, junto a la configuración de correo)
+- VirtualHost `era-realty.test`
+- **Apache necesita reinicio** para tomar los nuevos límites de `php.ini`
+- Sitio bilingüe español/inglés: sin decidir. Bloquea la Fase 2
 
 ---
 

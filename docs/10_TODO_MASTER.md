@@ -1,8 +1,15 @@
 # 10 — TODO maestro
 
-**Actualizado:** 2026-08-13 · **Fase actual:** 0 (planificación) · **Progreso: 0 / 214 tareas**
+**Actualizado:** 2026-08-13 · **Fase actual:** 1 · **Progreso: 18 / 216 tareas**
 
 > Este documento se actualiza **después de cada módulo**, junto con [11_CHANGELOG.md](11_CHANGELOG.md). Es obligación del prompt maestro (§2).
+
+> ## ⚠️ Condición de cierre de TODAS las fases
+> Ninguna pantalla se da por terminada sin pasar la verificación responsive en
+> **375 · 768 · 1024 · 1440 px**, con objetivos táctiles de 44 px y sin scroll
+> horizontal. Requisito explícito del cliente: la web y el panel deben funcionar
+> al 100 % desde PC, celular y tableta.
+> Método y registro en [14_RESPONSIVE.md](14_RESPONSIVE.md).
 
 ---
 
@@ -101,26 +108,31 @@ El espacio en `Era Realty` complica comandos en Windows. Renombrar ahora cuesta 
 
 ---
 
-## FASE 0 — Preparación (0/18)
+## FASE 0 — Preparación (18/20) ✅ prácticamente completa
 
-- [ ] **`git init` + `.gitignore` + primer commit** ← lo primero de todo
-- [ ] Decidir renombrado de la carpeta (Pregunta 9)
-- [ ] Verificar extensiones PHP (`php -m`): gd/imagick, intl, zip, bcmath
-- [ ] Respaldar `php.ini` antes de modificarlo
-- [ ] Ajustar `php.ini` (upload_max_filesize, post_max_size, memory_limit)
-- [ ] Crear BD `era_realty` y `era_realty_testing` (utf8mb4)
-- [ ] `composer create-project laravel/laravel:^12.0`
-- [ ] Instalar paquetes (Livewire, Intervention, spatie×2, purifier, Pest, Pint)
-- [ ] Instalar dependencias npm (Tailwind, Alpine, GSAP, Lenis, Sortable, TipTap)
-- [ ] Configurar `.env` + `.env.example`
-- [ ] `php artisan key:generate`
-- [ ] Trasladar tokens de `DESIGN.md` a `tailwind.config.js`
-- [ ] Configurar Vite
-- [ ] Crear estructura `app/Modules/`
-- [ ] `php artisan storage:link` + crear subcarpetas de storage
-- [ ] Configurar VirtualHost `era-realty.test`
-- [ ] Autenticación admin (login, recordar, recuperar, rate limit)
-- [ ] Roles y permisos (spatie) + seeder
+- [x] **`git init` + `.gitignore` + primer commit**
+- [x] Verificar extensiones PHP: **gd ✅**, exif faltaba → **activada**
+- [x] Respaldar `php.ini` → `php.ini.bak-2026-08-13-era-realty` (verificado idéntico)
+- [x] Ajustar `php.ini`: upload 2M→**10M**, post 8M→**60M**, files 20→**30**, exec 30→**120 s**
+- [x] Crear BD `era_realty` y `era_realty_testing` (utf8mb4_unicode_ci)
+- [x] `composer create-project laravel/laravel:^12.0` → **Laravel 12.66.0**
+- [x] Paquetes: Livewire 3, Intervention Image 3, spatie/permission, spatie/sitemap, purifier, Pest 3
+- [x] Dependencias npm: Tailwind 4, Alpine, GSAP, Lenis, SortableJS
+- [x] Configurar `.env` (MySQL, locale es, zona América/Santo Domingo) + `.env.example` sin secretos
+- [x] `php artisan key:generate`
+- [x] **Tokens de `DESIGN.md` → `resources/css/app.css`** (Tailwind 4, CSS-first)
+- [x] Configurar Vite → build en **14,65 KB gzip**
+- [x] Crear estructura `app/Modules/` (18 módulos)
+- [x] `php artisan storage:link` + subcarpetas de medios
+- [x] Autenticación admin: login, recordar sesión, doble rate limit, usuario desactivado
+- [x] Roles y permisos (spatie) + `RolePermissionSeeder` (4 roles, 11 permisos)
+- [x] `AdminUserSeeder` con contraseña aleatoria mostrada una sola vez
+- [x] Layout del panel + dashboard + **verificación responsive en 375/768/1440**
+- [ ] Recuperación de contraseña (movida a Fase 1, junto a la config de correo)
+- [ ] VirtualHost `era-realty.test` (pendiente: requiere editar `hosts` y `httpd.conf`)
+
+**Pendiente de decisión:** renombrado de la carpeta (Pregunta 9) — no ejecutado
+porque es el directorio de trabajo de la sesión.
 
 ## FASE 1 — Configuración general (0/16)
 
