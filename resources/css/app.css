@@ -1,0 +1,249 @@
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+/* Livewire y Blade viven fuera de resources/, hay que declararlos como fuentes */
+@source '../views';
+@source '../../app/Modules/**/Livewire';
+@source '../../app/Http';
+
+/* ============================================================================
+   DESIGN TOKENS — ERA Realty RD
+   Fuente de verdad: stitch_era_realty_rd_premium_redesign/estate_elite/DESIGN.md
+   No inventar valores aqui. Si hace falta un color nuevo, se anade primero
+   al DESIGN.md y luego aqui.
+   ========================================================================== */
+@theme {
+  /* --- Superficies --- */
+  --color-surface:                    #f7f9fb;
+  --color-surface-dim:                #d8dadc;
+  --color-surface-bright:             #f7f9fb;
+  --color-surface-container-lowest:   #ffffff;
+  --color-surface-container-low:      #f2f4f6;
+  --color-surface-container:          #eceef0;
+  --color-surface-container-high:     #e6e8ea;
+  --color-surface-container-highest:  #e0e3e5;
+  --color-surface-variant:            #e0e3e5;
+  --color-surface-tint:               #565e74;
+  --color-on-surface:                 #191c1e;
+  --color-on-surface-variant:         #45464d;
+  --color-inverse-surface:            #2d3133;
+  --color-inverse-on-surface:         #eff1f3;
+  --color-background:                 #f7f9fb;
+  --color-on-background:              #191c1e;
+
+  /* --- Contornos --- */
+  --color-outline:                    #76777d;
+  --color-outline-variant:            #c6c6cd;
+
+  /* --- Primary (navy de marca) --- */
+  --color-primary:                    #000000;
+  --color-on-primary:                 #ffffff;
+  --color-primary-container:          #131b2e;
+  --color-on-primary-container:       #7c839b;
+  --color-inverse-primary:            #bec6e0;
+  --color-primary-fixed:              #dae2fd;
+  --color-primary-fixed-dim:          #bec6e0;
+  --color-on-primary-fixed:           #131b2e;
+  --color-on-primary-fixed-variant:   #3f465c;
+
+  /* --- Secondary (azul interactivo: enlaces y foco) --- */
+  --color-secondary:                  #0058be;
+  --color-on-secondary:               #ffffff;
+  --color-secondary-container:        #2170e4;
+  --color-on-secondary-container:     #fefcff;
+  --color-secondary-fixed:            #d8e2ff;
+  --color-secondary-fixed-dim:        #adc6ff;
+  --color-on-secondary-fixed:         #001a42;
+  --color-on-secondary-fixed-variant: #004395;
+
+  /* --- Tertiary (verde: disponible / confirmacion) --- */
+  --color-tertiary:                   #000000;
+  --color-on-tertiary:                #ffffff;
+  --color-tertiary-container:         #002113;
+  --color-on-tertiary-container:      #009668;
+  --color-tertiary-fixed:             #6ffbbe;
+  --color-tertiary-fixed-dim:         #4edea3;
+  --color-on-tertiary-fixed:          #002113;
+  --color-on-tertiary-fixed-variant:  #005236;
+
+  /* --- Error (vendido) --- */
+  --color-error:                      #ba1a1a;
+  --color-on-error:                   #ffffff;
+  --color-error-container:            #ffdad6;
+  --color-on-error-container:         #93000a;
+
+  /* --- Estados de propiedad ---
+     DESIGN.md los describe en prosa pero no los define como tokens.
+     Se fijan aqui para que el chip de estado no dependa de valores sueltos.
+     'warning' es el "Warm Orange" (#d97706, ya usado en la maqueta de inicio). */
+  --color-status-available:           #009668;
+  --color-status-sold:                #ba1a1a;
+  --color-status-reserved:            #d97706;
+  --color-status-rented:              #0058be;
+  --color-status-unavailable:         #76777d;
+  --color-whatsapp:                   #25d366;
+
+  /* --- Tipografia --- */
+  --font-display:  'Playfair Display', ui-serif, Georgia, serif;
+  --font-heading:  'Playfair Display', ui-serif, Georgia, serif;
+  --font-body:     'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans:     'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --text-display-lg:         48px;
+  --text-display-lg--line-height:    56px;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight:    700;
+
+  --text-display-lg-mobile:  32px;
+  --text-display-lg-mobile--line-height:    40px;
+  --text-display-lg-mobile--letter-spacing: -0.01em;
+  --text-display-lg-mobile--font-weight:    700;
+
+  --text-headline-md:        32px;
+  --text-headline-md--line-height: 40px;
+  --text-headline-md--font-weight: 600;
+
+  --text-headline-md-mobile: 24px;
+  --text-headline-md-mobile--line-height: 32px;
+  --text-headline-md-mobile--font-weight: 600;
+
+  --text-title-lg:           20px;
+  --text-title-lg--line-height: 28px;
+  --text-title-lg--font-weight: 600;
+
+  --text-body-lg:            18px;
+  --text-body-lg--line-height: 28px;
+  --text-body-lg--font-weight: 400;
+
+  --text-body-md:            16px;
+  --text-body-md--line-height: 24px;
+  --text-body-md--font-weight: 400;
+
+  --text-label-md:           14px;
+  --text-label-md--line-height:    20px;
+  --text-label-md--letter-spacing: 0.05em;
+  --text-label-md--font-weight:    500;
+
+  --text-caption:            12px;
+  --text-caption--line-height: 16px;
+  --text-caption--font-weight: 400;
+
+  /* --- Espaciado (base 4px) --- */
+  --spacing-base:          4px;
+  --spacing-xs:            8px;
+  --spacing-sm:           16px;
+  --spacing-md:           24px;
+  --spacing-lg:           48px;
+  --spacing-xl:           80px;
+  --spacing-gutter:       24px;
+  --spacing-margin-mobile: 16px;
+  --spacing-container-max: 1280px;
+
+  /* --- Radios ---
+     Ojo: DESIGN.md define lg=1rem, pero las maquetas usan rounded-xl (12px)
+     en las tarjetas y rounded-lg (8px) en botones e inputs. Mandan las maquetas,
+     que es lo que se ve en screen.png. Ver docs/12_KNOWN_ISSUES.md #5. */
+  --radius-sm:    0.25rem;   /*  4px */
+  --radius-DEFAULT: 0.5rem;  /*  8px — botones, inputs */
+  --radius-md:    0.75rem;   /* 12px */
+  --radius-lg:    0.5rem;    /*  8px */
+  --radius-xl:    0.75rem;   /* 12px — tarjetas y contenedores */
+  --radius-2xl:   1.5rem;    /* 24px */
+
+  /* --- Sombras ambientales ---
+     El #0f172a de la prosa de DESIGN.md vive aqui: es donde las maquetas
+     lo aplican realmente. */
+  --shadow-ambient:       0 4px 20px rgba(15, 23, 42, 0.04);
+  --shadow-ambient-hover: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-ambient-lg:    0 12px 32px rgba(15, 23, 42, 0.10);
+
+  /* --- Contenedor --- */
+  --container-container-max: 1280px;
+
+  /* --- Curvas de animacion (ver docs/13_MOTION_AND_EFFECTS.md) --- */
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ============================================================================
+   BASE
+   ========================================================================== */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-on-background);
+    font-family: var(--font-body);
+    font-size: var(--text-body-md);
+    line-height: var(--text-body-md--line-height);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-heading);
+  }
+
+  ::selection {
+    background-color: var(--color-secondary-fixed-dim);
+    color: var(--color-on-secondary-fixed);
+  }
+
+  /* Foco visible y consistente en todo elemento interactivo.
+     Requisito de accesibilidad de docs/13_MOTION_AND_EFFECTS.md. */
+  :focus-visible {
+    outline: 2px solid var(--color-secondary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ============================================================================
+   UTILIDADES DEL SISTEMA
+   ========================================================================== */
+@utility glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@utility ambient-shadow {
+  box-shadow: var(--shadow-ambient);
+}
+
+/* Elevacion al hover: la sombra dobla su opacidad y el objeto se acerca.
+   DESIGN.md lo describe como "el objeto siendo atraido hacia el usuario". */
+@utility hover-lift {
+  transition: box-shadow 300ms var(--ease-out-quart),
+              transform 300ms var(--ease-out-quart);
+  &:hover {
+    box-shadow: var(--shadow-ambient-hover);
+    transform: translateY(-2px);
+  }
+}
+
+/* Enmascarado por linea para la entrada del titulo del hero */
+@utility line-mask {
+  overflow: hidden;
+  display: block;
+}
+
+/* ============================================================================
+   ACCESIBILIDAD — prefers-reduced-motion
+   Innegociable. Ver docs/13_MOTION_AND_EFFECTS.md seccion 5.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

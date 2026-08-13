@@ -1,0 +1,40 @@
+*.log
+.DS_Store
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
+
+# --- ERA Realty ---
+# Los archivos que suben los administradores no se versionan;
+# se respaldan aparte (ver docs/09_DEPLOYMENT.md seccion 5).
+/storage/app/public/properties/*
+/storage/app/public/news/*
+/storage/app/public/agents/*
+/storage/app/public/settings/*
+/storage/app/public/media/*
+!/storage/app/public/*/.gitkeep
+
+# Respaldos locales de configuracion de PHP/Apache
+*.bak-*
+
+# El diseno de Stitch SI se versiona: es la referencia visual del proyecto.
+# No anadir stitch_era_realty_rd_premium_redesign/ aqui.
