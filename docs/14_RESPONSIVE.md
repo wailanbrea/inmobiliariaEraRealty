@@ -34,6 +34,8 @@ Estas no se negocian por estética:
 |---|---|
 | **Nunca scroll horizontal** en `<body>` | Es el síntoma número uno de layout roto en móvil |
 | **Objetivo táctil ≥ 44 × 44 px** | WCAG 2.5.5 / Apple HIG. Implementado en `app.css` con `@media (pointer: coarse)` |
+| Un `<a>` estilado como botón lleva **`data-touch-target`** | La regla base cubre `button`, `input`, `select` y `textarea`, pero no puede distinguir un enlace-botón de un enlace de texto. El atributo lo marca explícitamente y es greppable |
+| Enlaces de navegación del pie: **≥ 24 px** de alto | WCAG 2.5.8 (AA). Se consigue con `inline-block py-1`, sin cambiar el aspecto |
 | **Inputs con fuente ≥ 16 px en móvil** | Por debajo, iOS hace zoom automático al enfocar y descoloca la página |
 | **Imágenes con `width`/`height`** | Sin ellos el layout salta al cargar (CLS) |
 | Tablas anchas → scroll **dentro** de su contenedor | Nunca desbordan la página |
@@ -80,6 +82,8 @@ costó un diagnóstico en falso.
 | Inicio público | — | — | — | ✅ | 2026-08-14 | Hero 85vh, buscador de cristal, tarjetas 1→3 columnas, contenedor 1280 px |
 | Listado público | — | — | — | ✅ | 2026-08-14 | Filtros en columna sticky (escritorio) / desplegable (móvil). Tarjetas 1→2→3 |
 | Detalle público | ✅ | — | — | ✅ | 2026-08-14 | Meta-grid 2→4 columnas. Barra de contacto fija en móvil. Sidebar sticky |
+| Comparador | ✅ | — | — | ✅ | 2026-08-14 | Tabla con scroll interno y columna de etiquetas sticky. Toggle «solo diferencias» |
+| Invierte | ✅ | — | — | ✅ | 2026-08-14 | Motivos 1→2 columnas. Línea temporal con numeración dentro de pantalla |
 
 ---
 

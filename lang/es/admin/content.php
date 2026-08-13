@@ -26,12 +26,21 @@ return [
     'hero_image_help' => 'Recomendado: horizontal, mínimo 1920×1080 px. Se optimiza y convierte a WebP automáticamente. Es la primera imagen que ve el visitante: usa una foto de propiedad real, no un genérico.',
     'image_help' => 'JPG, PNG o WebP. Máximo 5 MB.',
 
+    'pages' => [
+        'home' => 'Inicio',
+        'invest' => 'Invierte',
+    ],
+
     'sections' => [
         'hero' => 'Portada principal',
         'featured_properties' => 'Propiedades destacadas',
         'stats' => 'Cifras',
         'investment_cta' => 'Bloque de inversión',
         'final_cta' => 'Llamada a la acción final',
+        'why_invest' => 'Por qué invertir',
+        'process' => 'Cómo trabajamos',
+        'disclaimer' => 'Aviso legal',
+        'cta' => 'Llamada a la acción',
     ],
 
     'section_help' => [
@@ -40,6 +49,10 @@ return [
         'stats' => 'Las cifras se editan por ahora desde la base de datos.',
         'investment_cta' => 'Encabezado del bloque de oportunidades de inversión.',
         'final_cta' => 'La banda de contacto del final de la página.',
+        'why_invest' => 'Encabezado de los cuatro motivos. Los bloques se editan por ahora desde la base de datos.',
+        'process' => 'Encabezado de los pasos. El contenido de cada paso se edita por ahora desde la base de datos.',
+        'disclaimer' => 'Aviso de que la información no es asesoría legal ni fiscal. Escríbelo en el campo «Texto».',
+        'cta' => 'La banda de contacto del final de la página.',
     ],
 
     'status' => [

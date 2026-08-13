@@ -138,6 +138,7 @@
 
             <div class="flex flex-col items-center justify-center gap-sm sm:flex-row">
                 <a href="{{ $finalCta->button_url ?: lroute('contact.index') }}"
+                   data-touch-target
                    class="flex w-full items-center justify-center gap-xs rounded-lg
                           bg-surface-container-lowest px-md py-xs text-label-md font-semibold
                           text-on-surface transition-all hover-lift sm:w-auto">
@@ -147,6 +148,7 @@
 
                 @if ($enlaceWhatsapp = whatsapp()->generalLink())
                     <a href="{{ $enlaceWhatsapp }}" target="_blank" rel="noopener noreferrer"
+                       data-touch-target
                        class="flex w-full items-center justify-center gap-xs rounded-lg bg-whatsapp
                               px-md py-xs text-label-md font-semibold text-white
                               transition-transform hover:scale-105 sm:w-auto">

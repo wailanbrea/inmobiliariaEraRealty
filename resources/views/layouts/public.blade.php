@@ -196,7 +196,7 @@
                 @foreach (array_slice($nav, 0, 4) as [$route, $label])
                     <li>
                         <a href="{{ lroute($route) }}"
-                           class="text-label-md text-on-primary-container/80 transition-opacity hover:text-on-primary-container">
+                           class="inline-block py-1 text-label-md text-on-primary-container/80 transition-opacity hover:text-on-primary-container">
                             {{ __($label) }}
                         </a>
                     </li>
@@ -210,7 +210,7 @@
                 @foreach ([['news.index','common.nav.news'], ['contact.index','common.nav.contact'], ['privacy','common.footer.privacy'], ['terms','common.footer.terms']] as [$route, $label])
                     <li>
                         <a href="{{ lroute($route) }}"
-                           class="text-label-md text-on-primary-container/80 transition-opacity hover:text-on-primary-container">
+                           class="inline-block py-1 text-label-md text-on-primary-container/80 transition-opacity hover:text-on-primary-container">
                             {{ __($label) }}
                         </a>
                     </li>

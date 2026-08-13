@@ -280,6 +280,7 @@
 
                             @if ($enlaceWa)
                                 <a href="{{ $enlaceWa }}" target="_blank" rel="noopener noreferrer"
+                                   data-touch-target
                                    class="flex w-full items-center justify-center gap-xs rounded-lg
                                           bg-whatsapp px-md py-sm text-label-md font-semibold text-white
                                           transition-transform hover:scale-[1.02]">
@@ -290,6 +291,7 @@
 
                             @if (setting('contact_phone'))
                                 <a href="tel:{{ preg_replace('/\D+/', '', setting('contact_phone')) }}"
+                                   data-touch-target
                                    class="flex w-full items-center justify-center gap-xs rounded-lg
                                           border border-outline-variant px-md py-sm text-label-md
                                           text-on-surface transition-colors hover:bg-surface-container-low">

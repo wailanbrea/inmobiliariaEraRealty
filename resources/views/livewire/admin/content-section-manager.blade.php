@@ -111,18 +111,29 @@
 
                         @foreach ($locales as $codigo => $meta)
                             <div x-show="locale === '{{ $codigo }}'" x-cloak class="space-y-sm">
-                                @foreach (['title' => 'text', 'subtitle' => 'text', 'button_text' => 'text'] as $campo => $tipo)
+                                @foreach (['title' => 'text', 'subtitle' => 'text', 'content' => 'textarea', 'button_text' => 'text'] as $campo => $tipo)
                                     <div>
                                         <label for="{{ $campo }}_{{ $codigo }}"
                                                class="mb-base block text-caption font-medium text-on-surface-variant">
                                             {{ __("admin/content.fields.{$campo}") }} ({{ $meta['short'] }})
                                         </label>
-                                        <input id="{{ $campo }}_{{ $codigo }}" type="text" lang="{{ $codigo }}"
-                                               wire:model="fields.{{ $codigo }}.{{ $campo }}"
-                                               class="w-full rounded-lg border border-outline-variant
-                                                      bg-surface-container-low px-sm py-xs text-body-md
-                                                      text-on-surface focus:border-secondary focus:ring-1
-                                                      focus:ring-secondary">
+
+                                        @if ($tipo === 'textarea')
+                                            <textarea id="{{ $campo }}_{{ $codigo }}" rows="4" lang="{{ $codigo }}"
+                                                      wire:model="fields.{{ $codigo }}.{{ $campo }}"
+                                                      class="w-full rounded-lg border border-outline-variant
+                                                             bg-surface-container-low px-sm py-xs text-body-md
+                                                             text-on-surface focus:border-secondary focus:ring-1
+                                                             focus:ring-secondary"></textarea>
+                                        @else
+                                            <input id="{{ $campo }}_{{ $codigo }}" type="text" lang="{{ $codigo }}"
+                                                   wire:model="fields.{{ $codigo }}.{{ $campo }}"
+                                                   class="w-full rounded-lg border border-outline-variant
+                                                          bg-surface-container-low px-sm py-xs text-body-md
+                                                          text-on-surface focus:border-secondary focus:ring-1
+                                                          focus:ring-secondary">
+                                        @endif
+
                                         @error("fields.{$codigo}.{$campo}")
                                             <p role="alert" class="mt-1 text-caption text-error">{{ $message }}</p>
                                         @enderror

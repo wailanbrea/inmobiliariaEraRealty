@@ -2,6 +2,7 @@
 
 use App\Modules\Compare\Controllers\Public\CompareController;
 use App\Modules\Pages\Controllers\Public\HomeController;
+use App\Modules\Pages\Controllers\Public\InvestController;
 use App\Modules\Pages\Controllers\Public\PlaceholderController;
 use App\Modules\Properties\Controllers\Public\PropertyController;
 use App\Support\Locale;
@@ -49,7 +50,7 @@ foreach (Locale::codes() as $locale) {
             Route::post($seg('compare').'-vaciar', [CompareController::class, 'clear'])
                 ->name('compare.clear');
 
-            Route::get($seg('invest'), [PlaceholderController::class, 'invest'])
+            Route::get($seg('invest'), [InvestController::class, 'index'])
                 ->name('invest.index');
 
             Route::get($seg('about'), [PlaceholderController::class, 'about'])
