@@ -73,6 +73,7 @@ costó un diagnóstico en falso.
 |---|:--:|:--:|:--:|:--:|---|---|
 | `/admin/login` | ✅ | ✅ | — | ✅ | 2026-08-13 | Panel izquierdo oculto < 1024. Controles a 44 px |
 | `/admin` (dashboard) | ✅ | ✅ | — | ✅ | 2026-08-13 | Drawer OK. Tarjetas 2→2→4 columnas |
+| Layout público (`/invierte`, `/en/invest`) | ✅ | ✅ | — | ✅ | 2026-08-13 | Nav → drawer < 1024. Selector de idioma en ambas variantes. Contenedor a 1280 px. Footer 4 columnas |
 
 ---
 

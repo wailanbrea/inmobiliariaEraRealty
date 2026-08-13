@@ -22,6 +22,7 @@ Route::middleware('guest')->group(function () {
     // Si este fuera mas estricto, taparia al otro y el usuario legitimo veria
     // un 429 sin explicacion.
     Route::post('login', [LoginController::class, 'store'])
+        ->name('login.store')
         ->middleware('throttle:20,1');
 });
 

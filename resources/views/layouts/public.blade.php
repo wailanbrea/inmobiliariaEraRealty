@@ -1,0 +1,212 @@
+@php
+    use App\Support\Locale;
+    $meta = Locale::meta();
+    $alternates = Locale::alternates();
+@endphp
+<!DOCTYPE html>
+<html lang="{{ $meta['html_lang'] }}" class="h-full">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@yield('title', config('app.name'))</title>
+    <meta name="description" content="@yield('description', __('common.footer.tagline'))">
+
+    {{-- hreflang: cada idioma declara al otro, y x-default apunta al espanol.
+         Ver docs/15_I18N.md seccion 6. --}}
+    @foreach ($alternates as $code => $url)
+        <link rel="alternate" hreflang="{{ $code }}" href="{{ $url }}">
+    @endforeach
+    @if (isset($alternates[Locale::default()]))
+        <link rel="alternate" hreflang="x-default" href="{{ $alternates[Locale::default()] }}">
+    @endif
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <meta property="og:locale" content="{{ $meta['og_locale'] }}">
+    @foreach (Locale::codes() as $code)
+        @if ($code !== Locale::current())
+            <meta property="og:locale:alternate" content="{{ Locale::meta($code)['og_locale'] }}">
+        @endif
+    @endforeach
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="flex min-h-full flex-col bg-background font-body text-on-background"
+      x-data="{ menuOpen: false }">
+
+@php
+    $nav = [
+        ['home',             'common.nav.home'],
+        ['properties.index', 'common.nav.properties'],
+        ['invest.index',     'common.nav.invest'],
+        ['about.index',      'common.nav.about'],
+        ['news.index',       'common.nav.news'],
+        ['contact.index',    'common.nav.contact'],
+    ];
+@endphp
+
+<header class="sticky top-0 z-50 w-full bg-surface-container-lowest shadow-sm">
+    <div class="mx-auto flex h-20 w-full max-w-container-max items-center justify-between
+                px-margin-mobile md:px-gutter">
+
+        <a href="{{ lroute('home') }}" class="group flex items-center gap-xs">
+            <span class="material-symbols-outlined text-[32px] text-secondary transition-transform group-hover:scale-110">
+                real_estate_agent
+            </span>
+            <span class="text-title-lg font-bold text-secondary">{{ config('app.name') }}</span>
+        </a>
+
+        <nav class="hidden items-center gap-md lg:flex" aria-label="{{ __('common.nav.menu') }}">
+            @foreach ($nav as [$route, $label])
+                @php $active = request()->routeIs(Locale::current().'.'.$route); @endphp
+                <a href="{{ lroute($route) }}"
+                   @class([
+                       'text-label-md transition-colors',
+                       'border-b-2 border-secondary pb-1 font-bold text-secondary' => $active,
+                       'rounded px-xs py-1 text-on-surface-variant hover:bg-surface-container-low hover:text-secondary' => ! $active,
+                   ])
+                   @if ($active) aria-current="page" @endif>
+                    {{ __($label) }}
+                </a>
+            @endforeach
+        </nav>
+
+        <div class="flex items-center gap-xs">
+            <x-language-switcher class="hidden sm:flex" />
+
+            <a href="{{ lroute('publish.index') }}"
+               class="hidden items-center gap-base rounded-lg border border-primary px-sm py-xs
+                      text-label-md text-primary transition-colors hover:bg-surface-container-low xl:flex">
+                <span class="material-symbols-outlined text-[18px]">add_home</span>
+                {{ __('common.nav.publish') }}
+            </a>
+
+            <button @click="menuOpen = true" aria-label="{{ __('common.nav.open_menu') }}"
+                    class="p-1 text-on-surface transition-colors hover:text-secondary lg:hidden">
+                <span class="material-symbols-outlined text-[28px]">menu</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+{{-- Menu movil --}}
+<div x-show="menuOpen" x-cloak class="fixed inset-0 z-[60] lg:hidden"
+     @keydown.escape.window="menuOpen = false" role="dialog" aria-modal="true">
+
+    <div x-show="menuOpen" x-transition.opacity @click="menuOpen = false"
+         class="absolute inset-0 bg-primary/50"></div>
+
+    <div x-show="menuOpen"
+         x-transition:enter="transition-transform duration-300"
+         x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition-transform duration-200"
+         x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+         class="absolute inset-y-0 right-0 flex w-4/5 max-w-xs flex-col gap-sm
+                overflow-y-auto bg-surface-container-lowest p-sm">
+
+        <div class="flex items-center justify-between">
+            <span class="text-title-lg font-bold text-secondary">{{ __('common.nav.menu') }}</span>
+            <button @click="menuOpen = false" aria-label="{{ __('common.nav.close_menu') }}"
+                    class="p-1 text-on-surface-variant hover:text-secondary">
+                <span class="material-symbols-outlined text-[24px]">close</span>
+            </button>
+        </div>
+
+        <nav class="flex flex-col" aria-label="{{ __('common.nav.menu') }}">
+            @foreach ($nav as [$route, $label])
+                <a href="{{ lroute($route) }}"
+                   class="rounded-lg px-xs py-sm text-body-lg text-on-surface transition-colors hover:bg-surface-container-low">
+                    {{ __($label) }}
+                </a>
+            @endforeach
+            <a href="{{ lroute('publish.index') }}"
+               class="rounded-lg px-xs py-sm text-body-lg text-secondary transition-colors hover:bg-surface-container-low">
+                {{ __('common.nav.publish') }}
+            </a>
+        </nav>
+
+        <x-language-switcher variant="mobile" />
+    </div>
+</div>
+
+<main class="flex-1">
+    @yield('content')
+</main>
+
+<footer class="mt-xl bg-primary-container text-on-primary-container">
+    <div class="mx-auto grid max-w-container-max grid-cols-1 gap-gutter px-margin-mobile
+                py-xl md:grid-cols-4 md:px-gutter">
+
+        <div>
+            <div class="mb-sm flex items-center gap-xs text-headline-md-mobile text-on-secondary-container">
+                <span class="material-symbols-outlined text-[32px]">real_estate_agent</span>
+                {{ config('app.name') }}
+            </div>
+            <p class="max-w-xs text-body-md text-on-primary-container/80">
+                {{ __('common.footer.tagline') }}
+            </p>
+        </div>
+
+        <div>
+            <h2 class="mb-sm text-title-lg text-on-secondary-container">{{ __('common.footer.navigation') }}</h2>
+            <ul class="space-y-sm">
+                @foreach (array_slice($nav, 0, 4) as [$route, $label])
+                    <li>
+                        <a href="{{ lroute($route) }}"
+                           class="text-label-md text-on-primary-container/80 transition-opacity hover:text-on-primary-container">
+                            {{ __($label) }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+        <div>
+            <h2 class="mb-sm text-title-lg text-on-secondary-container">{{ __('common.footer.support') }}</h2>
+            <ul class="space-y-sm">
+                @foreach ([['news.index','common.nav.news'], ['contact.index','common.nav.contact'], ['privacy','common.footer.privacy'], ['terms','common.footer.terms']] as [$route, $label])
+                    <li>
+                        <a href="{{ lroute($route) }}"
+                           class="text-label-md text-on-primary-container/80 transition-opacity hover:text-on-primary-container">
+                            {{ __($label) }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+        <div>
+            <h2 class="mb-sm text-title-lg text-on-secondary-container">{{ __('common.footer.contact') }}</h2>
+            {{-- Fase 1: estos datos salen de settings, no del codigo. --}}
+            <ul class="space-y-sm text-body-md text-on-primary-container/80">
+                <li class="flex items-start gap-xs">
+                    <span class="material-symbols-outlined mt-1 text-[20px]">location_on</span>
+                    <span>Av. Winston Churchill, Santo Domingo, Rep. Dom.</span>
+                </li>
+                <li class="flex items-center gap-xs">
+                    <span class="material-symbols-outlined text-[20px]">mail</span>
+                    <span>info@erarealtyrd.com</span>
+                </li>
+                <li class="flex items-center gap-xs">
+                    <span class="material-symbols-outlined text-[20px]">call</span>
+                    <span>+1 (809) 555-0100</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="border-t border-on-primary-container/20 px-margin-mobile py-sm text-center md:px-gutter">
+        <p class="text-body-md text-on-primary-container/60">
+            &copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('common.footer.rights') }}
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>

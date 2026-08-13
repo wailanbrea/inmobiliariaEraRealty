@@ -5,6 +5,63 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.3.0] — 2026-08-13 — Sitio bilingüe español / inglés
+
+El cliente confirma que el sitio será en ambos idiomas con selector visible.
+Decisión tomada **antes** de crear las tablas de contenido: hacerlo tras la
+Fase 2 habría obligado a migrar el esquema y reescribir todas las vistas.
+
+### Añadido
+
+- `docs/15_I18N.md` — plan completo: qué se traduce, estrategia de URLs,
+  almacenamiento, SEO bilingüe e impacto por fase
+- `config/locales.php` — idiomas, prefijos y **segmentos de URL traducidos**
+- `App\Support\Locale` — resolución de segmentos, URL alternativa y `hreflang`
+- Middleware `SetLocale` — el idioma lo fija la URL, no la cookie ni el navegador
+- Helper global `lroute()` para rutas públicas con idioma
+- 22 rutas públicas registradas en ambos idiomas
+- `lang/es` y `lang/en` (`common.php`, `home.php`)
+- **Layout público**: header sticky, nav de escritorio, drawer móvil, footer de
+  4 columnas, `hreflang`, `canonical` y `og:locale`
+- Componente `<x-language-switcher>` (variantes escritorio y móvil)
+- Home provisional y plantilla de secciones pendientes
+- 29 pruebas nuevas de i18n
+
+### Corregido
+
+- Claves de traducción sin prefijo de archivo en `PlaceholderController`:
+  las páginas internas mostraban `nav.invest` en crudo. Detectado en navegador,
+  no por las pruebas, porque estas solo miraban el layout.
+  Añadida una prueba que recorre las 20 URLs públicas y **falla si queda
+  cualquier clave sin resolver**.
+- `POST /admin/login` quedaba con nombre de ruta vacío (`admin.`)
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| Español sin prefijo, inglés en `/en` | El prompt maestro fija `/propiedades`, `/invierte`… como requisito, y el público principal es dominicano |
+| Segmentos traducidos (`/en/properties`, no `/en/propiedades`) | Un comprador anglófono busca *"properties for sale punta cana"*; tener la palabra en la URL es el motivo de ser bilingüe |
+| Tablas `*_translations` para propiedades y noticias | El slug debe ser único por idioma y la búsqueda necesita `FULLTEXT` por idioma; con JSON no se puede |
+| JSON para catálogos, agentes y settings | No llevan slug ni búsqueda por texto: la simplicidad gana |
+| Sin autodetección por IP ni `Accept-Language` | Google penaliza la redirección automática al rastrear |
+| Panel admin solo en español | El equipo es dominicano; lo bilingüe es el *contenido*, no la herramienta |
+| Respaldo al español si falta traducción | Mejor una ficha en español que un hueco |
+
+### Pruebas
+
+`php artisan test` → **43 pasadas**.
+Responsive del layout público verificado en 375, 768 y 1440 px, incluido el
+cambio de idioma desde el menú móvil.
+
+### Pendiente
+
+- Los slugs traducidos de propiedades y noticias se resuelven en las Fases 2 y 6
+  (`Locale::alternateUrl` ya tiene el punto de enganche vía `translatedSlug()`)
+- Sitemap bilingüe: Fase 8
+
+---
+
 ## [0.2.0] — 2026-08-13 — Fase 0: base del proyecto
 
 Plan confirmado por el cliente: **Blade + Livewire**, diseños derivados de los
