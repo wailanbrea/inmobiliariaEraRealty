@@ -2,6 +2,8 @@
 
 use App\Modules\Auth\Controllers\LoginController;
 use App\Modules\Dashboard\Controllers\DashboardController;
+use App\Modules\Locations\Controllers\Admin\LocationLookupController;
+use App\Modules\Properties\Controllers\Admin\PropertyController;
 use App\Modules\Settings\Controllers\Admin\SettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,7 +53,29 @@ Route::middleware('auth')->group(function () {
         Route::delete('imagen/{key}', [SettingsController::class, 'removeImage'])->name('image.remove');
     });
 
-    // Fase 2: propiedades, tipos, ubicaciones
+    // --- Propiedades ---
+    Route::prefix('propiedades')->name('properties.')->group(function () {
+        Route::get('/', [PropertyController::class, 'index'])->name('index');
+        Route::get('crear', [PropertyController::class, 'create'])->name('create');
+        Route::post('/', [PropertyController::class, 'store'])->name('store');
+        Route::get('{property:id}/editar', [PropertyController::class, 'edit'])->name('edit');
+        Route::put('{property:id}', [PropertyController::class, 'update'])->name('update');
+        Route::delete('{property:id}', [PropertyController::class, 'destroy'])->name('destroy');
+        Route::post('{id}/restaurar', [PropertyController::class, 'restore'])->name('restore');
+
+        Route::post('{property:id}/publicar', [PropertyController::class, 'publish'])->name('publish');
+        Route::post('{property:id}/pausar', [PropertyController::class, 'pause'])->name('pause');
+        Route::post('{property:id}/estado', [PropertyController::class, 'changeStatus'])->name('status');
+        Route::get('{property:id}/vista-previa', [PropertyController::class, 'preview'])->name('preview');
+    });
+
+    // --- Ubicaciones: alimentan los selects encadenados ---
+    Route::prefix('ubicaciones')->name('locations.')->group(function () {
+        Route::get('ciudades/{province:id}', [LocationLookupController::class, 'cities'])->name('cities');
+        Route::get('sectores/{city:id}', [LocationLookupController::class, 'sectors'])->name('sectors');
+    });
+
+    // Fase 2 (resto): CRUD de tipos y ubicaciones
     // Fase 3: imagenes, media
     // Fase 5: leads
     // Fase 6: noticias

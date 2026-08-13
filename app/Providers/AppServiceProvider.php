@@ -2,11 +2,16 @@
 
 namespace App\Providers;
 
+use App\Modules\Properties\Livewire\PropertyIndex;
+use App\Modules\Properties\Models\Property;
+use App\Modules\Properties\Policies\PropertyPolicy;
 use App\Modules\Settings\Services\SettingsService;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,5 +35,12 @@ class AppServiceProvider extends ServiceProvider
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Database\\Factories\\'.class_basename($modelName).'Factory'
         );
+
+        // Las policies viven en los modulos, asi que no las descubre la
+        // convencion App\Policies\*. Se registran a mano.
+        Gate::policy(Property::class, PropertyPolicy::class);
+
+        // Livewire tampoco descubre componentes fuera de app/Livewire.
+        Livewire::component('property-index', PropertyIndex::class);
     }
 }

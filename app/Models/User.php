@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Modules\Agents\Models\Agent;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -60,5 +62,14 @@ class User extends Authenticatable
     public function isSuperAdmin(): bool
     {
         return $this->hasRole('super_admin');
+    }
+
+    /**
+     * Ficha de agente asociada, si la tiene.
+     * La usa PropertyPolicy para saber que propiedades le corresponden.
+     */
+    public function agent(): HasOne
+    {
+        return $this->hasOne(Agent::class);
     }
 }

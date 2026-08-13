@@ -75,6 +75,8 @@ costó un diagnóstico en falso.
 | `/admin` (dashboard) | ✅ | ✅ | — | ✅ | 2026-08-13 | Drawer OK. Tarjetas 2→2→4 columnas |
 | Layout público (`/invierte`, `/en/invest`) | ✅ | ✅ | — | ✅ | 2026-08-13 | Nav → drawer < 1024. Selector de idioma en ambas variantes. Contenedor a 1280 px. Footer 4 columnas |
 | Configuración × 4 pestañas | ✅ | — | — | ✅ | 2026-08-13 | Grids 1→2/3 columnas. Pestañas con scroll interno. Barra de guardar sticky. Cero controles < 44 px |
+| Listado de propiedades | ✅ | — | — | ✅ | 2026-08-13 | **La tabla scrollea dentro de su contenedor, no la página.** Filtros 1→4 columnas |
+| Formulario de propiedad | ✅ | — | — | ✅ | 2026-08-13 | 9 pestañas con scroll interno, una sección visible a la vez. Selects encadenados. Pestañas ES/EN |
 
 ---
 

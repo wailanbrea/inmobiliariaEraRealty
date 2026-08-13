@@ -40,7 +40,7 @@
             // [icono, etiqueta, ruta, activo, patrón para marcar la sección]
             $nav = [
                 ['dashboard',      'Dashboard',     'admin.dashboard', true,  'admin.dashboard'],
-                ['home_work',      'Propiedades',   null,              false, null],
+                ['home_work',      'Propiedades',   'admin.properties.index', true, 'admin.properties.*'],
                 ['photo_library',  'Media',         null,              false, null],
                 ['article',        'Noticias',      null,              false, null],
                 ['contact_page',   'Leads',         null,              false, null],
@@ -146,5 +146,6 @@
 </div>
 
 @livewireScripts
+@stack('scripts')
 </body>
 </html>

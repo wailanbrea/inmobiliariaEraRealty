@@ -295,11 +295,18 @@ class Property extends Model
     }
 
     /**
-     * Resolucion por slug del idioma activo, con respaldo al otro idioma.
-     * Asi un enlace antiguo o cruzado sigue encontrando la propiedad.
+     * En el sitio publico se resuelve por slug, buscando en TODOS los idiomas:
+     * asi un enlace antiguo o cruzado sigue encontrando la propiedad.
+     *
+     * En el panel se usa {property:id}, porque un borrador puede no tener
+     * slug todavia.
      */
     public function resolveRouteBinding($value, $field = null)
     {
+        if ($field !== null && $field !== 'slug') {
+            return static::query()->where($field, $value)->first();
+        }
+
         return static::query()
             ->whereHas('translations', fn (Builder $q) => $q->where('slug', $value))
             ->forListing()

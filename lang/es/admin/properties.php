@@ -1,0 +1,175 @@
+<?php
+
+return [
+
+    'title' => 'Propiedades',
+    'new' => 'Nueva propiedad',
+    'edit' => 'Editar propiedad',
+    'create' => 'Crear propiedad',
+
+    'created' => 'Propiedad creada. Ya puedes completar el resto de datos.',
+    'saved' => 'Cambios guardados.',
+    'deleted' => 'Propiedad enviada a la papelera.',
+    'restored' => 'Propiedad restaurada.',
+    'published' => 'Propiedad publicada.',
+    'paused' => 'Propiedad pausada.',
+    'status_changed' => 'Estado actualizado.',
+
+    'cannot_publish_without_title' => 'No se puede publicar sin título en español: la ficha saldría rota.',
+    'cannot_preview_without_title' => 'Añade un título antes de ver la vista previa.',
+
+    'bulk_published' => ':count propiedades publicadas.',
+    'bulk_paused' => ':count propiedades pausadas.',
+    'bulk_featured' => ':count propiedades actualizadas.',
+    'bulk_deleted' => ':count propiedades enviadas a la papelera.',
+
+    'filters' => [
+        'search' => 'Buscar por título o código',
+        'status' => 'Estado',
+        'operation' => 'Operación',
+        'type' => 'Tipo',
+        'province' => 'Provincia',
+        'agent' => 'Agente',
+        'flag' => 'Marcadas como',
+        'all' => 'Todas',
+        'featured' => 'Destacadas',
+        'investment' => 'Inversión',
+        'project' => 'Proyecto',
+        'clear' => 'Limpiar filtros',
+        'trashed' => 'Ver papelera',
+        'active' => 'Ver activas',
+    ],
+
+    'sort' => [
+        'label' => 'Ordenar por',
+        'recent' => 'Más recientes',
+        'oldest' => 'Más antiguas',
+        'price_asc' => 'Precio: menor a mayor',
+        'price_desc' => 'Precio: mayor a menor',
+        'views' => 'Más vistas',
+    ],
+
+    'table' => [
+        'property' => 'Propiedad',
+        'type' => 'Tipo',
+        'price' => 'Precio',
+        'status' => 'Estado',
+        'location' => 'Ubicación',
+        'agent' => 'Agente',
+        'views' => 'Vistas',
+        'updated' => 'Actualizada',
+        'actions' => 'Acciones',
+        'no_agent' => 'Sin asignar',
+        'untranslated' => 'Falta :locale',
+        'no_title' => 'Sin título',
+    ],
+
+    'bulk' => [
+        'selected' => ':count seleccionadas',
+        'publish' => 'Publicar',
+        'pause' => 'Pausar',
+        'feature' => 'Destacar',
+        'unfeature' => 'Quitar destacado',
+        'delete' => 'Enviar a papelera',
+        'confirm_delete' => '¿Enviar las propiedades seleccionadas a la papelera?',
+    ],
+
+    'empty' => [
+        'title' => 'Todavía no hay propiedades',
+        'body' => 'Crea la primera para que aparezca en el sitio.',
+        'filtered_title' => 'Ningún resultado',
+        'filtered_body' => 'Prueba a cambiar o limpiar los filtros.',
+        'trash_title' => 'La papelera está vacía',
+    ],
+
+    'tabs' => [
+        'general' => 'General',
+        'price' => 'Precio',
+        'location' => 'Ubicación',
+        'features' => 'Características',
+        'amenities' => 'Amenidades',
+        'content' => 'Descripción',
+        'media' => 'Multimedia',
+        'contact' => 'Agente y propietario',
+        'seo' => 'SEO',
+    ],
+
+    'fields' => [
+        'reference_code' => 'Código de referencia',
+        'reference_auto' => 'Se genera solo al guardar.',
+        'operation_type' => 'Operación',
+        'property_type' => 'Tipo de propiedad',
+        'status' => 'Estado',
+        'is_featured' => 'Destacada en el inicio',
+        'is_investment' => 'Oportunidad de inversión',
+        'is_project' => 'En construcción',
+
+        'price' => 'Precio',
+        'price_help' => 'Déjalo vacío para mostrar «Precio a consultar».',
+        'currency' => 'Moneda',
+        'price_period' => 'Periodo',
+        'maintenance_fee' => 'Cuota de mantenimiento',
+
+        'province' => 'Provincia',
+        'city' => 'Ciudad',
+        'sector' => 'Sector',
+        'address' => 'Dirección',
+        'show_exact_location' => 'Mostrar la ubicación exacta en el mapa',
+        'location_privacy' => 'Si lo dejas desmarcado, el mapa muestra solo un área aproximada.',
+        'latitude' => 'Latitud',
+        'longitude' => 'Longitud',
+
+        'bedrooms' => 'Habitaciones',
+        'bathrooms' => 'Baños',
+        'bathrooms_help' => 'Admite medios baños: 3.5',
+        'parking_spaces' => 'Parqueos',
+        'construction_area' => 'Área de construcción (m²)',
+        'land_area' => 'Área de terreno (m²)',
+        'floor_level' => 'Nivel o piso',
+        'year_built' => 'Año de construcción',
+        'is_furnished' => 'Amueblada',
+
+        'title' => 'Título',
+        'slug' => 'Slug (URL)',
+        'slug_help' => 'Se genera del título. Cambiarlo en una ficha publicada rompe los enlaces compartidos.',
+        'short_description' => 'Descripción corta',
+        'short_description_help' => 'Aparece en las tarjetas del listado.',
+        'description' => 'Descripción completa',
+
+        'video_url' => 'URL del video',
+        'virtual_tour_url' => 'URL del tour virtual',
+
+        'agent' => 'Agente asignado',
+        'owner_name' => 'Nombre del propietario',
+        'owner_phone' => 'Teléfono del propietario',
+        'owner_email' => 'Correo del propietario',
+        'internal_notes' => 'Notas internas',
+        'private_warning' => 'Estos datos son privados y nunca se muestran en el sitio.',
+
+        'meta_title' => 'Meta título',
+        'meta_description' => 'Meta descripción',
+        'published_at' => 'Fecha de publicación',
+    ],
+
+    'actions' => [
+        'save_draft' => 'Guardar borrador',
+        'save' => 'Guardar',
+        'save_publish' => 'Guardar y publicar',
+        'publish' => 'Publicar',
+        'pause' => 'Pausar',
+        'preview' => 'Vista previa',
+        'delete' => 'Eliminar',
+        'restore' => 'Restaurar',
+        'cancel' => 'Cancelar',
+        'back' => 'Volver al listado',
+        'confirm_delete' => '¿Enviar esta propiedad a la papelera?',
+    ],
+
+    'select' => [
+        'choose' => 'Elegir…',
+        'none' => 'Ninguno',
+        'province_first' => 'Elige primero una provincia',
+        'city_first' => 'Elige primero una ciudad',
+    ],
+
+];

@@ -5,6 +5,66 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.5.0] — 2026-08-13 — Fase 2: propiedades
+
+### Añadido — modelo de datos
+
+- 9 tablas: `property_types`, `provinces`, `cities`, `sectors`, `amenities`,
+  `agents`, `properties`, `property_translations`, `amenity_property`
+- Enums `PropertyStatus`, `OperationType`, `PricePeriod`, `Currency`
+- Traits `TranslatesJsonFields` y `HasSlug`
+- `PropertyService`: creación, actualización, traducciones, código de
+  referencia y transiciones de estado
+- Seeders: 11 tipos, 21 amenidades, **32 provincias con 18 ciudades y 47 sectores**
+- Factories con estados (`published`, `draft`, `translated`, `spanishOnly`…)
+
+### Añadido — panel
+
+- `PropertyPolicy` con reglas por rol
+- Listado Livewire: buscador, 6 filtros, orden, paginación, acciones en lote,
+  papelera y filtros persistidos en la URL
+- Formulario en 9 pestañas con campos ES/EN sobre los textos
+- Selects encadenados provincia → ciudad → sector, cargados por petición
+- Publicar, pausar, cambiar estado, papelera y restaurar
+- Vista previa con enlace firmado de 30 minutos
+- 32 pruebas nuevas
+
+### Corregido
+
+- Las factories no resolvían: Laravel las busca asumiendo `App\Models` y los
+  modelos viven en `app/Modules/*/Models`. Resuelto con
+  `Factory::guessFactoryNamesUsing()`, válido para todos los modelos.
+- `AuthorizesRequests` no venía en el controlador base de Laravel 12
+- Las rutas de ubicaciones resolvían por slug en vez de por id
+- **Un editor podía borrar propiedades.** Corregido: borrar queda en admin y
+  super_admin
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| Textos en `property_translations`, no en JSON | El slug debe ser único por idioma y la búsqueda necesita `FULLTEXT` por idioma |
+| Código de referencia por `MAX()`, no por conteo | Borrar una propiedad generaría un código repetido |
+| El slug no se regenera al editar un título publicado | Cambiar la URL de una ficha indexada tira su posicionamiento |
+| Vendido y alquilado siguen visibles, pero sin contacto ni indexación | El diseño los contempla y son prueba social |
+| Un idioma sin título se ignora | Mejor eso que una ficha en blanco |
+| Borrar reservado a admin | `manage_properties` habilita crear y editar, no destruir |
+| Binding por `id` en el panel, por `slug` en público | Un borrador puede no tener slug |
+
+### Pruebas
+
+`php artisan test` → **192 pasadas, 354 aserciones**.
+Listado y formulario verificados en 375 y 1440 px: la tabla scrollea dentro de
+su contenedor, cero controles bajo 44 px, sin desbordamiento de página.
+
+### Pendiente de la Fase 2
+
+- CRUD de tipos de propiedad, ubicaciones y amenidades (el catálogo ya está
+  sembrado; falta la pantalla para editarlo)
+- `DemoDataSeeder` con datos de muestra
+
+---
+
 ## [0.4.0] — 2026-08-13 — Fase 1: configuración general
 
 ### Añadido
