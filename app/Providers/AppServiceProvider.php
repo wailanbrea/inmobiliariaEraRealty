@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Modules\Locations\Livewire\LocationManager;
+use App\Modules\Media\Livewire\MediaManager;
 use App\Modules\Properties\Livewire\PropertyIndex;
 use App\Modules\Properties\Models\Property;
 use App\Modules\Properties\Policies\PropertyPolicy;
@@ -46,5 +47,6 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('property-index', PropertyIndex::class);
         Livewire::component('catalog-manager', CatalogManager::class);
         Livewire::component('location-manager', LocationManager::class);
+        Livewire::component('media-manager', MediaManager::class);
     }
 }

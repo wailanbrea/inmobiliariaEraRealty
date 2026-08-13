@@ -41,7 +41,7 @@
             $nav = [
                 ['dashboard',      'Dashboard',     'admin.dashboard', true,  'admin.dashboard'],
                 ['home_work',      'Propiedades',   'admin.properties.index', true, 'admin.properties.*'],
-                ['photo_library',  'Media',         null,              false, null],
+                ['photo_library',  'Media',         'admin.media.index', true, 'admin.media.*'],
                 ['article',        'Noticias',      null,              false, null],
                 ['contact_page',   'Leads',         null,              false, null],
                 ['badge',          'Agentes',       null,              false, null],

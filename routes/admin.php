@@ -3,6 +3,7 @@
 use App\Modules\Auth\Controllers\LoginController;
 use App\Modules\Dashboard\Controllers\DashboardController;
 use App\Modules\Locations\Controllers\Admin\LocationLookupController;
+use App\Modules\Media\Controllers\Admin\MediaController;
 use App\Modules\Properties\Controllers\Admin\PropertyController;
 use App\Modules\PropertyImages\Controllers\Admin\PropertyImageController;
 use App\Modules\PropertyTypes\Controllers\Admin\CatalogController;
@@ -85,6 +86,9 @@ Route::middleware('auth')->group(function () {
         Route::get('ciudades/{province:id}', [LocationLookupController::class, 'cities'])->name('cities');
         Route::get('sectores/{city:id}', [LocationLookupController::class, 'sectors'])->name('sectors');
     });
+
+    // --- Biblioteca de medios ---
+    Route::get('media', [MediaController::class, 'index'])->name('media.index');
 
     // --- Catalogos ---
     Route::prefix('catalogo')->name('catalog.')->group(function () {

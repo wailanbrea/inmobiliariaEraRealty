@@ -50,10 +50,20 @@ en disco. Si vuelve a pasar con otro test, es la misma causa.
 Uploader verificado en 375 y 1440 px: rejilla 2→4 columnas, modal dentro de
 pantalla y con cierre por `Escape`, cero controles bajo 44 px.
 
-### Pendiente de la Fase 3
+### Añadido — biblioteca de medios (cierre de la Fase 3)
 
-- Media manager general reutilizable (logo, noticias, agentes)
-- Comando `media:prune` para ficheros huérfanos
+- Tabla `media_files` y `MediaLibraryService` con el mismo pipeline
+  (orientar, descartar EXIF, WebP, miniatura)
+- Gestor con vista de cuadrícula y de lista, búsqueda por nombre y por texto
+  alternativo, filtro por contexto, subida múltiple y edición de alt/título
+- Botón de copiar URL con confirmación visual
+- **Borrado con verificación de uso previa**: antes de eliminar se muestra
+  dónde está usado el archivo (configuración, noticias). Borrar un logo en
+  uso deja un hueco en todas las páginas
+- Comando `media:prune`: por defecto **solo lista**; borrar exige `--force`
+  **y** confirmación interactiva, porque un huérfano puede ser un archivo
+  legítimo subido por otra vía
+- 22 pruebas más
 
 ---
 
