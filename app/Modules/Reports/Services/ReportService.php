@@ -90,6 +90,55 @@ class ReportService
     }
 
     /**
+     * Reparto del catalogo por tipo de propiedad.
+     *
+     * Solo publicadas: al administrador le interesa que hay EN EL SITIO, no
+     * cuantos borradores lleva a medias.
+     *
+     * @return Collection<int, array{nombre: string, total: int}>
+     */
+    public function byType(): Collection
+    {
+        return Property::query()
+            ->published()
+            ->selectRaw('property_type_id, COUNT(*) as total')
+            ->groupBy('property_type_id')
+            ->orderByDesc('total')
+            ->with('type')
+            ->get()
+            ->map(fn (Property $p) => [
+                'nombre' => $p->type?->name ?? '—',
+                'total' => (int) $p->total,
+            ])
+            ->values();
+    }
+
+    /**
+     * Reparto por estado, con el color que ya usa el chip de la ficha para
+     * que la grafica y el listado hablen el mismo idioma.
+     *
+     * @return Collection<int, array{nombre: string, total: int, color: string}>
+     */
+    public function byStatus(): Collection
+    {
+        $conteo = Property::query()
+            ->published()
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        return collect(PropertyStatus::cases())
+            ->filter(fn (PropertyStatus $s) => ($conteo[$s->value] ?? 0) > 0)
+            ->map(fn (PropertyStatus $s) => [
+                'nombre' => $s->label(),
+                'total' => (int) $conteo[$s->value],
+                'color' => 'var(--color-'.$s->color().')',
+            ])
+            ->sortByDesc('total')
+            ->values();
+    }
+
+    /**
      * Serie diaria para el grafico. Rellena los dias sin datos con cero.
      *
      * Sin ese relleno, una semana sin leads dibujaria una linea recta entre

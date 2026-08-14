@@ -164,6 +164,25 @@
     @endif
 </div>
 
+{{-- ================== REPARTO DEL CATALOGO ================== --}}
+<div class="mt-md grid grid-cols-1 gap-sm lg:grid-cols-2">
+    <div class="rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-sm ambient-shadow">
+        <h2 class="mb-xs font-heading text-title-lg text-on-surface">
+            {{ __('admin/reports.charts.by_type') }}
+        </h2>
+        <x-admin.bar-chart :datos="$porTipo" color="var(--color-chart-leads)" />
+    </div>
+
+    <div class="rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-sm ambient-shadow">
+        <h2 class="mb-xs font-heading text-title-lg text-on-surface">
+            {{ __('admin/reports.charts.by_status') }}
+        </h2>
+        {{-- Cada estado con el color de su chip, para que la grafica y el
+             listado de propiedades se lean igual. --}}
+        <x-admin.bar-chart :datos="$porEstado" />
+    </div>
+</div>
+
 {{-- ========================= INVENTARIO ========================= --}}
 <div class="mt-md rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-sm ambient-shadow">
     <h2 class="mb-xs font-heading text-title-lg text-on-surface">{{ __('admin/reports.inventory.title') }}</h2>

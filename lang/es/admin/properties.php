@@ -61,6 +61,7 @@ return [
         'actions' => 'Acciones',
         'no_agent' => 'Sin asignar',
         'untranslated' => 'Falta :locale',
+        'no_photo' => 'Sin foto',
         'no_title' => 'Sin título',
     ],
 
@@ -100,6 +101,10 @@ return [
         'operation_type' => 'Operación',
         'property_type' => 'Tipo de propiedad',
         'status' => 'Estado',
+        'main_image' => 'Imagen principal',
+        'no_main_image' => 'Sin imagen principal',
+        'manage_images' => 'Gestionar imágenes',
+        'add_images' => 'Añadir imágenes',
         'is_featured' => 'Destacada en el inicio',
         'is_investment' => 'Oportunidad de inversión',
         'is_project' => 'En construcción',

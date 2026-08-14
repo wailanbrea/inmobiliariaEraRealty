@@ -475,3 +475,14 @@
     display: none;
   }
 }
+
+
+/* ----------------------------------------------------------------------------
+   Entrada de los dialogos del panel
+   Va en CSS y no en x-transition de Alpine: anidar dos x-show con
+   transiciones distintas dejaba el panel invisible sobre el velo ya pintado.
+   -------------------------------------------------------------------------- */
+@keyframes dialogo-entra {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}

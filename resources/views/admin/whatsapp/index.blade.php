@@ -1,6 +1,13 @@
 @extends('admin.layouts.app')
 @section('title', __('admin/whatsapp.title'))
 @section('content')
+
+{{-- Se explica que mide y, sobre todo, que NO hace: el modulo se
+     confundia con una integracion de mensajeria. --}}
+<p class="mb-md max-w-3xl text-body-md text-on-surface-variant">
+    {{ __('admin/whatsapp.subtitle') }}
+</p>
+
 <form method="GET" class="mb-md grid gap-xs rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-sm md:grid-cols-4">
     <label class="grid gap-1 text-label-md"><span>{{ __('admin/whatsapp.filters.source') }}</span><select name="source" class="min-h-11 rounded-lg border border-outline-variant px-xs"><option value="">{{ __('admin/whatsapp.filters.all') }}</option>@foreach($sources as $source)<option value="{{ $source }}" @selected(request('source') === $source)>{{ $source }}</option>@endforeach</select></label>
     <label class="grid gap-1 text-label-md"><span>{{ __('admin/whatsapp.filters.from') }}</span><input type="date" name="from" value="{{ request('from') }}" class="min-h-11 rounded-lg border border-outline-variant px-xs"></label>

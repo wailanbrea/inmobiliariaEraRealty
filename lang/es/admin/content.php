@@ -1,6 +1,20 @@
 <?php
 
 return [
+    'guide' => [
+        'open' => 'Ver guía',
+        'title' => 'Cómo editar el contenido del sitio',
+        'next' => 'Siguiente',
+        'back' => 'Atrás',
+        'done' => 'Entendido',
+        'steps' => [
+            ['titulo' => '1 · Elige la página', 'texto' => 'Arriba están las páginas del sitio. Pulsa la que quieras cambiar: cada una tiene sus propias secciones.'],
+            ['titulo' => '2 · Abre la sección', 'texto' => 'Cada tarjeta es un bloque de la página real. Pulsa «Editar» en la que quieras cambiar y se abrirá el formulario debajo.'],
+            ['titulo' => '3 · Escribe el texto', 'texto' => 'Cambia el título, el subtítulo y el texto del botón. Las pestañas ES e IN son el mismo bloque en español y en inglés: si dejas el inglés vacío, se muestra el español.'],
+            ['titulo' => '4 · Cambia la imagen', 'texto' => 'Si la sección lleva foto, súbela desde el mismo formulario. Se recorta y se optimiza sola. La anterior se borra al guardar la nueva.'],
+            ['titulo' => '5 · Guarda y comprueba', 'texto' => 'Pulsa «Guardar». El cambio sale en el sitio al instante: ábrelo con «Ver sitio», arriba a la derecha, para confirmarlo.'],
+        ],
+    ],
 
     'title' => 'Contenido del inicio',
     'intro' => 'Textos e imágenes de las secciones de la página de inicio. Lo que cambies aquí se ve en el sitio al instante.',

@@ -24,6 +24,12 @@ class DashboardController extends Controller
             'resumen' => $puedeVerMetricas ? $this->reports->summary($desde, $hasta) : null,
             'serie' => $puedeVerMetricas ? $this->reports->dailySeries($desde, $hasta) : null,
             'masVistas' => $puedeVerMetricas ? $this->reports->mostViewed($desde, $hasta, 5) : null,
+
+            // El reparto del catalogo lo ve TODO el mundo: un editor tambien
+            // necesita saber que hay publicado. Lo que se reserva a los
+            // administradores son las metricas de negocio (leads, dinero).
+            'porTipo' => $this->reports->byType(),
+            'porEstado' => $this->reports->byStatus(),
             'ultimosLeads' => Lead::with('property')->latest()->limit(5)->get(),
             'desde' => $desde,
             'hasta' => $hasta,

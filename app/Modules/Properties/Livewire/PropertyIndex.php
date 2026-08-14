@@ -189,7 +189,7 @@ class PropertyIndex extends Component
 
         return Property::query()
             ->when($this->trashed, fn (Builder $q) => $q->onlyTrashed())
-            ->with(['translations', 'type', 'city', 'sector', 'province', 'agent'])
+            ->with(['translations', 'type', 'city', 'sector', 'province', 'agent', 'mainImage'])
 
             ->when($this->search, function (Builder $q) {
                 $termino = trim($this->search);

@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'charts' => [
+        'by_type' => 'Propiedades por tipo',
+        'by_status' => 'Propiedades por estado',
+    ],
+
     'title' => 'Reportes',
     'subtitle' => 'Qué se está mirando, qué genera conversación y qué acaba en consulta.',
 

@@ -98,6 +98,67 @@
     <section x-show="tab === 'general'" x-cloak
              class="space-y-md rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-md ambient-shadow">
 
+        {{--
+            Imagen principal, solo al EDITAR: en el alta todavia no hay
+            propiedad a la que colgar fotos, asi que un hueco vacio ahi solo
+            confunde.
+
+            Es de solo lectura a proposito. Subir y reordenar se hace en la
+            pestana «Imagenes», que es donde vive el gestor completo; duplicar
+            ese control aqui daria dos sitios distintos para lo mismo. Este
+            bloque responde a otra pregunta: «¿cual es la foto que se esta
+            usando ahora mismo?», que antes obligaba a cambiar de pestana.
+        --}}
+        @if ($property->exists)
+            @php $portada = $property->mainImage; @endphp
+
+            <div class="border-b border-outline-variant/30 pb-sm">
+                <p class="mb-xs text-caption font-medium uppercase tracking-wider text-on-surface-variant">
+                    {{ __('admin/properties.fields.main_image') }}
+                </p>
+
+                <div class="flex flex-wrap items-center gap-sm">
+                    @if ($portada)
+                        {{-- object-contain y no object-cover: aqui la miniatura
+                             sirve para reconocer la foto, y recortarla podria
+                             ocultar justo lo que la identifica. --}}
+                        <img src="{{ $portada->thumbnailUrl() }}"
+                             alt="{{ $portada->altText() }}"
+                             width="240" height="160" decoding="async"
+                             class="h-[160px] w-[240px] rounded-lg border border-outline-variant/40
+                                    bg-surface-container object-contain">
+
+                        <div class="min-w-0">
+                            <p class="truncate text-body-md text-on-surface">{{ $portada->original_name }}</p>
+                            <p class="text-caption text-on-surface-variant">
+                                {{ $portada->width }} × {{ $portada->height }} px
+                            </p>
+                            <button type="button" @click="tab = 'media'"
+                                    class="mt-xs inline-flex items-center gap-base text-label-md text-secondary hover:underline">
+                                <span class="material-symbols-outlined text-[18px]">photo_library</span>
+                                {{ __('admin/properties.fields.manage_images') }}
+                            </button>
+                        </div>
+                    @else
+                        <div class="flex h-[160px] w-[240px] flex-col items-center justify-center gap-xs
+                                    rounded-lg border border-dashed border-outline-variant bg-surface-container
+                                    text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[32px]">no_photography</span>
+                            <span class="text-caption">{{ __('admin/properties.fields.no_main_image') }}</span>
+                        </div>
+
+                        <button type="button" @click="tab = 'media'"
+                                class="inline-flex items-center gap-base rounded-lg border border-outline-variant
+                                       px-sm py-xs text-label-md text-on-surface transition-colors
+                                       hover:bg-surface-container-low">
+                            <span class="material-symbols-outlined text-[18px]">add_photo_alternate</span>
+                            {{ __('admin/properties.fields.add_images') }}
+                        </button>
+                    @endif
+                </div>
+            </div>
+        @endif
+
         <div class="grid gap-sm md:grid-cols-3">
             <x-admin.field name="operation_type" :label="__('admin/properties.fields.operation_type')"
                 type="select" required :value="$property->operation_type?->value"

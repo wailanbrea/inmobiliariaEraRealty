@@ -1,8 +1,9 @@
 <?php
 
 return [
+    'subtitle' => 'Cuántas veces se pulsa un enlace de WhatsApp en el sitio, desde qué página y sobre qué propiedad. El sistema no envía mensajes: la conversación se abre en el teléfono del visitante.',
 
-    'title' => 'WhatsApp',
+    'title' => 'Clics de WhatsApp',
 
     'metrics' => [
         'total' => 'Clics filtrados',

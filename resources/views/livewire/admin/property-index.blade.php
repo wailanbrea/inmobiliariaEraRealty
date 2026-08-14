@@ -115,6 +115,26 @@
                 </select>
             </div>
 
+            {{-- El filtro por asesor ya existia en el componente y en la
+                 consulta, y la vista recibia $agents, pero nunca se pinto el
+                 select: media implementacion que no servia de nada. --}}
+            @if ($agents->isNotEmpty())
+                <div>
+                    <label for="f-agent" class="mb-base block text-caption font-medium text-on-surface-variant">
+                        {{ __('admin/properties.filters.agent') }}
+                    </label>
+                    <select id="f-agent" wire:model.live="agent"
+                            class="w-full rounded-lg border border-outline-variant bg-surface-container-low
+                                   px-sm py-xs text-body-md text-on-surface
+                                   focus:border-secondary focus:ring-1 focus:ring-secondary">
+                        <option value="">{{ __('admin/properties.filters.all') }}</option>
+                        @foreach ($agents as $a)
+                            <option value="{{ $a->id }}">{{ $a->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
             <div>
                 <label for="f-flag" class="mb-base block text-caption font-medium text-on-surface-variant">
                     {{ __('admin/properties.filters.flag') }}
@@ -249,7 +269,30 @@
                             </td>
 
                             <td class="px-sm py-xs">
-                                <div class="flex flex-col">
+                                <div class="flex items-start gap-sm">
+                                    {{-- Miniatura de la imagen principal.
+                                         Se usa thumbnailUrl(), que cae a la foto
+                                         completa si aun no hay recorte generado.
+                                         El hueco mide lo mismo con foto y sin
+                                         ella, para que las filas no bailen. --}}
+                                    @php $portada = $property->mainImage; @endphp
+
+                                    @if ($portada)
+                                        <img src="{{ $portada->thumbnailUrl() }}"
+                                             alt="{{ $portada->altText() }}"
+                                             width="64" height="48" loading="lazy" decoding="async"
+                                             class="h-12 w-16 shrink-0 rounded-lg border border-outline-variant/40
+                                                    bg-surface-container object-cover">
+                                    @else
+                                        <span class="flex h-12 w-16 shrink-0 flex-col items-center justify-center gap-0.5
+                                                     rounded-lg border border-dashed border-outline-variant
+                                                     bg-surface-container text-on-surface-variant"
+                                              title="{{ __('admin/properties.table.no_photo') }}">
+                                            <span class="material-symbols-outlined text-[18px]">no_photography</span>
+                                        </span>
+                                    @endif
+
+                                <div class="flex min-w-0 flex-col">
                                     <span class="text-label-md font-semibold text-on-surface">
                                         {{ $traduccion?->title ?? __('admin/properties.table.no_title') }}
                                     </span>
@@ -275,6 +318,7 @@
                                             </span>
                                         @endforeach
                                     </div>
+                                </div>
                                 </div>
                             </td>
 

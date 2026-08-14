@@ -12,7 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- admin.js y NO app.js: el panel usa el Alpine que trae Livewire.
+         Ver la cabecera de resources/js/admin.js. --}}
+    @vite(['resources/css/app.css', 'resources/js/admin.js'])
     @livewireStyles
 </head>
 <body class="h-full bg-surface font-body text-on-surface"
@@ -47,7 +49,10 @@
                 ['badge',          'Agentes',       'admin.agents.index', true, 'admin.agents.*'],
                 ['category',       'Catálogo',      'admin.catalog.types', true, 'admin.catalog.*'],
                 ['description',    'Contenido',     'admin.content.index', true, 'admin.content.*'],
-                ['chat',           'WhatsApp',      'admin.whatsapp.index', true, 'admin.whatsapp.*'],
+                // Se llama «Clics de WhatsApp» y no «WhatsApp» porque no es una
+                // integracion de mensajeria: no envia nada. Mide cuantas
+                // veces se pulsa un enlace de WhatsApp y desde donde.
+                ['ads_click',      'Clics de WhatsApp', 'admin.whatsapp.index', true, 'admin.whatsapp.*'],
                 // Los reportes cruzan leads, dinero y comportamiento: mismo
                 // criterio que la auditoría, solo administradores.
                 ['insights',       'Reportes',      'admin.reports.index',
