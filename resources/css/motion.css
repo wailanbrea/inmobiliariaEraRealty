@@ -425,24 +425,24 @@
    dejado puesto antes de que la consulta de medios cambiara en caliente.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal].is-primed,
-  .line-mask.is-primed > * {
+  html:not([data-force-motion="true"]) [data-reveal].is-primed,
+  html:not([data-force-motion="true"]) .line-mask.is-primed > * {
     opacity: 1 !important;
     transform: none !important;
   }
 
-  .is-ken-burns,
-  .area-pulse,
-  .hero-aurora::before,
-  .hero-aurora::after,
-  .hero-sweep::before,
-  .hero-curtain.is-drawing {
+  html:not([data-force-motion="true"]) .is-ken-burns,
+  html:not([data-force-motion="true"]) .area-pulse,
+  html:not([data-force-motion="true"]) .hero-aurora::before,
+  html:not([data-force-motion="true"]) .hero-aurora::after,
+  html:not([data-force-motion="true"]) .hero-sweep::before,
+  html:not([data-force-motion="true"]) .hero-curtain.is-drawing {
     animation: none !important;
   }
 
   /* El barrido parado a medio camino dejaria una banda clara fija cruzando
      la foto, que se lee como un defecto. Se retira entero. */
-  .hero-sweep {
+  html:not([data-force-motion="true"]) .hero-sweep {
     display: none;
   }
 
@@ -454,7 +454,7 @@
      titulo del hero seria invisible — a quien pidio MENOS movimiento.
      Detectado midiendo en el navegador: webkitTextFillColor daba
      rgba(0,0,0,0) con la clase aun presente. */
-  .hero-shine.is-shining {
+  html:not([data-force-motion="true"]) .hero-shine.is-shining {
     animation: none !important;
     background-image: none !important;
     -webkit-text-fill-color: currentColor !important;
@@ -463,11 +463,11 @@
   /* La aurora, el grano y la vinneta se QUEDAN: son textura, no movimiento.
      Quitarlas dejaria el hero peor a quien pidio menos animacion, que no es
      lo que esa preferencia significa. Lo que se detiene es la deriva. */
-  .hero-spotlight {
+  html:not([data-force-motion="true"]) .hero-spotlight {
     display: none;
   }
 
-  .scroll-progress {
+  html:not([data-force-motion="true"]) .scroll-progress {
     display: none;
   }
 }

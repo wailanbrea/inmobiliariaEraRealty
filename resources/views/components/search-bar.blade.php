@@ -1,18 +1,59 @@
 @props(['types' => null, 'provinces' => null, 'glass' => true])
 
-{{--
-    Buscador del hero. El .glass-panel viene del diseño: fondo blanco al 85 %
-    con desenfoque de 12px por detrás.
---}}
 @php
     $types ??= \App\Modules\PropertyTypes\Models\PropertyType::active()->get();
     $provinces ??= \App\Modules\Locations\Models\Province::active()
         ->whereHas('properties', fn ($q) => $q->published())
         ->get();
 
-    $campo = 'h-12 w-full appearance-none rounded-lg border border-outline-variant
-              bg-surface-container-lowest py-xs pl-sm pr-lg text-body-md text-on-surface
-              outline-none transition-shadow focus:border-secondary focus:ring-2 focus:ring-secondary';
+    $trigger = 'flex h-12 w-full items-center justify-between rounded-lg border border-outline-variant
+                bg-surface-container-lowest py-xs pl-sm pr-sm text-left text-body-md text-on-surface
+                outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary';
+
+    $operationOptions = collect([['value' => '', 'label' => __('home.search.any')]])
+        ->merge(collect(\App\Enums\OperationType::cases())->map(fn ($operation) => [
+            'value' => $operation->value,
+            'label' => $operation->label(),
+        ]))
+        ->values();
+
+    $typeOptions = collect([['value' => '', 'label' => __('home.search.any')]])
+        ->merge($types->map(fn ($type) => [
+            'value' => $type->slug,
+            'label' => $type->name,
+        ]))
+        ->values();
+
+    $provinceOptions = collect([['value' => '', 'label' => __('home.search.anywhere')]])
+        ->merge($provinces->map(fn ($province) => [
+            'value' => $province->slug,
+            'label' => $province->name,
+        ]))
+        ->values();
+
+    $filters = [
+        [
+            'id' => 's-operacion',
+            'name' => 'operacion',
+            'label' => __('home.search.operation'),
+            'value' => request('operacion', ''),
+            'options' => $operationOptions,
+        ],
+        [
+            'id' => 's-tipo',
+            'name' => 'tipo',
+            'label' => __('home.search.type'),
+            'value' => request('tipo', ''),
+            'options' => $typeOptions,
+        ],
+        [
+            'id' => 's-provincia',
+            'name' => 'provincia',
+            'label' => __('home.search.location'),
+            'value' => request('provincia', ''),
+            'options' => $provinceOptions,
+        ],
+    ];
 @endphp
 
 <form method="GET" action="{{ lroute('properties.index') }}"
@@ -20,66 +61,64 @@
           . 'w-full rounded-xl p-sm ambient-shadow md:p-md']) }}>
 
     <div class="flex flex-col gap-sm md:flex-row md:gap-gutter">
+        @foreach ($filters as $filter)
+            <div class="flex-1"
+                 x-data="{
+                     open: false,
+                     value: @js($filter['value']),
+                     options: @js($filter['options']),
+                     get selectedLabel() {
+                         return this.options.find((option) => option.value === this.value)?.label ?? this.options[0].label;
+                     },
+                     choose(option) {
+                         this.value = option.value;
+                         this.open = false;
+                     },
+                 }"
+                 @keydown.escape.window="open = false">
+                <label for="{{ $filter['id'] }}-button"
+                       class="mb-base block text-caption uppercase tracking-wider text-on-surface-variant">
+                    {{ $filter['label'] }}
+                </label>
+                <div class="relative">
+                    <input id="{{ $filter['id'] }}" type="hidden" name="{{ $filter['name'] }}" :value="value">
 
-        {{-- Operación --}}
-        <div class="flex-1">
-            <label for="s-operacion"
-                   class="mb-base block text-caption uppercase tracking-wider text-on-surface-variant">
-                {{ __('home.search.operation') }}
-            </label>
-            <div class="relative">
-                <select id="s-operacion" name="operacion" class="{{ $campo }}">
-                    <option value="">{{ __('home.search.any') }}</option>
-                    @foreach (\App\Enums\OperationType::cases() as $operacion)
-                        <option value="{{ $operacion->value }}" @selected(request('operacion') === $operacion->value)>
-                            {{ $operacion->label() }}
-                        </option>
-                    @endforeach
-                </select>
-                <span class="material-symbols-outlined pointer-events-none absolute right-sm top-1/2
-                             -translate-y-1/2 text-on-surface-variant">expand_more</span>
-            </div>
-        </div>
+                    <button id="{{ $filter['id'] }}-button"
+                            type="button"
+                            class="{{ $trigger }}"
+                            data-filter-trigger="{{ $filter['name'] }}"
+                            aria-haspopup="listbox"
+                            :aria-expanded="open.toString()"
+                            @click="open = !open">
+                        <span class="truncate" x-text="selectedLabel"></span>
+                        <span class="material-symbols-outlined shrink-0 text-on-surface-variant transition-transform"
+                              :class="{ 'rotate-180': open }">expand_more</span>
+                    </button>
 
-        {{-- Tipo --}}
-        <div class="flex-1">
-            <label for="s-tipo"
-                   class="mb-base block text-caption uppercase tracking-wider text-on-surface-variant">
-                {{ __('home.search.type') }}
-            </label>
-            <div class="relative">
-                <select id="s-tipo" name="tipo" class="{{ $campo }}">
-                    <option value="">{{ __('home.search.any') }}</option>
-                    @foreach ($types as $tipo)
-                        <option value="{{ $tipo->slug }}" @selected(request('tipo') === $tipo->slug)>
-                            {{ $tipo->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <span class="material-symbols-outlined pointer-events-none absolute right-sm top-1/2
-                             -translate-y-1/2 text-on-surface-variant">expand_more</span>
+                    <div x-cloak
+                         x-show="open"
+                         @click.outside="open = false"
+                         data-filter-menu="{{ $filter['name'] }}"
+                         class="absolute left-0 right-0 top-full z-40 mt-xs max-h-72 overflow-auto rounded-lg border
+                                border-outline-variant bg-surface-container-lowest py-xs shadow-ambient-lg"
+                         role="listbox"
+                         aria-labelledby="{{ $filter['id'] }}-button">
+                        <template x-for="option in options" :key="option.value">
+                            <button type="button"
+                                    class="flex min-h-11 w-full items-center px-sm py-xs text-left text-body-md text-on-surface
+                                           transition-colors hover:bg-surface-container focus:bg-surface-container"
+                                    :class="{ 'bg-secondary-fixed text-on-secondary-fixed': option.value === value }"
+                                    :aria-selected="(option.value === value).toString()"
+                                    x-bind:data-filter-option="option.value"
+                                    role="option"
+                                    @click="choose(option)">
+                                <span class="truncate" x-text="option.label"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        {{-- Ubicación --}}
-        <div class="flex-1">
-            <label for="s-provincia"
-                   class="mb-base block text-caption uppercase tracking-wider text-on-surface-variant">
-                {{ __('home.search.location') }}
-            </label>
-            <div class="relative">
-                <select id="s-provincia" name="provincia" class="{{ $campo }}">
-                    <option value="">{{ __('home.search.anywhere') }}</option>
-                    @foreach ($provinces as $provincia)
-                        <option value="{{ $provincia->slug }}" @selected(request('provincia') === $provincia->slug)>
-                            {{ $provincia->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <span class="material-symbols-outlined pointer-events-none absolute right-sm top-1/2
-                             -translate-y-1/2 text-on-surface-variant">expand_more</span>
-            </div>
-        </div>
+        @endforeach
 
         <div class="mt-sm flex shrink-0 items-end md:mt-0">
             <button type="submit"

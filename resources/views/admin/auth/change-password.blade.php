@@ -33,6 +33,7 @@
 
         <form method="POST" action="{{ route('admin.password.forced') }}" class="mt-md space-y-sm">
             @csrf
+            @method('PUT')
 
             <label class="block">
                 <span class="mb-1 block text-caption text-on-surface-variant">

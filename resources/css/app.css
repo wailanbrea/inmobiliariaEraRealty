@@ -357,12 +357,18 @@
   display: block;
 }
 
+[x-cloak] {
+  display: none !important;
+}
+
 /* ============================================================================
    ACCESIBILIDAD — prefers-reduced-motion
    Innegociable. Ver docs/13_MOTION_AND_EFFECTS.md seccion 5.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  html:not([data-force-motion="true"]) *,
+  html:not([data-force-motion="true"]) *::before,
+  html:not([data-force-motion="true"]) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

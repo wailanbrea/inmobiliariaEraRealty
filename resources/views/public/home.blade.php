@@ -3,6 +3,12 @@
 @section('title', ($hero?->title ?: __('home.hero.title')) . ' · ' . setting('site_name'))
 @section('description', $hero?->subtitle ?: __('home.hero.subtitle'))
 
+@if ($hero?->imageUrl())
+    @push('head')
+        <link rel="preload" as="image" href="{{ $hero->imageUrl() }}" fetchpriority="high">
+    @endpush
+@endif
+
 @section('content')
 
 {{-- ============================ HERO ============================ --}}
