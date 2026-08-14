@@ -17,6 +17,8 @@ use App\Modules\PropertyImages\Controllers\Admin\PropertyImageController;
 use App\Modules\PropertyTypes\Controllers\Admin\CatalogController;
 use App\Modules\Reports\Controllers\Admin\ReportController;
 use App\Modules\Settings\Controllers\Admin\SettingsController;
+use App\Modules\Users\Controllers\Admin\PasswordChangeController;
+use App\Modules\Users\Controllers\Admin\UserController;
 use App\Modules\WhatsApp\Controllers\Admin\WhatsappReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -119,6 +121,16 @@ Route::middleware('auth')->group(function () {
         Route::put('categorias/{category}', [NewsCategoryController::class, 'update'])->name('categories.update');
         Route::delete('categorias/{category}', [NewsCategoryController::class, 'destroy'])->name('categories.destroy');
     });
+
+    // --- Cambio obligatorio de contrasena ---
+    // El nombre lleva '.forced' porque 'password.update' ya lo ocupa el flujo
+    // de recuperacion por correo, que es otra cosa: aquel restablece sin haber
+    // entrado, este obliga a cambiar estando dentro.
+    Route::get('cambiar-contrasena', [PasswordChangeController::class, 'create'])->name('password.change');
+    Route::put('cambiar-contrasena', [PasswordChangeController::class, 'update'])->name('password.forced');
+
+    // --- Usuarios ---
+    Route::get('usuarios', [UserController::class, 'index'])->name('users.index');
 
     // --- Reportes ---
     Route::prefix('reportes')->name('reports.')->group(function () {

@@ -58,6 +58,10 @@
                 // ofrecerle un enlace que devuelve 403.
                 ['history',        'Auditoría',     'admin.audit.index',
                     auth()->user()->hasAnyRole(['admin', 'super_admin']), 'admin.audit.*'],
+                // Repartir accesos es lo único reservado al super_admin: un
+                // 'admin' toca todo el contenido pero no puede crear cuentas.
+                ['group',          'Usuarios',      'admin.users.index',
+                    auth()->user()->isSuperAdmin(), 'admin.users.*'],
                 ['settings',       'Configuración', 'admin.settings.general', true, 'admin.settings.*'],
             ];
         @endphp

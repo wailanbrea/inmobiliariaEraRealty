@@ -17,6 +17,7 @@ use App\Modules\Properties\Policies\PropertyPolicy;
 use App\Modules\PropertyImages\Models\PropertyImage;
 use App\Modules\PropertyTypes\Livewire\CatalogManager;
 use App\Modules\Settings\Services\SettingsService;
+use App\Modules\Users\Livewire\UserManager;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -65,5 +66,6 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('content-section-manager', ContentSectionManager::class);
         Livewire::component('agent-manager', AgentManager::class);
         Livewire::component('audit-log-index', AuditLogIndex::class);
+        Livewire::component('user-manager', UserManager::class);
     }
 }

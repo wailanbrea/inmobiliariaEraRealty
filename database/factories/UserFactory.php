@@ -30,6 +30,12 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            // Explicitos aunque la tabla tenga DEFAULT: sin ellos, el modelo
+            // recien creado no lleva el atributo cargado y cualquier
+            // comprobacion en memoria lo lee como null. Costo un fallo real
+            // en UserGuard.
+            'is_active' => true,
+            'must_change_password' => false,
         ];
     }
 

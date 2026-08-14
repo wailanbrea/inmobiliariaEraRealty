@@ -5,6 +5,56 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.12.0] — 2026-08-14 — Usuarios: el panel deja de depender del correo
+
+A raíz de una pregunta del cliente —«¿no necesitamos SMTP, si los usuarios
+pueden escribir desde sus propios correos?»— quedó claro que el sistema solo
+enviaba tres correos, y que **dos de ellos sí tienen sustituto humano**:
+responder a un cliente siempre sale del buzón o el WhatsApp del asesor. El
+único sin alternativa era la recuperación de contraseña, porque el enlace
+lleva un token que genera el sistema.
+
+Esta entrega elimina esa dependencia.
+
+### Añadido
+
+- Pantalla `/admin/usuarios`: alta, edición de rol, activar/desactivar,
+  restablecer contraseña y borrado — **sin enviar un solo correo**
+- `UserGuard` con las invariantes que impiden quedarse sin acceso
+- Middleware `ForcePasswordChange` y pantalla de cambio obligatorio
+- Comando `admin:password` (con `--list` y `--promote`) como última red
+- 32 pruebas nuevas
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| La contraseña se genera y **se muestra una sola vez** | Es lo que permite dar de alta a alguien sin correo. Se pasa por WhatsApp o en persona |
+| Formato `XXXX-XXXX-XXXX-XXXX` sin `0/O/1/l/I` | Esta clave se dicta por teléfono; los caracteres que se confunden generan llamadas de vuelta |
+| Restablecer **obliga** a cambiarla y renueva el `remember_token` | Si no, quien restableció conoce la contraseña del otro indefinidamente, y una sesión «recordada» con la clave vieja seguiría viva |
+| No se acepta repetir la misma contraseña | Dejarla puesta anula el sentido de obligar al cambio |
+| Solo un `super_admin` gestiona usuarios | Un `admin` toca todo el contenido pero no reparte accesos: es lo que impide que un panel comprometido se convierta en un panel perdido |
+| **Nadie puede quitarse a sí mismo el super_admin** ni desactivar su propia cuenta | Es el camino más corto a quedarse fuera, y nunca es lo que se pretende |
+| **El último super_admin activo es intocable** | Uno desactivado no cuenta: no puede entrar a arreglar nada |
+| Las invariantes viven en `UserGuard`, no en el componente | Las comparte el comando de consola. Una invariante duplicada en dos sitios es una que algún día solo se cumple en uno |
+
+### Corregido
+
+- **`must_change_password` no hacía nada.** El campo estaba en la tabla desde
+  la Fase 0 y solo se ponía a `false` al restablecer por correo: una bandera
+  de seguridad sin efecto. Ahora la aplica un middleware.
+- **`UserGuard` leía un atributo que podía no estar cargado.** `$user->is_active`
+  vale `null` en un modelo recién construido cuyo valor lo pone el `DEFAULT`
+  de la tabla, y entonces la comprobación dejaba pasar justo la operación que
+  debía bloquear. Ahora se pregunta a la base de datos. Lo destapó una prueba.
+- `UserFactory` declara `is_active` y `must_change_password` explícitamente.
+
+### Pruebas
+
+`php artisan test` → **613 pasadas, 1 316 aserciones**.
+
+---
+
 ## [0.11.0] — 2026-08-14 — Fase 9 (2/2): reportes y dashboard
 
 Cierra la Fase 9. Con la auditoría de la entrega anterior, los once puntos.

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\DetectBrowserLocale;
+use App\Http\Middleware\ForcePasswordChange;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -29,6 +30,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Solo actua en la raiz y en la primera visita; en el resto de rutas
         // devuelve la peticion intacta. Ver la cabecera de la clase.
         $middleware->web(append: [DetectBrowserLocale::class]);
+
+        // Una contrasena generada por otra persona solo puede servir para
+        // entrar una vez. Deja pasar la pantalla de cambio y el cierre de
+        // sesion; todo lo demas redirige alli.
+        $middleware->web(append: [ForcePasswordChange::class]);
 
         $middleware->alias([
             'set.locale' => SetLocale::class,
