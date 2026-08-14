@@ -159,7 +159,7 @@
         </div>
 
     @else
-        <div class="overflow-x-auto rounded-xl border border-outline-variant/40
+        <div class="table-scroll rounded-xl border border-outline-variant/40
                     bg-surface-container-lowest ambient-shadow">
             <table class="w-full min-w-[720px] text-left">
                 <thead class="border-b border-outline-variant/40 bg-surface-container-low">

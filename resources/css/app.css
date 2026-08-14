@@ -298,6 +298,28 @@
   box-shadow: var(--shadow-ambient);
 }
 
+/* Contenedor de una tabla ancha: scrollea ella, nunca la pagina.
+   Ver docs/14_RESPONSIVE.md seccion 2.
+
+   EL 'position: relative' NO ES DECORATIVO Y NO SE PUEDE QUITAR.
+
+   Un ancestro con overflow NO recorta a un descendiente 'position: absolute'
+   salvo que ese ancestro sea su bloque contenedor, es decir, salvo que este
+   posicionado. Con el contenedor en 'static', cualquier absoluto de dentro se
+   escapa del scroll y estira el documento entero.
+
+   Paso de verdad: un <span class="sr-only"> en la ultima cabecera de la tabla
+   de auditoria —Tailwind le pone position: absolute— quedaba en x=679 dentro
+   de un contenedor de 343 px, y el panel scrolleaba horizontalmente en movil.
+   Invisible a simple vista, porque el span mide 1x1 px y esta recortado.
+
+   Usar SIEMPRE esta utilidad en vez de 'overflow-x-auto' suelto cuando lo que
+   scrollea pueda contener un absoluto: sr-only, tooltips, menus. */
+@utility table-scroll {
+  overflow-x: auto;
+  position: relative;
+}
+
 /* Elevacion al hover: la sombra dobla su opacidad y el objeto se acerca.
    DESIGN.md lo describe como "el objeto siendo atraido hacia el usuario". */
 @utility hover-lift {

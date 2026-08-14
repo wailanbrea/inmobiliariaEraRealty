@@ -88,6 +88,7 @@ costó un diagnóstico en falso.
 | Agentes (panel) | ✅ | — | — | ✅ | 2026-08-14 | Fichas 1→3 columnas. Cero controles < 44 px. Los ocultos se atenúan |
 | Capa de efectos | ✅ | — | — | ✅ | 2026-08-14 | En 375 px **no se descarga GSAP** (medido con `performance.getEntriesByType`). Revelados y contadores sí funcionan. Ver §6 |
 | Auditoría (panel) | ✅ | — | — | ✅ | 2026-08-14 | Contenedor 343 px con tabla de 758: **scrollea la tabla, no la página**. Filtros 1→4 columnas. Cero controles < 44 px |
+| **Barrido completo** | ✅ | ✅ | ✅ | ✅ | 2026-08-14 | 195 combinaciones: 22 pantallas públicas (ES+EN) y 17 del panel × 5 anchos. Cero desbordes, cero solapes, cero controles < 44 px. Ver §6 |
 
 ---
 
@@ -155,3 +156,48 @@ de Tailwind. Funcionaba por casualidad.
 
 **Solución:** ternario, de modo que solo una de las dos clases está presente en
 cada momento.
+
+
+---
+
+## 6. El barrido completo, y el defecto que destapó
+
+Petición del cliente: *«comprueba que la web no se rompa en ninguna pantalla»*.
+
+Se midieron **195 combinaciones** — 22 pantallas públicas (las 11 en español y
+las 11 en inglés) y 17 del panel, cada una en 375 · 768 · 1024 · 1440 · 1920 px
+— cargándolas en un `<iframe>` del ancho correspondiente y midiendo dentro.
+El iframe responde a las media queries igual que una ventana, y permite barrer
+todo sin navegar pantalla por pantalla.
+
+Por cada combinación se comprueba:
+
+- que `documentElement.scrollWidth` no supere el ancho del viewport;
+- que ningún elemento sobresalga por la derecha **sin un ancestro que lo
+  recorte o lo desplace**;
+- que dos elementos posicionados no se pisen;
+- que toda `<img>` declare `width` y `height` (CLS).
+
+Resultado: **cero problemas**, tras corregir el que sigue.
+
+### 6.1 Un `sr-only` estiraba el panel en móvil 🔴
+
+La pantalla de auditoría scrolleaba horizontalmente a 375 px: el documento
+medía 680 px en un viewport de 375. La tabla estaba bien contenida —343 px de
+contenedor con `overflow-x: auto` sobre una tabla de 720— y aun así el
+documento crecía.
+
+El culpable era un `<span class="sr-only">` de 1 × 1 px en la última cabecera.
+
+**La regla que lo explica:** un ancestro con `overflow` **no recorta** a un
+descendiente `position: absolute` salvo que ese ancestro sea su *bloque
+contenedor*, es decir, salvo que esté posicionado. El contenedor de la tabla
+era `position: static`, así que el `sr-only` —que Tailwind posiciona en
+absoluto— se escapaba del scroll y estiraba el documento.
+
+Invisible a simple vista: el span mide un píxel y está recortado.
+
+**Solución sistemática**, no parche por vista: la utilidad `table-scroll` de
+`app.css` combina `overflow-x: auto` **y** `position: relative`, y sustituye a
+`overflow-x-auto` en las nueve tablas del proyecto. El comentario del propio
+archivo explica por qué el `position` no se puede quitar.

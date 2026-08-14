@@ -8,7 +8,7 @@
     <div class="flex items-end gap-xs"><button class="min-h-11 flex-1 rounded-lg bg-primary-container px-sm text-label-md text-on-primary">{{ __('admin/leads.filters.apply') }}</button><a href="{{ route('admin.leads.index') }}" class="flex min-h-11 items-center rounded-lg border border-outline-variant px-sm">{{ __('admin/leads.filters.clear') }}</a></div>
 </form>
 <div class="mb-sm flex justify-end"><a href="{{ route('admin.leads.export', request()->query()) }}" class="inline-flex min-h-11 items-center gap-xs rounded-lg border border-outline-variant px-sm text-label-md"><span class="material-symbols-outlined text-[18px]">download</span>{{ __('admin/leads.actions.export') }}</a></div>
-<div class="overflow-x-auto rounded-xl border border-outline-variant/40 bg-surface-container-lowest">
+<div class="table-scroll rounded-xl border border-outline-variant/40 bg-surface-container-lowest">
     <table class="min-w-full text-left text-body-md">
         <thead class="bg-surface-container-low text-label-md"><tr><th class="p-sm">{{ __('admin/leads.fields.date') }}</th><th class="p-sm">{{ __('admin/leads.fields.contact') }}</th><th class="p-sm">{{ __('admin/leads.fields.source') }}</th><th class="p-sm">{{ __('admin/leads.fields.status') }}</th><th class="p-sm"><span class="sr-only">{{ __('admin/leads.actions.view') }}</span></th></tr></thead>
         <tbody class="divide-y divide-outline-variant/30">

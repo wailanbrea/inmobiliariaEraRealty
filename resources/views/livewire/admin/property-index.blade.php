@@ -215,7 +215,7 @@
     @else
         {{-- La tabla desborda por su propio contenedor, nunca por la pagina.
              Regla dura de docs/14_RESPONSIVE.md. --}}
-        <div class="overflow-x-auto rounded-xl border border-outline-variant/40 bg-surface-container-lowest ambient-shadow">
+        <div class="table-scroll rounded-xl border border-outline-variant/40 bg-surface-container-lowest ambient-shadow">
             <table class="w-full min-w-[900px] text-left">
                 <thead class="border-b border-outline-variant/40 bg-surface-container-low">
                     <tr class="text-caption uppercase tracking-wider text-on-surface-variant">

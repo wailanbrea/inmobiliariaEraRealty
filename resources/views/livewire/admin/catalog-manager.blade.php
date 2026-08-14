@@ -145,7 +145,7 @@
             <p class="text-body-md text-on-surface-variant">{{ __('admin/catalog.empty') }}</p>
         </div>
     @else
-        <div class="overflow-x-auto rounded-xl border border-outline-variant/40 bg-surface-container-lowest ambient-shadow">
+        <div class="table-scroll rounded-xl border border-outline-variant/40 bg-surface-container-lowest ambient-shadow">
             <table class="w-full min-w-[640px] text-left">
                 <thead class="border-b border-outline-variant/40 bg-surface-container-low">
                     <tr class="text-caption uppercase tracking-wider text-on-surface-variant">

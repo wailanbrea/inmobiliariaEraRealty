@@ -76,7 +76,7 @@
     @else
         {{-- La tabla scrollea DENTRO de su contenedor, no la pagina.
              Ver docs/14_RESPONSIVE.md seccion 2. --}}
-        <div class="overflow-x-auto rounded-xl border border-outline-variant/40
+        <div class="table-scroll rounded-xl border border-outline-variant/40
                     bg-surface-container-lowest ambient-shadow">
             <table class="w-full min-w-[720px] text-left">
                 <thead class="border-b border-outline-variant/40 text-caption uppercase
@@ -168,7 +168,7 @@
                         {{ __('admin/audit.detail.no_changes') }}
                     </p>
                 @else
-                    <div class="overflow-x-auto rounded-lg border border-outline-variant/40">
+                    <div class="table-scroll rounded-lg border border-outline-variant/40">
                         <table class="w-full min-w-[520px] text-left text-body-md">
                             <thead class="border-b border-outline-variant/40 text-caption uppercase
                                           tracking-wider text-on-surface-variant">
