@@ -46,6 +46,9 @@ return [
         'video' => 'Video',
         'watch_video' => 'Watch the property video',
         'view_photo' => 'View photo :n',
+        'open_gallery' => 'Enlarge the photo gallery',
+        'previous_photo' => 'Previous photo',
+        'next_photo' => 'Next photo',
         'yes' => 'Yes',
     ],
 

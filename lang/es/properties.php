@@ -46,6 +46,9 @@ return [
         'video' => 'Video',
         'watch_video' => 'Ver el video de la propiedad',
         'view_photo' => 'Ver foto :n',
+        'open_gallery' => 'Ampliar la galería de fotos',
+        'previous_photo' => 'Foto anterior',
+        'next_photo' => 'Foto siguiente',
         'yes' => 'Sí',
     ],
 

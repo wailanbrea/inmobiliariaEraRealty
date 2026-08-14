@@ -15,8 +15,12 @@
       {{ $attributes->merge(['class' => 'inline-flex']) }}>
     @csrf
 
+    {{-- aria-pressed dice si la propiedad ya esta en el comparador. Lo usa el
+         lector de pantalla y tambien compare.js, para no hacer volar la
+         tarjeta cuando lo que se pulsa es "quitar". --}}
     <button type="submit"
             @disabled($lleno)
+            aria-pressed="{{ $marcada ? 'true' : 'false' }}"
             title="{{ $lleno ? __('compare.full', ['max' => $compare::MAX]) : ($marcada ? __('compare.remove') : __('compare.add')) }}"
             @class([
                 'inline-flex items-center gap-xs rounded-lg text-label-md transition-colors',

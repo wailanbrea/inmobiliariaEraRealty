@@ -26,6 +26,7 @@ return [
         'send' => 'Enviar',
         'compare' => 'Comparar',
         'back_home' => 'Volver al inicio',
+        'close' => 'Cerrar',
     ],
 
     'footer' => [

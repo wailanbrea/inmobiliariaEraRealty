@@ -86,6 +86,7 @@ costó un diagnóstico en falso.
 | Invierte | ✅ | — | — | ✅ | 2026-08-14 | Motivos 1→2 columnas. Línea temporal con numeración dentro de pantalla |
 | Sobre nosotros | ✅ | — | — | ✅ | 2026-08-14 | Valores 1→3 columnas. Equipo 1→4. Iniciales cuando el agente no tiene foto |
 | Agentes (panel) | ✅ | — | — | ✅ | 2026-08-14 | Fichas 1→3 columnas. Cero controles < 44 px. Los ocultos se atenúan |
+| Capa de efectos | ✅ | — | — | ✅ | 2026-08-14 | En 375 px **no se descarga GSAP** (medido con `performance.getEntriesByType`). Revelados y contadores sí funcionan. Ver §6 |
 
 ---
 
@@ -122,6 +123,28 @@ lo que tiene que crecer es **su etiqueta**, que es lo que el dedo toca.
 **Solución:** regla base con `label:has(> input[type="checkbox"])` bajo
 `@media (pointer: coarse)`. Cubre todas las casillas del proyecto, presentes y
 futuras, sin tener que acordarse en cada formulario.
+
+### 5.5 El móvil no paga la capa de efectos 🟢
+
+No es un defecto corregido sino una decisión de arquitectura que se verificó
+midiendo, y que conviene no perder de vista al tocar `motion.js`.
+
+El presupuesto de la sección 4 de `docs/13` prohíbe el parallax por debajo de
+768 px. Lo único que necesita GSAP es el parallax. Por tanto el módulo se
+partió en dos:
+
+| Módulo | Peso (gz) | Cuándo se descarga |
+|---|--:|---|
+| `motion.js` | 1,35 KB | Siempre que no haya `prefers-reduced-motion` |
+| `compare.js` | 0,71 KB | Ídem |
+| `motion-scroll.js` (GSAP + Lenis) | 50,66 KB | **Solo a partir de 768 px** |
+
+Un teléfono paga **2,06 KB** y aun así ve todos los revelados, los contadores,
+la cabecera adaptativa y la barra de progreso, porque el núcleo usa
+`IntersectionObserver` y transiciones CSS, no la librería.
+
+Verificado a 375 px: `performance.getEntriesByType('resource')` devuelve
+`app.js` y `motion.js`, y **no** `motion-scroll.js`.
 
 ### 5.3 Alternancia frágil del drawer 🟡
 

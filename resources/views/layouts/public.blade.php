@@ -32,6 +32,35 @@
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <meta property="og:type" content="website">
 
+    {{-- Open Graph y Twitter.
+         Se emiten AQUI y no en cada vista para que ninguna pagina se quede sin
+         tarjeta al compartirla. El detalle de propiedad y la noticia empujan su
+         propia og:image desde @push('head'); como las etiquetas repetidas las
+         resuelve el ultimo valor leido, la suya gana sobre esta por defecto.
+
+         Importa mas de lo que parece: en este mercado los enlaces circulan por
+         WhatsApp, y un enlace sin imagen se ve como un enlace sospechoso. --}}
+    <meta property="og:title" content="@yield('title', setting('seo_default_title') ?: config('app.name'))">
+    <meta property="og:description" content="@yield('description', setting('seo_default_description') ?: __('common.footer.tagline'))">
+    <meta property="og:url" content="{{ url()->current() }}">
+
+    @php
+        $ogPorDefecto = setting('seo_default_og_image') ?: setting('site_logo');
+    @endphp
+    @if ($ogPorDefecto)
+        <meta property="og:image" content="{{ url(Storage::url($ogPorDefecto)) }}">
+    @endif
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', setting('seo_default_title') ?: config('app.name'))">
+    <meta name="twitter:description" content="@yield('description', setting('seo_default_description') ?: __('common.footer.tagline'))">
+
+    {{-- La organizacion se declara una sola vez, en el layout: Google la usa
+         para el panel de conocimiento y para vincular las redes sociales. --}}
+    <script type="application/ld+json">
+        {!! json_encode(App\Support\Seo::organization(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -59,7 +88,9 @@
     ];
 @endphp
 
-<header class="sticky top-0 z-50 w-full bg-surface-container-lowest shadow-sm">
+{{-- data-header: motion.js le pone .is-condensed al pasar los 100 px de
+     scroll (80 -> 64 px de alto, fondo translucido con desenfoque). --}}
+<header data-header class="sticky top-0 z-50 w-full bg-surface-container-lowest shadow-sm">
     <div class="mx-auto flex h-20 w-full max-w-container-max items-center justify-between
                 px-margin-mobile md:px-gutter">
 

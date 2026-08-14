@@ -6,13 +6,27 @@
     imagen con zoom al hover, precio superpuesto abajo a la derecha y chip de
     estado arriba a la izquierda.
 --}}
+{{--
+    Una propiedad sin NINGUNA traducción no tiene slug, y construir su enlace
+    lanza UrlGenerationException: eso tumbaba la portada entera con un 500 por
+    una sola fila incompleta.
+
+    translated() ya cae al idioma por defecto, así que esto solo ocurre si la
+    propiedad se creó fuera del formulario del panel. Aun así se omite la
+    tarjeta en lugar de dejar caer la página: el resto del listado vale más
+    que esa ficha.
+--}}
+@if ($property->slug !== null)
 @php
     $imagen = $property->mainImage;
     $enlace = lroute('properties.show', ['slug' => $property->slug]);
 @endphp
 
-<article class="group overflow-hidden rounded-xl border border-surface-variant
-                bg-surface-container-lowest ambient-shadow hover-lift">
+{{-- data-compare-card marca desde donde despega la miniatura que vuela hasta
+     la barra del comparador (resources/js/compare.js). --}}
+<article data-reveal data-compare-card
+         {{ $attributes->merge(['class' => 'group overflow-hidden rounded-xl border border-surface-variant
+                bg-surface-container-lowest ambient-shadow hover-lift']) }}>
 
     <a href="{{ $enlace }}" class="block">
         <div class="relative h-64 overflow-hidden bg-surface-container">
@@ -102,3 +116,4 @@
         </div>
     @endif
 </article>
+@endif

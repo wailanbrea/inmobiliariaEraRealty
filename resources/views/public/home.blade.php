@@ -8,31 +8,48 @@
 {{-- ============================ HERO ============================ --}}
 {{-- Traducido de inicio_era_realty_rd: 85vh, imagen de fondo al 60 % de
      opacidad sobre primary, degradado desde abajo y buscador de cristal.
-     El parallax y el Ken Burns llegan en la Fase 8. --}}
-<section class="relative flex min-h-[600px] w-full flex-col items-center justify-center
-                px-margin-mobile md:px-gutter"
+
+     Parallax de TRES capas (el limite que fija docs/13): el fondo baja un
+     30 %, el texto sube un 15 % y el buscador sube un 5 %. Esa diferencia de
+     velocidades es lo que genera la sensacion de profundidad.
+
+     El fondo se agranda un 15 % y se sube un 7,5 % para que al desplazarse no
+     asome su borde inferior. Sin ese margen se veria la franja del `primary`
+     por debajo de la foto. --}}
+<section data-parallax-scene
+         class="relative flex min-h-[600px] w-full flex-col items-center justify-center
+                overflow-hidden px-margin-mobile md:px-gutter"
          style="height: 85vh">
 
-    <div class="absolute inset-0 z-0 bg-primary">
+    <div class="absolute inset-0 z-0 overflow-hidden bg-primary">
         @if ($hero?->imageUrl())
-            <div class="size-full bg-cover bg-center opacity-60"
-                 style="background-image: url('{{ $hero->imageUrl() }}')"
-                 role="img" aria-label="{{ $hero->title }}"></div>
+            <div data-parallax="30"
+                 class="absolute -top-[7.5%] left-0 h-[115%] w-full">
+                <div data-ken-burns
+                     class="size-full bg-cover bg-center opacity-60"
+                     style="background-image: url('{{ $hero->imageUrl() }}')"
+                     role="img" aria-label="{{ $hero->title }}"></div>
+            </div>
         @endif
         <div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent"></div>
     </div>
 
     <div class="relative z-10 mx-auto flex w-full max-w-container-max flex-col items-center text-center">
-        <h1 class="mb-sm max-w-4xl font-display text-display-lg-mobile text-on-primary
-                   drop-shadow-lg md:text-display-lg">
-            {{ $hero?->title ?: __('home.hero.title') }}
+        {{-- La mascara por linea es lo que hace lucir a Playfair Display: el
+             titulo sube desde debajo de un borde recto en vez de aparecer. --}}
+        <h1 class="line-mask mb-sm max-w-4xl" data-parallax="-15">
+            <span class="block font-display text-display-lg-mobile text-on-primary
+                         drop-shadow-lg md:text-display-lg">
+                {{ $hero?->title ?: __('home.hero.title') }}
+            </span>
         </h1>
 
-        <p class="mb-lg max-w-2xl font-body text-body-lg text-on-primary/90 drop-shadow-md">
+        <p class="mb-lg max-w-2xl font-body text-body-lg text-on-primary/90 drop-shadow-md"
+           data-parallax="-15">
             {{ $hero?->subtitle ?: __('home.hero.subtitle') }}
         </p>
 
-        <x-search-bar class="max-w-4xl" />
+        <x-search-bar class="max-w-4xl" data-parallax="-5" />
     </div>
 </section>
 
@@ -56,7 +73,8 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 gap-gutter md:grid-cols-2 lg:grid-cols-3">
+        <div data-reveal-group="100"
+             class="grid grid-cols-1 gap-gutter md:grid-cols-2 lg:grid-cols-3">
             @foreach ($featured as $index => $property)
                 <x-property-card :property="$property" :eager="$index < 3" />
             @endforeach
@@ -76,9 +94,9 @@
 @if ($stats && $stats->extra_json)
     <section class="bg-surface-container-low py-lg">
         <div class="mx-auto max-w-container-max px-margin-mobile md:px-gutter">
-            <dl class="grid grid-cols-2 gap-sm text-center md:grid-cols-4">
+            <dl data-reveal-group="80" class="grid grid-cols-2 gap-sm text-center md:grid-cols-4">
                 @foreach ($stats->extra_json as $dato)
-                    <div class="rounded-xl bg-surface-container-lowest p-md ambient-shadow">
+                    <div data-reveal class="rounded-xl bg-surface-container-lowest p-md ambient-shadow">
                         <dd class="font-heading text-headline-md-mobile text-secondary md:text-headline-md"
                             data-counter="{{ $dato['value'] ?? 0 }}">
                             {{ $dato['value'] ?? '' }}{{ $dato['suffix'] ?? '' }}
@@ -105,7 +123,8 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 gap-gutter md:grid-cols-2 lg:grid-cols-3">
+        <div data-reveal-group="100"
+             class="grid grid-cols-1 gap-gutter md:grid-cols-2 lg:grid-cols-3">
             @foreach ($investment as $property)
                 <x-property-card :property="$property" />
             @endforeach

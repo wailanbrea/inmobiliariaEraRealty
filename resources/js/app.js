@@ -1,8 +1,10 @@
 import Alpine from 'alpinejs'
 import uploader from './uploader'
+import gallery from './gallery'
 
 // Componentes Alpine registrados antes de arrancar.
 Alpine.data('uploader', uploader)
+Alpine.data('gallery', gallery)
 
 window.Alpine = Alpine
 Alpine.start()
@@ -63,6 +65,6 @@ document.addEventListener('click', (event) => {
  * Ver docs/13_MOTION_AND_EFFECTS.md seccion 2.
  */
 if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    // La capa completa se implementa en la Fase 8.
-    // import('./motion.js').then(({ initMotion }) => initMotion())
+    import('./motion.js').then(({ initMotion }) => initMotion())
+    import('./compare.js').then(({ initCompareFlight }) => initCompareFlight())
 }

@@ -1,0 +1,181 @@
+/* ============================================================================
+   CAPA DE MOVIMIENTO
+   Ver docs/13_MOTION_AND_EFFECTS.md
+   ============================================================================
+
+   REGLA QUE GOBIERNA TODO ESTE ARCHIVO:
+
+   Los elementos animados arrancan VISIBLES. Es el JS el que los oculta justo
+   antes de animarlos, y solo despues de confirmar que va a poder animarlos.
+
+   Al reves —ocultar en CSS y confiar en que el JS lo revele— basta un error de
+   red, un bloqueador de scripts o un navegador antiguo para dejar la pagina en
+   blanco. La animacion es un lujo; el contenido no.
+
+   Por eso aqui no hay ni un solo `opacity: 0` de partida. La ocultacion vive
+   en la clase .is-primed, que solo pone el JS.
+   ========================================================================== */
+
+/* ----------------------------------------------------------------------------
+   Revelado al hacer scroll
+   -------------------------------------------------------------------------- */
+[data-reveal].is-primed {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 600ms var(--ease-out-quart),
+    transform 600ms var(--ease-out-quart);
+}
+
+/* ----------------------------------------------------------------------------
+   Entrada del titulo por lineas
+   El <span> interior sube desde debajo del borde de su mascara.
+   -------------------------------------------------------------------------- */
+.line-mask.is-primed > * {
+  transform: translateY(110%);
+}
+
+.line-mask.is-revealed > * {
+  transform: none;
+  transition: transform 800ms var(--ease-out-expo);
+}
+
+/* ----------------------------------------------------------------------------
+   Ken Burns del hero
+   Arranca despues del LCP: la clase la pone el JS, no el CSS, para no competir
+   con la metrica que Google mide.
+   -------------------------------------------------------------------------- */
+@keyframes ken-burns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+
+.is-ken-burns {
+  animation: ken-burns 20s var(--ease-in-out-quart) infinite alternate;
+  will-change: transform;
+}
+
+/* ----------------------------------------------------------------------------
+   Barra de progreso de lectura
+   -------------------------------------------------------------------------- */
+.scroll-progress {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: 60;
+  block-size: 2px;
+  inline-size: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background-color: var(--color-secondary);
+  pointer-events: none;
+}
+
+/* ----------------------------------------------------------------------------
+   Cabecera adaptativa
+   80px -> 64px al pasar los 100px de scroll.
+   -------------------------------------------------------------------------- */
+[data-header] {
+  transition:
+    background-color 300ms var(--ease-out-quart),
+    box-shadow 300ms var(--ease-out-quart);
+}
+
+[data-header] > div {
+  transition: block-size 300ms var(--ease-out-quart);
+}
+
+[data-header].is-condensed {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-ambient-hover);
+}
+
+[data-header].is-condensed > div {
+  block-size: 64px;
+}
+
+/* ----------------------------------------------------------------------------
+   Lightbox de la galeria
+   -------------------------------------------------------------------------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(19, 27, 46, 0.94);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out-quart);
+}
+
+.lightbox.is-open {
+  opacity: 1;
+}
+
+.lightbox img {
+  max-inline-size: 92vw;
+  max-block-size: 84vh;
+  object-fit: contain;
+}
+
+/* ----------------------------------------------------------------------------
+   Estado de envio de los formularios
+   El boton no cambia de tamano al pasar a spinner: si lo hiciera, el layout
+   saltaria justo cuando el usuario acaba de pulsar.
+   -------------------------------------------------------------------------- */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.is-submitting [data-submit-label] {
+  visibility: hidden;
+}
+
+.is-submitting [data-submit-spinner] {
+  display: block;
+  animation: spin 700ms linear infinite;
+}
+
+/* ----------------------------------------------------------------------------
+   Pulso del area aproximada en el mapa
+   Cuando show_exact_location = 0 se dibuja un circulo en vez de un marcador.
+   -------------------------------------------------------------------------- */
+@keyframes area-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%      { opacity: 0.18; transform: scale(1.06); }
+}
+
+.area-pulse {
+  animation: area-pulse 4s var(--ease-in-out-quart) infinite;
+}
+
+/* ============================================================================
+   MOVIMIENTO REDUCIDO
+   ============================================================================
+   El bloque global de app.css ya acorta toda animacion y transicion. Aqui se
+   neutraliza ademas cualquier estado intermedio que el JS pudiera haber
+   dejado puesto antes de que la consulta de medios cambiara en caliente.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal].is-primed,
+  .line-mask.is-primed > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .is-ken-burns,
+  .area-pulse {
+    animation: none !important;
+  }
+
+  .scroll-progress {
+    display: none;
+  }
+}

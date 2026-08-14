@@ -5,6 +5,85 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.9.0] — 2026-08-14 — Fase 8: efectos, SEO y rendimiento
+
+La capa que responde al requisito extra del cliente: *«deberá tener efectos
+llamativos»*. Llamativos por sofisticación, no por estridencia —
+`docs/13_MOTION_AND_EFFECTS.md` §1.
+
+### Añadido
+
+**Capa de movimiento**
+
+- `motion.css`: revelados, máscara por líneas, Ken Burns, barra de progreso,
+  cabecera condensada y lightbox
+- `motion.js` (núcleo, sin dependencias): revelados y contadores con
+  `IntersectionObserver`, escalonado automático por rejilla, cabecera
+  adaptativa, barra de progreso de lectura y cursor magnético
+- `motion-scroll.js`: Lenis + GSAP/ScrollTrigger para el parallax de tres
+  capas del hero, entradas en `batch()` y dibujado de trazos SVG
+- `gallery.js`: lightbox con transición compartida (FLIP), navegación por
+  teclado, deslizamiento táctil, trampa de foco y `aria-modal`
+- `compare.js`: la tarjeta vuela hasta la barra del comparador
+- Componente `<x-reveal>` y convenciones `data-reveal`, `data-reveal-group`,
+  `data-parallax`, `data-counter`, `data-magnetic`
+
+**SEO**
+
+- `/sitemap.xml` con `xhtml:link` por idioma y `x-default`
+- `/robots.txt` servido desde la configuración del panel — el ajuste
+  `seo_robots_txt` existía pero el archivo real era estático, así que
+  editarlo no hacía nada
+- `App\Support\Seo::organization()`: JSON-LD `RealEstateAgent` en el layout
+- Open Graph y Twitter Card completas en el layout
+
+### Corregido
+
+- **La portada devolvía 500 si una propiedad no tenía ninguna traducción.**
+  Sin slug no se puede construir su enlace y `UrlGenerationException` tumbaba
+  la página entera por una sola fila incompleta. Ahora se omite esa ficha.
+  Lo destapó una prueba de la capa de efectos que asertaba sobre una página
+  que en realidad era un 500 — la aserción pasaba porque el texto buscado
+  aparecía en el volcado del error.
+- **El parallax se congelaba tras un scroll programático.** Lenis solo avisa
+  a ScrollTrigger cuando el desplazamiento lo provoca el usuario, así que la
+  posición que el navegador restaura al volver atrás dejaba las capas
+  midiendo contra un layout viejo.
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| Los elementos animados se sirven **visibles**; el JS los oculta antes de animar | Al revés, un bloqueador de scripts sirve una página en blanco. Hay pruebas que lo vigilan |
+| GSAP solo se descarga a partir de 768 px | El presupuesto prohíbe el parallax en móvil, y es lo único que necesita la librería |
+| El contador lleva la cifra final ya escrita en el HTML | Si el JS falla se lee el número correcto, no un cero |
+| El vuelo al comparador ocurre **antes** de enviar el formulario | El botón es un POST que recarga; animar después cortaría el vuelo por la mitad |
+| Vendido y alquilado fuera del sitemap | Siguen visibles como prueba social, pero no se le pide a Google que posicione una página que decepciona |
+
+### Presupuesto de rendimiento
+
+| Módulo | Comprimido |
+|---|--:|
+| `motion.js` + `compare.js` (móvil) | **2,06 KB** |
+| `motion-scroll.js` (escritorio) | 50,66 KB |
+| Total escritorio | **52,7 KB** — presupuesto: 60 KB |
+
+### Pruebas
+
+`php artisan test` → **478 pasadas, 1 045 aserciones**.
+
+Verificado en navegador a 375 y 1440 px: sin scroll horizontal, cero
+controles bajo 44 px, GSAP ausente en móvil, la barra de progreso sigue al
+scroll con exactitud (0,310 medido frente a 0,310 esperado), el lightbox
+atrapa el foco y lo devuelve al cerrar con `Esc`.
+
+### Pendiente
+
+- Medición con Lighthouse móvil real (LCP, CLS, INP) sobre el sitio desplegado
+- La foto del hero (Cap Cana)
+
+---
+
 ## [0.8.0] — 2026-08-14 — Cierre de la Fase 4 y fases 5, 6 y 7
 
 Entrega grande: se completan las páginas públicas que quedaban y entran los

@@ -6,7 +6,8 @@
 @if ($total > 0 && ! request()->routeIs('*.compare.index'))
     {{-- Barra flotante del comparador. Sube desde abajo al marcar la primera
          propiedad. Se oculta en la propia página de comparación. --}}
-    <div class="fixed inset-x-0 bottom-0 z-40 border-t border-outline-variant/40
+    <div data-compare-bar
+         class="fixed inset-x-0 bottom-0 z-40 border-t border-outline-variant/40
                 bg-surface-container-lowest/95 backdrop-blur">
         <div class="mx-auto flex max-w-container-max flex-wrap items-center justify-between gap-xs
                     px-margin-mobile py-xs md:px-gutter">

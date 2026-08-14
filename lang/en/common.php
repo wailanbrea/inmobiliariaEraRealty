@@ -26,6 +26,7 @@ return [
         'send' => 'Send',
         'compare' => 'Compare',
         'back_home' => 'Back to home',
+        'close' => 'Close',
     ],
 
     'footer' => [

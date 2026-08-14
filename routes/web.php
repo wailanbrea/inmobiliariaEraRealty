@@ -10,6 +10,8 @@ use App\Modules\Pages\Controllers\Public\InvestController;
 use App\Modules\Pages\Controllers\Public\PlaceholderController;
 use App\Modules\Pages\Controllers\Public\PublishPropertyController;
 use App\Modules\Properties\Controllers\Public\PropertyController;
+use App\Modules\Seo\Controllers\Public\RobotsController;
+use App\Modules\Seo\Controllers\Public\SitemapController;
 use App\Modules\WhatsApp\Controllers\Public\WhatsappClickController;
 use App\Support\Locale;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +33,13 @@ use Illuminate\Support\Facades\Route;
 Route::post('wa/click', [WhatsappClickController::class, 'store'])
     ->middleware('throttle:30,1')
     ->name('whatsapp.click');
+
+/*
+| Sitemap y robots van SIN prefijo de idioma: son unicos para todo el sitio.
+| El sitemap lista ambos idiomas y declara las alternativas hreflang dentro.
+*/
+Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('robots.txt', [RobotsController::class, 'index'])->name('robots');
 
 foreach (Locale::codes() as $locale) {
 
