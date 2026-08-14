@@ -18,6 +18,7 @@ importa el catálogo con un comando incluido.
 | **Frontend** | Blade + Livewire 3 + Alpine · Tailwind CSS 4 |
 | **Efectos** | GSAP + Lenis, cargados solo cuando aportan (ver §7) |
 | **Pruebas** | Pest 3 — **619 pruebas, 1 330 aserciones** |
+| **Catálogo** | 122 propiedades reales con 674 fotos |
 | **Idiomas** | Español (sin prefijo) e inglés (`/en`), con URL traducidas |
 
 ### Sitio público
@@ -117,12 +118,26 @@ php artisan era:import --force            # reimporta las existentes
 Lee la API REST de WordPress de `erarealtyrd.com`, interpreta las fichas y
 descarga la galería, convirtiéndola a WebP.
 
+Trae **las 122 fichas del catálogo** con sus fotos.
+
 **Qué importa y qué no.** El sitio anterior tiene los campos estructurados
 —«No. Habitaciones», «Baños»— **vacíos en las 122 fichas**; los datos van en
 texto libre. Se importa lo que se lee con certeza (título, descripción,
 referencia, ubicación, precio, moneda, operación, tipo, fecha) y se deja en
-blanco lo demás, en vez de inventarlo. El tipo sale del sufijo de la
-referencia: `735-V` villa, `733-A` apartamento, `727-S` solar.
+blanco lo demás, en vez de inventarlo.
+
+**Dos formatos.** Las fichas recientes usan `Ref. 735-V`, y el sufijo da el
+tipo: `V` villa, `A` apartamento, `S` solar. Las 21 más antiguas usan otro
+—`Número de Referencia LA-JA-0234` y una primera línea `Provincia – Tipo`—,
+así que el tipo se deduce del texto. Descartarlas por no encajar en el primer
+patrón dejaba fuera una sexta parte del catálogo.
+
+**Los baños solo se leen cuando la ficha da una cifra explícita.** El sitio
+anterior los describe habitación por habitación —«Baño de visita», «Habitación
+principal con baño», «Medio baño en área social»— y contar esas menciones da
+números equivocados: en una ficha real el recuento sale 5 cuando la respuesta
+es 4,5. Publicar baños inventados en una inmobiliaria es peor que dejarlos
+vacíos.
 
 Al terminar, el comando enumera lo que necesita una decisión humana:
 
@@ -253,13 +268,19 @@ Reglas que el sistema impone y no se pueden saltar desde la interfaz:
 
 ## 7. Rendimiento
 
-Medido sobre datos reales (45 propiedades, ~250 fotos):
+Medido sobre el catálogo completo (**122 propiedades, 674 fotos**):
 
-| Pantalla | TTFB | Consultas | HTML |
-|---|--:|--:|--:|
-| Listado | 51 ms | 11 | 94 KB |
-| Detalle con galería | 42 ms | 14 | 53 KB |
-| Sitemap (26 URL) | 23 ms | — | 25 KB |
+| Pantalla | Consultas | HTML |
+|---|--:|--:|
+| Listado | 11 | 104 KB |
+| Detalle con galería | 11 | 56 KB |
+| Sitemap (110 URL) | — | — |
+
+**Las consultas no crecen con el catálogo:** el listado hacía 11 con 12
+propiedades y hace 11 con 122. Lo garantiza `chaperone()` en las relaciones de
+imagen, más una prueba que falla si alguien reintroduce un N+1.
+
+Bajo Apache con opcache el listado responde en ~51 ms.
 
 Navegador, listado completo: FCP 608 ms · carga 753 ms · **CLS 0,0000** ·
 723 KB, de los cuales 401 KB son imágenes.

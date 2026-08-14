@@ -280,13 +280,29 @@ class ImportFromLegacySite extends Command
         $lineas = array_values(array_filter(array_map('trim', explode("\n", $texto)), 'strlen'));
         $cabecera = implode("\n", array_slice($lineas, 0, 4));
 
-        // Sin referencia no hay tipo fiable ni forma de evitar duplicados.
-        if (! preg_match('/Ref\.?\s*([0-9]{2,5})\s*-\s*([A-Z])/iu', $cabecera, $ref)) {
-            return null;
-        }
+        // --- FORMATO NUEVO: «Ref. 735-V» -----------------------------------
+        if (preg_match('/Ref\.?\s*([0-9]{2,5})\s*-\s*([A-Z])/iu', $cabecera, $ref)) {
+            $referencia = strtoupper($ref[1].'-'.strtoupper($ref[2]));
+            $tipoSlug = self::TIPOS[strtoupper($ref[2])] ?? null;
+        } else {
+            // --- FORMATO ANTIGUO -------------------------------------------
+            //
+            // Las fichas viejas del catalogo no usan «Ref. 735-V». Tienen otra
+            // estructura, igual de legible pero distinta:
+            //
+            //     Número de Referencia LA-JA-0234
+            //     La Vega – Solares
+            //     Distrito Nacional – Pent House
+            //
+            // Son 21 de 122. Descartarlas por no encajar en el primer patron
+            // dejaba fuera una sexta parte del catalogo, incluidas fichas con
+            // fotos y precio.
+            $referencia = preg_match('/N[uú]mero\s+de\s+Referencia\s*:?\s*([A-Z0-9-]{3,20})/iu', $texto, $m)
+                ? strtoupper($m[1])
+                : 'WP-'.($ficha['id'] ?? 'X');
 
-        $sufijo = strtoupper($ref[2]);
-        $tipoSlug = self::TIPOS[$sufijo] ?? null;
+            $tipoSlug = $this->adivinarTipo($titulo.' '.$cabecera);
+        }
 
         if ($tipoSlug === null) {
             return null;
@@ -308,7 +324,7 @@ class ImportFromLegacySite extends Command
         [$precio, $moneda, $porMetro] = $this->leerPrecio($cabecera);
 
         return [
-            'reference_code' => strtoupper($ref[1].'-'.$sufijo),
+            'reference_code' => $referencia,
             'wp_id' => $ficha['id'] ?? null,
             'title' => $titulo,
             'por_metro' => $porMetro,
@@ -340,6 +356,43 @@ class ImportFromLegacySite extends Command
 
             'link' => $ficha['link'] ?? null,
         ];
+    }
+
+    /**
+     * Tipo de propiedad a partir del texto, para las fichas del formato
+     * antiguo que no traen el sufijo de la referencia.
+     *
+     * El orden importa: «Pent House» tiene que comprobarse antes que «casa»,
+     * o un penthouse acabaria clasificado como casa. Igual «local comercial»
+     * antes que «local», y «solar» antes que «terreno», porque el catalogo
+     * distingue ambos.
+     */
+    private function adivinarTipo(string $texto): ?string
+    {
+        $texto = Str::lower($texto);
+
+        $senales = [
+            'penthouse' => ['penthouse', 'pent house', 'pent-house'],
+            'villa' => ['villa'],
+            'apartamento' => ['apartamento', 'aptos', 'apto', 'apartamentos'],
+            'casa' => ['casa'],
+            'local-comercial' => ['local comercial', 'locales comerciales', 'locales', 'local', 'plaza comercial'],
+            'oficina' => ['oficina'],
+            'nave' => ['nave industrial', 'naves'],
+            'finca' => ['finca', 'tareas'],
+            'solar' => ['solar', 'solares'],
+            'terreno' => ['terreno', 'terrenos'],
+        ];
+
+        foreach ($senales as $slug => $palabras) {
+            foreach ($palabras as $palabra) {
+                if (str_contains($texto, $palabra)) {
+                    return $slug;
+                }
+            }
+        }
+
+        return null;
     }
 
     private function esResidencial(string $tipoSlug): bool
