@@ -2,6 +2,11 @@
 .DS_Store
 .env
 .env.backup
+# Cualquier copia del .env, con el sufijo que sea. El patron exacto
+# '.env.backup' dejaba pasar '.env.backup-antes-de-app-url', que se colo
+# en un commit con APP_KEY y credenciales dentro.
+.env.backup*
+.env.*.backup
 .env.production
 .phpactor.json
 .phpunit.result.cache

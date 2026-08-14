@@ -128,14 +128,25 @@ class Property extends Model
         return $this->belongsToMany(Amenity::class);
     }
 
+    /*
+     * chaperone() coloca la relacion INVERSA en cada imagen cargada.
+     *
+     * Sin el, PropertyImage::altText() —que cae al titulo de la propiedad
+     * cuando no hay texto alternativo— tiene que ir a buscar a su padre, y de
+     * paso las traducciones de ese padre. Son DOS consultas por imagen: el
+     * listado pasaba de 11 a 35 consultas con solo 12 tarjetas, y habria
+     * crecido con cada propiedad anadida.
+     *
+     * El padre ya esta en memoria; lo unico que faltaba era decirselo al hijo.
+     */
     public function images(): HasMany
     {
-        return $this->hasMany(PropertyImage::class)->orderBy('sort_order');
+        return $this->hasMany(PropertyImage::class)->orderBy('sort_order')->chaperone();
     }
 
     public function mainImage(): HasOne
     {
-        return $this->hasOne(PropertyImage::class)->where('is_main', true);
+        return $this->hasOne(PropertyImage::class)->where('is_main', true)->chaperone();
     }
 
     public function createdBy(): BelongsTo

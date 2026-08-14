@@ -231,3 +231,41 @@ Ramas: `main` (producción) · `develop` (integración) · `feature/*` por fase.
 - [ ] Lighthouse móvil ≥ 90
 - [ ] Páginas 404 y 500 personalizadas
 - [ ] Textos legales publicados
+
+---
+
+## opcache y `php artisan serve`: no midas donde no toca
+
+Medido el 14/08/2026 sobre 31 propiedades reales con 138 fotos.
+
+| Cómo se sirve | TTFB del listado |
+|---|--:|
+| `php artisan serve` (CLI) | **420 ms** |
+| Apache + opcache | **51 ms** |
+
+La diferencia **no** es Apache: es **opcache**. La extensión está cargada, pero
+`opcache.enable_cli` viene apagado por defecto, y `php artisan serve` usa el
+SAPI de CLI. Sin opcache, PHP recompila los ~900 archivos del framework en
+cada petición.
+
+**Consecuencia práctica:** nunca juzgues el rendimiento con `artisan serve`.
+Un TTFB de 400 ms ahí puede ser 50 ms en producción, y al revés — una consulta
+lenta se disimula entre el ruido de la compilación.
+
+Comprobar en producción que opcache está activo:
+
+```php
+opcache_get_status(false)['opcache_enabled']
+```
+
+## Presupuesto medido
+
+| Pantalla | TTFB | Consultas | HTML |
+|---|--:|--:|--:|
+| Listado (12 tarjetas) | 51 ms | 11 | 94 KB |
+| Detalle con galería | 42 ms | 14 | 53 KB |
+| Comparador | 82 ms | 2 | 21 KB |
+| Sitemap (26 URL) | 23 ms | — | 25 KB |
+
+Navegador, listado completo: FCP 608 ms · carga 753 ms · **CLS 0,0000** ·
+723 KB totales, de los cuales 401 KB son imágenes.

@@ -31,17 +31,24 @@
     <a href="{{ $enlace }}" class="block">
         <div class="relative h-64 overflow-hidden bg-surface-container">
             @if ($imagen)
-                <picture>
-                    @if ($imagen->webpUrl())
-                        <source srcset="{{ $imagen->webpUrl() }}" type="image/webp">
-                    @endif
-                    <img src="{{ $imagen->url() }}"
-                         alt="{{ $imagen->altText() }}"
-                         width="{{ $imagen->width }}" height="{{ $imagen->height }}"
-                         @if ($eager) fetchpriority="high" @else loading="lazy" @endif
-                         decoding="async"
-                         class="size-full object-cover transition-transform duration-500 group-hover:scale-105">
-                </picture>
+                {{--
+                    La tarjeta usa la MINIATURA, no la foto completa.
+
+                    Se medía en el navegador: la tarjeta muestra la imagen a
+                    284 px y estaba descargando la de 1024 —3,6 veces más de
+                    lo que se ve—, con archivos de hasta 163 KB. Doce tarjetas
+                    sumaban 1 MB de imágenes para pintar una rejilla.
+
+                    La miniatura ya existía y solo la usaba la galería del
+                    detalle. Es el mismo recorte 600×400 que necesita la
+                    tarjeta.
+                --}}
+                <img src="{{ $imagen->thumbnailUrl() }}"
+                     alt="{{ $imagen->altText() }}"
+                     width="600" height="400"
+                     @if ($eager) fetchpriority="high" @else loading="lazy" @endif
+                     decoding="async"
+                     class="size-full object-cover transition-transform duration-500 group-hover:scale-105">
             @else
                 <div class="flex size-full items-center justify-center">
                     <span class="material-symbols-outlined text-[48px] text-outline-variant">
@@ -94,33 +101,67 @@
                 {{ $property->locationLabel() ?: $property->type?->name }}
             </p>
 
-            {{-- Meta-grid de 3 columnas, como en el diseño --}}
-            <dl class="grid grid-cols-3 gap-xs border-t border-surface-variant pt-sm">
-                <div class="flex flex-col items-center">
-                    <span class="material-symbols-outlined mb-1 text-[20px] text-outline">bed</span>
-                    <dt class="sr-only">{{ __('property.specs.bedrooms') }}</dt>
-                    <dd class="text-label-md text-on-surface">
-                        {{ $property->bedrooms ?? '—' }} {{ __('property.specs_short.bedrooms') }}
-                    </dd>
-                </div>
+            {{--
+                Meta-grid: SOLO las cifras que existen.
 
-                <div class="flex flex-col items-center border-x border-surface-variant">
-                    <span class="material-symbols-outlined mb-1 text-[20px] text-outline">shower</span>
-                    <dt class="sr-only">{{ __('property.specs.bathrooms') }}</dt>
-                    <dd class="text-label-md text-on-surface">
-                        {{ $property->bathrooms ? rtrim(rtrim(number_format($property->bathrooms, 1), '0'), '.') : '—' }}
-                        {{ __('property.specs_short.bathrooms') }}
-                    </dd>
-                </div>
+                Antes se pintaban siempre las tres con un guion cuando faltaba
+                el dato, y eso daba dos resultados malos a la vez: un solar
+                anunciando «— Habs — Baños», que no tiene sentido ni aunque el
+                dato estuviera, y una rejilla de tarjetas llena de guiones que
+                hace parecer el catálogo a medio cargar.
 
-                <div class="flex flex-col items-center">
-                    <span class="material-symbols-outlined mb-1 text-[20px] text-outline">square_foot</span>
-                    <dt class="sr-only">{{ __('property.specs.area') }}</dt>
-                    <dd class="text-label-md text-on-surface">
-                        {{ $property->construction_area ? number_format($property->construction_area, 0) : '—' }} m²
-                    </dd>
-                </div>
-            </dl>
+                Se muestra lo que se sabe. Si no se sabe nada, la fila
+                desaparece y la tarjeta se cierra limpia después de la
+                ubicación.
+            --}}
+            @php
+                $specs = collect([
+                    $property->bedrooms ? [
+                        'bed',
+                        __('property.specs.bedrooms'),
+                        $property->bedrooms.' '.__('property.specs_short.bedrooms'),
+                    ] : null,
+                    $property->bathrooms ? [
+                        'shower',
+                        __('property.specs.bathrooms'),
+                        rtrim(rtrim(number_format($property->bathrooms, 1), '0'), '.')
+                            .' '.__('property.specs_short.bathrooms'),
+                    ] : null,
+                    // En un terreno o un solar la cifra que importa es la
+                    // superficie del terreno, no la construida.
+                    ($area = $property->construction_area ?: $property->land_area) ? [
+                        'square_foot',
+                        __('property.specs.area'),
+                        number_format($area, 0, ',', '.').' m²',
+                    ] : null,
+                    $property->parking_spaces ? [
+                        'directions_car',
+                        __('property.specs.parking'),
+                        $property->parking_spaces.' '.__('property.specs_short.parking'),
+                    ] : null,
+                ])->filter()->take(3)->values();
+            @endphp
+
+            @if ($specs->isNotEmpty())
+                <dl @class([
+                    'grid gap-xs border-t border-surface-variant pt-sm',
+                    'grid-cols-1' => $specs->count() === 1,
+                    'grid-cols-2' => $specs->count() === 2,
+                    'grid-cols-3' => $specs->count() === 3,
+                ])>
+                    @foreach ($specs as $spec)
+                        <div @class([
+                            'flex flex-col items-center',
+                            'border-x border-surface-variant' => $specs->count() === 3 && $loop->index === 1,
+                        ])>
+                            <span class="material-symbols-outlined mb-1 text-[20px] text-outline">{{ $spec[0] }}</span>
+                            <dt class="sr-only">{{ $spec[1] }}</dt>
+                            <dd class="text-label-md text-on-surface">{{ $spec[2] }}</dd>
+                        </div>
+                    @endforeach
+                </dl>
+            @endif
+
         </div>
     </a>
 
