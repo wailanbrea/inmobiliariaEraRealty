@@ -2,6 +2,7 @@
 
 namespace App\Modules\Settings\Services;
 
+use App\Enums\AuditAction;
 use App\Modules\Settings\Models\Setting;
 use App\Support\Locale;
 use Illuminate\Support\Collection;
@@ -96,10 +97,17 @@ class SettingsService
             return false;
         }
 
+        $original = $setting->value;
         $setting->value = $this->prepare($setting, $value);
+        $cambio = $setting->isDirty('value');
+
         $setting->save();
 
         $this->flush();
+
+        if ($cambio) {
+            $this->auditar([$key => $original], [$key => $setting->value]);
+        }
 
         return true;
     }
@@ -109,6 +117,9 @@ class SettingsService
      */
     public function setMany(array $values): void
     {
+        $antes = [];
+        $despues = [];
+
         foreach ($values as $key => $value) {
             $setting = $this->all()->get($key);
 
@@ -116,11 +127,66 @@ class SettingsService
                 continue;
             }
 
+            $original = $setting->value;
             $setting->value = $this->prepare($setting, $value);
+
+            // Solo se anota lo que cambio de verdad: guardar el formulario
+            // sin tocar nada no debe ensuciar la auditoria.
+            if ($setting->isDirty('value')) {
+                $antes[$key] = $original;
+                $despues[$key] = $setting->value;
+            }
+
             $setting->save();
         }
 
         $this->flush();
+
+        if ($antes !== []) {
+            $this->auditar($antes, $despues);
+        }
+    }
+
+    /**
+     * Registra el cambio de ajustes con la accion que le corresponde.
+     *
+     * Va aqui y no en el controlador para que quede constancia venga de donde
+     * venga la escritura. La censura de credenciales la aplica AuditService:
+     * 'mail_password' nunca llega escrito al registro.
+     *
+     * @param  array<string, mixed>  $antes
+     * @param  array<string, mixed>  $despues
+     */
+    private function auditar(array $antes, array $despues): void
+    {
+        // Un guardado puede tocar claves de varios grupos, asi que se agrupan
+        // y se emite un apunte por cada accion afectada. Asi el listado
+        // distingue "cambio el WhatsApp" de "cambio el SMTP" sin tener que
+        // abrir el detalle.
+        $porAccion = [];
+
+        foreach ($antes as $key => $valor) {
+            $porAccion[$this->accionPara($key)->value][$key] = $valor;
+        }
+
+        foreach ($porAccion as $accion => $claves) {
+            audit()->log(
+                AuditAction::from($accion),
+                old: $claves,
+                new: array_intersect_key($despues, $claves),
+                label: implode(', ', array_slice(array_keys($claves), 0, 5)),
+            );
+        }
+    }
+
+    private function accionPara(string $key): AuditAction
+    {
+        return match (true) {
+            str_starts_with($key, 'mail_') => AuditAction::MailChanged,
+            str_contains($key, 'whatsapp') => AuditAction::WhatsappChanged,
+            in_array($key, ['site_logo', 'site_favicon'], true) => AuditAction::LogoChanged,
+            default => AuditAction::SettingsChanged,
+        };
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Agents\Controllers\Admin\AgentController;
+use App\Modules\Audit\Controllers\Admin\AuditLogController;
 use App\Modules\Auth\Controllers\ForgotPasswordController;
 use App\Modules\Auth\Controllers\LoginController;
 use App\Modules\Auth\Controllers\ResetPasswordController;
@@ -118,6 +119,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('categorias/{category}', [NewsCategoryController::class, 'destroy'])->name('categories.destroy');
     });
 
+    // --- Auditoria ---
+    Route::get('auditoria', [AuditLogController::class, 'index'])->name('audit.index');
+
     // --- Agentes ---
     Route::get('agentes', [AgentController::class, 'index'])->name('agents.index');
 
@@ -145,8 +149,4 @@ Route::middleware('auth')->group(function () {
         Route::get('ubicaciones', [CatalogController::class, 'locations'])->name('locations');
     });
 
-    // Fase 3: imagenes, media. Fase 5: leads
-    // Fase 6: noticias
-    // Fase 7: agentes
-    // Fase 9: reportes, auditoria
 });

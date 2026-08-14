@@ -2,6 +2,7 @@
 
 namespace App\Modules\Auth\Controllers;
 
+use App\Enums\AuditAction;
 use App\Http\Controllers\Controller;
 use App\Modules\Auth\Requests\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -22,13 +23,17 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        // TODO Fase 9: registrar 'login' en audit_logs.
+        audit()->log(AuditAction::Login);
 
         return redirect()->intended(route('admin.dashboard'));
     }
 
     public function destroy(Request $request): RedirectResponse
     {
+        // Se registra ANTES de cerrar la sesion: despues del logout ya no hay
+        // usuario autenticado y el apunte quedaria sin autor.
+        audit()->log(AuditAction::Logout);
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

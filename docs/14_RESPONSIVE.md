@@ -87,6 +87,7 @@ costó un diagnóstico en falso.
 | Sobre nosotros | ✅ | — | — | ✅ | 2026-08-14 | Valores 1→3 columnas. Equipo 1→4. Iniciales cuando el agente no tiene foto |
 | Agentes (panel) | ✅ | — | — | ✅ | 2026-08-14 | Fichas 1→3 columnas. Cero controles < 44 px. Los ocultos se atenúan |
 | Capa de efectos | ✅ | — | — | ✅ | 2026-08-14 | En 375 px **no se descarga GSAP** (medido con `performance.getEntriesByType`). Revelados y contadores sí funcionan. Ver §6 |
+| Auditoría (panel) | ✅ | — | — | ✅ | 2026-08-14 | Contenedor 343 px con tabla de 758: **scrollea la tabla, no la página**. Filtros 1→4 columnas. Cero controles < 44 px |
 
 ---
 

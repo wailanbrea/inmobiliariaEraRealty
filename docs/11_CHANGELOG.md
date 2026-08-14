@@ -5,6 +5,55 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.10.0] — 2026-08-14 — Fase 9 (1/2): auditoría
+
+Primera mitad de la Fase 9. Los reportes y los gráficos del dashboard van en
+la siguiente entrega.
+
+### Añadido
+
+- Tabla `audit_logs` y `AuditService`
+- Enum `AuditAction` con las trece acciones del prompt maestro §21, más el
+  **intento de acceso fallido** y el cierre de sesión
+- Observers de `Property`, `PropertyImage` y `NewsPost`
+- Auditoría de ajustes dentro de `SettingsService`, separando configuración,
+  logotipo, WhatsApp y correo
+- Pantalla `/admin/auditoria`: filtros por acción, usuario y rango de fechas,
+  y detalle con diff campo a campo
+- `config/audit.php` con los periodos de retención
+- Comando `audit:prune` y su programación semanal
+- 53 pruebas
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| **Ninguna credencial llega al registro** | Guarda el «antes» y el «después» de cada cambio y lo lee cualquier administrador: sin censura, cambiar la contraseña del SMTP la dejaría escrita en claro **dos veces** en una tabla consultable. La detección es por fragmento (`password`, `secret`, `token`…) y recorre arrays anidados |
+| Se registran los accesos **fallidos** | Un listado que solo muestra logins correctos no sirve para ver que alguien lleva media hora probando contraseñas — que es la razón principal por la que uno mira un registro de auditoría |
+| El apunte copia el **nombre** del autor, no solo su id | Con `nullOnDelete`, borrar al usuario deja el apunte sin autor. Un registro que se vacía borrando a quien actuó no audita nada |
+| Auditoría por **observer**, no en el controlador | Queda registrado venga de donde venga la escritura: formulario, Livewire, consola |
+| El cambio de estado es su propia acción, y **un solo apunte por guardado** | Pasar una villa a «vendida» es una decisión de negocio, no una edición más |
+| Solo lectura: sin editar ni borrar desde el panel | Un registro modificable desde la misma interfaz que audita no vale para nada. Hay pruebas que verifican que no existe ruta `DELETE`/`PUT`/`PATCH` |
+| `audit:prune` **simula por defecto** | Un comando que borra la única prueba de lo ocurrido en cuanto se teclea es justo lo que no debe existir. Borrar exige `--force` |
+| Los accesos fallidos caducan a los 90 días, el resto al año | Son los que más volumen generan en un ataque y su valor se pierde rápido |
+| El fallo de la auditoría no tumba la acción auditada | Se anota en el log de la aplicación y la petición sigue. Hay una prueba que borra la tabla y comprueba que la propiedad se crea igual |
+
+### Corregido
+
+- **El diff daba «sin cambios» justo al cambiar la contraseña del SMTP.**
+  Al censurar los dos lados con el mismo marcador, la comparación los veía
+  iguales y ocultaba el apunte más importante que registra el módulo. Ahora
+  un valor censurado se muestra siempre como cambio.
+
+### Pruebas
+
+`php artisan test` → **531 pasadas, 1 139 aserciones**.
+
+Verificado en 375 y 1440 px: contenedor de 343 px con una tabla de 758 —
+scrollea la tabla, no la página.
+
+---
+
 ## [0.9.0] — 2026-08-14 — Fase 8: efectos, SEO y rendimiento
 
 La capa que responde al requisito extra del cliente: *«deberá tener efectos

@@ -48,7 +48,12 @@
                 ['category',       'Catálogo',      'admin.catalog.types', true, 'admin.catalog.*'],
                 ['description',    'Contenido',     'admin.content.index', true, 'admin.content.*'],
                 ['chat',           'WhatsApp',      'admin.whatsapp.index', true, 'admin.whatsapp.*'],
-                ['history',        'Auditoría',     null,              false, null],
+                // La auditoría solo la ven administradores: es información de
+                // seguridad (quién entró, desde qué IP), no de contenido. Un
+                // editor la vería deshabilitada, que es más honesto que
+                // ofrecerle un enlace que devuelve 403.
+                ['history',        'Auditoría',     'admin.audit.index',
+                    auth()->user()->hasAnyRole(['admin', 'super_admin']), 'admin.audit.*'],
                 ['settings',       'Configuración', 'admin.settings.general', true, 'admin.settings.*'],
             ];
         @endphp

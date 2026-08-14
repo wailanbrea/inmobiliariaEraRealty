@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Audit\Services\AuditService;
 use App\Modules\Settings\Services\SettingsService;
 use App\Modules\WhatsApp\Services\WhatsappService;
 use App\Support\Locale;
@@ -50,5 +51,18 @@ if (! function_exists('whatsapp')) {
     function whatsapp(): WhatsappService
     {
         return app(WhatsappService::class);
+    }
+}
+
+if (! function_exists('audit')) {
+    /**
+     * Registro de auditoria, para no repetir la resolucion del servicio:
+     *   audit(AuditAction::PropertyDeleted, $property);
+     *
+     * Ver docs/03_ADMIN_PANEL.md y app/Enums/AuditAction.php.
+     */
+    function audit(): AuditService
+    {
+        return app(AuditService::class);
     }
 }

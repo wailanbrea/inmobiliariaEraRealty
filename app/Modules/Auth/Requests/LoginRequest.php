@@ -2,6 +2,7 @@
 
 namespace App\Modules\Auth\Requests;
 
+use App\Enums\AuditAction;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -56,6 +57,15 @@ class LoginRequest extends FormRequest
 
         if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
+
+            // Se registra el intento fallido con el correo probado, pero
+            // NUNCA con la contrasena: quien mira la auditoria necesita saber
+            // que cuenta esta bajo ataque, no con que la estan atacando.
+            audit()->log(
+                AuditAction::LoginFailed,
+                label: (string) $this->input('email'),
+                new: ['email' => (string) $this->input('email')],
+            );
 
             throw ValidationException::withMessages([
                 'email' => 'Las credenciales no coinciden con nuestros registros.',

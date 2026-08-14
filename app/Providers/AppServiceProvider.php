@@ -3,12 +3,18 @@
 namespace App\Providers;
 
 use App\Modules\Agents\Livewire\AgentManager;
+use App\Modules\Audit\Livewire\AuditLogIndex;
+use App\Modules\Audit\Observers\NewsPostObserver;
+use App\Modules\Audit\Observers\PropertyImageObserver;
+use App\Modules\Audit\Observers\PropertyObserver;
 use App\Modules\Locations\Livewire\LocationManager;
 use App\Modules\Media\Livewire\MediaManager;
+use App\Modules\News\Models\NewsPost;
 use App\Modules\Pages\Livewire\ContentSectionManager;
 use App\Modules\Properties\Livewire\PropertyIndex;
 use App\Modules\Properties\Models\Property;
 use App\Modules\Properties\Policies\PropertyPolicy;
+use App\Modules\PropertyImages\Models\PropertyImage;
 use App\Modules\PropertyTypes\Livewire\CatalogManager;
 use App\Modules\Settings\Services\SettingsService;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -45,6 +51,12 @@ class AppServiceProvider extends ServiceProvider
         // convencion App\Policies\*. Se registran a mano.
         Gate::policy(Property::class, PropertyPolicy::class);
 
+        // Auditoria por observer, no por controlador: asi queda registrado
+        // venga de donde venga la escritura. Ver app/Enums/AuditAction.php.
+        Property::observe(PropertyObserver::class);
+        PropertyImage::observe(PropertyImageObserver::class);
+        NewsPost::observe(NewsPostObserver::class);
+
         // Livewire tampoco descubre componentes fuera de app/Livewire.
         Livewire::component('property-index', PropertyIndex::class);
         Livewire::component('catalog-manager', CatalogManager::class);
@@ -52,5 +64,6 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('media-manager', MediaManager::class);
         Livewire::component('content-section-manager', ContentSectionManager::class);
         Livewire::component('agent-manager', AgentManager::class);
+        Livewire::component('audit-log-index', AuditLogIndex::class);
     }
 }

@@ -303,19 +303,19 @@ porque es el directorio de trabajo de la sesión.
 - [ ] Medición Lighthouse ≥ 90 móvil
 - [ ] Tests de SEO
 
-## FASE 9 — Reportes y auditoría (0/11)
+## FASE 9 — Reportes y auditoría (7/11)
 
-- [ ] Migración `audit_logs` + `AuditService` + Observers
-- [ ] Exclusión de campos sensibles del log
-- [ ] Registro de las 13 acciones sensibles
-- [ ] Listado de auditoría con filtros
-- [ ] Detalle con diff visual
+- [x] Migración `audit_logs` + `AuditService` + Observers
+- [x] Exclusión de campos sensibles del log
+- [x] Registro de las 13 acciones sensibles (+ acceso fallido y cierre de sesión)
+- [x] Listado de auditoría con filtros
+- [x] Detalle con diff visual
 - [ ] `property_views` + reporte de más vistas
 - [ ] Reportes de propiedades, leads y WhatsApp
 - [ ] Gráficos del dashboard
 - [ ] Rango de fechas + exportación CSV
-- [ ] Comandos de poda programados
-- [ ] Tests de auditoría
+- [x] Comandos de poda programados
+- [x] Tests de auditoría (53)
 
 ## FASE 10 — Testing y despliegue (0/16)
 
