@@ -1,7 +1,13 @@
-# Laravel ignora por defecto TODO lo que hay aqui. Se abre una excepcion para
-# las fotos del catalogo de demostracion, que si se versionan: ver la nota en
-# el .gitignore de la raiz.
+# Laravel ignora por defecto TODO lo que hay aqui. Se abren excepciones para
+# el contenido de demostracion, que si se versiona: ver la nota en el
+# .gitignore de la raiz.
+#
+# 'properties' son las fotos del catalogo. 'content_sections' incluye la foto
+# del hero, sin la cual la portada de un clon recien desplegado sale con el
+# fondo negro — que es exactamente lo que paso en el primer despliegue.
 *
 !.gitignore
 !properties/
 !properties/**
+!content_sections/
+!content_sections/**

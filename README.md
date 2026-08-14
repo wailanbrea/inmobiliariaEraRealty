@@ -167,11 +167,34 @@ Al terminar, el comando enumera lo que necesita una decisión humana:
 composer install --no-dev --optimize-autoloader
 npm ci && npm run build
 php artisan migrate --force
+php artisan db:seed --force
+php artisan db:seed --class=DemoDataSeeder --force
 php artisan storage:link
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 ```
+
+> **`storage:link` no es opcional.** Sin él, **todas** las fotos devuelven 404:
+> el sitio se ve maquetado pero con las tarjetas en negro y el hero vacío. Es
+> el fallo más habitual del primer despliegue, y no da ningún error en el log
+> porque desde el punto de vista de Laravel el fichero sencillamente no está.
+>
+> Comprueba que quedó bien:
+>
+> ```bash
+> ls -la public/storage        # debe ser un enlace a ../storage/app/public
+> curl -I https://TU-DOMINIO/storage/properties/10/*.webp
+> ```
+>
+> Si el hosting no permite enlaces simbólicos, copia la carpeta en su lugar:
+>
+> ```bash
+> cp -r storage/app/public public/storage
+> ```
+>
+> Con la copia hay que repetirla cada vez que se suban fotos nuevas, así que
+> el enlace es preferible siempre que se pueda.
 
 Cron del servidor:
 
@@ -210,7 +233,25 @@ petición.
 opcache_get_status(false)['opcache_enabled']
 ```
 
-### 4.5 Certificados TLS en Windows/XAMPP
+### 4.5 Si algo no se ve bien tras desplegar
+
+| Síntoma | Causa casi siempre |
+|---|---|
+| Página **sin estilos**, texto plano | Falta `npm run build`, o `public/build/` no se subió |
+| Maquetación correcta pero **todas las fotos en negro** | Falta `php artisan storage:link` |
+| **Hero negro** y el resto bien | La foto de portada no está en `storage/app/public/content_sections/` |
+| Listado **vacío** con la maqueta bien | Falta `db:seed --class=DemoDataSeeder` |
+| Error 500 sin detalle | Falta `APP_KEY`, o `storage/` y `bootstrap/cache/` sin permisos de escritura |
+
+Diagnóstico rápido desde tu máquina, sin entrar al servidor:
+
+```bash
+curl -I https://TU-DOMINIO/build/manifest.json    # 200 = assets compilados
+curl -I https://TU-DOMINIO/storage/properties/    # 404 = falta storage:link
+curl -s https://TU-DOMINIO/propiedades | grep -c data-compare-card
+```
+
+### 4.6 Certificados TLS en Windows/XAMPP
 
 Si `era:import` o el envío de correo fallan con *«unable to get local issuer
 certificate»*, a `php.ini` le falta el paquete de certificados raíz:
