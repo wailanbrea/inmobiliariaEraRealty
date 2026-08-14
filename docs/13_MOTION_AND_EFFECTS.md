@@ -55,6 +55,57 @@ En reduced-motion no se descargan ~53 KB de JS que no se van a usar.
 | **Transición de página** | Cortina que barre desde abajo en `primary-container (#131b2e)`, 400 ms in / 500 ms out |
 | **WhatsApp flotante** | Entra con `scale 0→1` + rebote a los 2 s. Pulso suave cada 8 s. Tooltip al hover |
 
+### 3.1.b Hero cinematográfico (implementado en la Fase 9)
+
+Petición explícita del cliente: *«quiero tener un efecto bonito y moderno en el HERO»*.
+
+Cinco capas de fondo, de atrás hacia delante. El detalle está en
+`resources/css/motion.css`, sección «Hero cinematográfico».
+
+| # | Capa | Qué hace | Coste |
+|--:|---|---|---|
+| 1 | **Foto** | Ken Burns dentro, parallax fuera, y un **revelado de cortina** con `clip-path` al cargar | `transform` + `clip-path` |
+| 2 | **Aurora** | Dos resplandores de marca —turquesa y azul institucional— que derivan en contrafase | `transform` |
+| 3 | **Grano** | Textura de película, SVG en línea, **estática** | 0 |
+| 4 | **Viñeta** | Oscurece los bordes y empuja la mirada al centro | 0 |
+| 5 | **Foco del cursor** | Resplandor suave que sigue al ratón. Solo puntero fino | 2 variables CSS por frame |
+
+Más el **brillo del título** (una sola pasada, 900 ms después de cargar) y la
+**disolución al salir**: el contenido se aleja y se desvanece al descender, lo
+que da profundidad en vez de una tira de secciones apiladas.
+
+**Ni un `filter: blur()`.** Las auroras son `radial-gradient` sobre elementos
+que se mueven, no blobs desenfocados: el desenfoque obliga a la GPU a
+repintar cada frame, y en el hero eso se nota justo cuando menos CPU sobra.
+
+**Las duraciones son primas entre sí** (26 s y 34 s) para que las dos auroras
+no vuelvan a coincidir nunca y el movimiento no se perciba como un bucle.
+
+**La aurora se pinta aunque no haya foto.** Mientras el cliente no suba la
+portada de Cap Cana es lo único que separa el hero de un rectángulo azul
+plano — y con foto le añade profundidad de color.
+
+#### El defecto que costó encontrar 🔴
+
+`background-clip: text` solo deja ver el degradado si el relleno del texto es
+**transparente**. La primera versión ponía esa transparencia en la regla base,
+lo que significaba que el titular del hero —lo primero que lee un visitante—
+dependía de que el degradado se pintara.
+
+Peor: bajo `prefers-reduced-motion`, la animación se suprime, el evento
+`animationend` **nunca llega**, el JS no retira la clase y el título se queda
+invisible. Justamente para quien pidió *menos* movimiento.
+
+Se corrigió por dos vías:
+
+1. La transparencia vive solo dentro de `.is-shining`, que el JS quita al
+   terminar. Fuera de ese segundo y medio el título es texto opaco normal.
+2. El bloque de `prefers-reduced-motion` **devuelve el relleno opaco**, en vez
+   de limitarse a cancelar la animación. Así la garantía no depende del JS.
+
+Detectado midiendo en el navegador: `webkitTextFillColor` daba `rgba(0,0,0,0)`
+con la clase aún presente.
+
 ### 3.2 Home (`inicio_era_realty_rd`)
 
 | Efecto | Detalle |

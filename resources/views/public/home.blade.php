@@ -21,25 +21,49 @@
                 overflow-hidden px-margin-mobile md:px-gutter"
          style="height: 85vh">
 
+    {{-- Las cinco capas del fondo, de atrás hacia delante. El detalle de cada
+         una está en resources/css/motion.css, sección «Hero cinematográfico». --}}
     <div class="absolute inset-0 z-0 overflow-hidden bg-primary">
+
+        {{-- 1 · Foto: Ken Burns dentro, parallax fuera, cortina al cargar --}}
         @if ($hero?->imageUrl())
-            <div data-parallax="30"
-                 class="absolute -top-[7.5%] left-0 h-[115%] w-full">
+            <div data-parallax="30" data-hero-curtain
+                 class="hero-curtain absolute -top-[7.5%] left-0 h-[115%] w-full">
                 <div data-ken-burns
                      class="size-full bg-cover bg-center opacity-60"
                      style="background-image: url('{{ $hero->imageUrl() }}')"
                      role="img" aria-label="{{ $hero->title }}"></div>
             </div>
         @endif
+
+        {{-- 2 · Aurora. Se pinta SIEMPRE, haya foto o no: mientras no se suba
+             la portada es lo único que separa el hero de un rectángulo azul
+             plano, y con foto le añade profundidad de color. --}}
+        <div class="hero-aurora" aria-hidden="true"></div>
+
+        {{-- 3 · Grano de película --}}
+        <div class="hero-grain" aria-hidden="true"></div>
+
+        {{-- Degradado del diseño original: sostiene la legibilidad del texto --}}
         <div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent"></div>
+
+        {{-- 4 · Viñeta --}}
+        <div class="hero-vignette" aria-hidden="true"></div>
+
+        {{-- 5 · Foco del cursor (solo escritorio con puntero fino) --}}
+        <div class="hero-spotlight" data-hero-spotlight aria-hidden="true"></div>
     </div>
 
-    <div class="relative z-10 mx-auto flex w-full max-w-container-max flex-col items-center text-center">
-        {{-- La mascara por linea es lo que hace lucir a Playfair Display: el
-             titulo sube desde debajo de un borde recto en vez de aparecer. --}}
+    <div data-hero-content
+         class="relative z-10 mx-auto flex w-full max-w-container-max flex-col items-center text-center">
+
+        {{-- La máscara por línea es lo que hace lucir a Playfair Display: el
+             título sube desde debajo de un borde recto en vez de aparecer.
+             El brillo lo recorre una sola vez, 900 ms después. --}}
         <h1 class="line-mask mb-sm max-w-4xl" data-parallax="-15">
-            <span class="block font-display text-display-lg-mobile text-on-primary
-                         drop-shadow-lg md:text-display-lg">
+            <span data-hero-shine
+                  class="hero-shine block font-display text-display-lg-mobile
+                         text-on-primary drop-shadow-lg md:text-display-lg">
                 {{ $hero?->title ?: __('home.hero.title') }}
             </span>
         </h1>

@@ -136,9 +136,38 @@ function initStrokeDraw() {
     })
 }
 
+/**
+ * Disolucion del hero al salir de pantalla.
+ *
+ * El contenido central se aleja y se desvanece conforme se desciende, en vez
+ * de limitarse a desplazarse hacia arriba. Es lo que da la sensacion de que la
+ * pagina tiene profundidad y no es una tira de secciones apiladas.
+ *
+ * Termina en el 60 % del recorrido, no en el 100 %: si el texto siguiera
+ * visible al borde de desaparecer se leeria como un fallo de renderizado.
+ */
+function initHeroDissolve() {
+    const scene = document.querySelector('[data-parallax-scene]')
+    const content = scene?.querySelector('[data-hero-content]')
+    if (!content) return
+
+    gsap.to(content, {
+        opacity: 0,
+        scale: 0.94,
+        ease: 'none',
+        scrollTrigger: {
+            trigger: scene,
+            start: 'top top',
+            end: '60% top',
+            scrub: true,
+        },
+    })
+}
+
 export function initScrollMotion() {
     initSmoothScroll()
     initParallax()
+    initHeroDissolve()
     initBatchReveals()
     initStrokeDraw()
 

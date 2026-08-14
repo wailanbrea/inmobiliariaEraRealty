@@ -202,6 +202,84 @@ function initKenBurns() {
 }
 
 /* --------------------------------------------------------------------------
+   Hero cinematografico
+   -------------------------------------------------------------------------- */
+
+/**
+ * Revelado de cortina y brillo del titulo.
+ *
+ * Igual que el Ken Burns, arranca DESPUES de la carga. La imagen del hero es
+ * casi siempre el elemento LCP: recortarla con clip-path mientras el navegador
+ * la esta midiendo empeoraria justo la metrica que Google puntua.
+ */
+function initHeroEntrance() {
+    const curtain = document.querySelector('[data-hero-curtain]')
+    const shine = document.querySelector('[data-hero-shine]')
+
+    if (!curtain && !shine) return
+
+    const start = () => {
+        curtain?.classList.add('is-drawing')
+
+        if (shine) {
+            // La clase se quita al terminar. Mientras esta puesta, el relleno
+            // del texto es transparente para que se vea el degradado; dejarla
+            // para siempre significaria que el titulo depende de un degradado
+            // para ser legible. Un segundo y medio, y vuelve a ser texto.
+            shine.addEventListener('animationend', () => shine.classList.remove('is-shining'), { once: true })
+            shine.classList.add('is-shining')
+        }
+    }
+
+    if (document.readyState === 'complete') {
+        start()
+    } else {
+        window.addEventListener('load', start, { once: true })
+    }
+}
+
+/**
+ * Foco que sigue al cursor sobre el hero.
+ *
+ * Solo con puntero fino: en tactil no hay cursor al que seguir.
+ *
+ * Las coordenadas se escriben en variables CSS y se aplican dentro de un
+ * requestAnimationFrame. Sin ese acotado, un raton moviendose rapido dispara
+ * cientos de escrituras de estilo por segundo y el resto de la pagina lo nota.
+ */
+function initHeroSpotlight() {
+    const spot = document.querySelector('[data-hero-spotlight]')
+    if (!spot) return
+
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+
+    const scene = spot.closest('[data-parallax-scene]') || spot.parentElement
+    let pending = false
+    let x = 0
+    let y = 0
+
+    scene.addEventListener('mousemove', (event) => {
+        const box = scene.getBoundingClientRect()
+        x = ((event.clientX - box.left) / box.width) * 100
+        y = ((event.clientY - box.top) / box.height) * 100
+
+        if (pending) return
+        pending = true
+
+        requestAnimationFrame(() => {
+            spot.style.setProperty('--spot-x', `${x}%`)
+            spot.style.setProperty('--spot-y', `${y}%`)
+            spot.classList.add('is-lit')
+            pending = false
+        })
+    })
+
+    // Al salir se apaga en vez de congelarse: un resplandor parado en el
+    // borde donde el raton abandono el hero se lee como un defecto.
+    scene.addEventListener('mouseleave', () => spot.classList.remove('is-lit'))
+}
+
+/* --------------------------------------------------------------------------
    Cursor magnetico
    -------------------------------------------------------------------------- */
 
@@ -240,6 +318,8 @@ export function initMotion() {
     initCounters()
     initScrollChrome()
     initKenBurns()
+    initHeroEntrance()
+    initHeroSpotlight()
     initMagnetic()
 
     // Livewire reemplaza nodos del DOM al filtrar. Los que entren nuevos

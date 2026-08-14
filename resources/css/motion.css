@@ -60,6 +60,186 @@
   will-change: transform;
 }
 
+/* ============================================================================
+   HERO CINEMATOGRAFICO
+   ============================================================================
+   Cinco capas que trabajan juntas. El orden importa: cada una va encima de la
+   anterior y por debajo del texto.
+
+     1. Foto            — Ken Burns + parallax
+     2. Aurora          — resplandores de marca que derivan lentamente
+     3. Grano           — textura de pelicula, estatica
+     4. Vinneta         — oscurece los bordes y empuja la mirada al centro
+     5. Foco del cursor — solo en escritorio con puntero fino
+
+   Todo se anima con transform y opacity. Ni un filtro caro: las auroras son
+   radial-gradient sobre elementos que se mueven, no blobs desenfocados con
+   filter: blur(), que obligan a la GPU a repintar cada frame.
+
+   La aurora ademas resuelve un problema real: mientras no haya foto de
+   portada subida, el hero seria un rectangulo azul plano. Con ella se ve
+   deliberado.
+   ========================================================================== */
+
+/* --- 2. Aurora ------------------------------------------------------------ */
+.hero-aurora {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+
+.hero-aurora::before,
+.hero-aurora::after {
+  content: '';
+  position: absolute;
+  inline-size: 60%;
+  block-size: 60%;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+/* Turquesa del sistema, arriba a la izquierda. */
+.hero-aurora::before {
+  inset-block-start: 5%;
+  inset-inline-start: 0;
+  background: radial-gradient(
+    circle at center,
+    color-mix(in srgb, var(--color-secondary-fixed-dim) 55%, transparent) 0%,
+    transparent 68%
+  );
+  animation: aurora-drift-a 26s var(--ease-in-out-quart) infinite alternate;
+}
+
+/* Azul institucional, abajo a la derecha, en contrafase. */
+.hero-aurora::after {
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  background: radial-gradient(
+    circle at center,
+    color-mix(in srgb, var(--color-secondary) 50%, transparent) 0%,
+    transparent 70%
+  );
+  animation: aurora-drift-b 34s var(--ease-in-out-quart) infinite alternate;
+}
+
+/* Duraciones distintas y primas entre si (26 y 34 s) a proposito: asi las dos
+   auroras nunca vuelven a coincidir y el movimiento no se percibe como un
+   bucle. */
+@keyframes aurora-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(18%, 12%, 0) scale(1.25); }
+}
+
+@keyframes aurora-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.15); }
+  to   { transform: translate3d(-15%, -10%, 0) scale(1); }
+}
+
+/* --- 3. Grano de pelicula ------------------------------------------------- */
+/* SVG en linea como data URI: no es una peticion mas y no se puede quedar
+   sin cargar. Estatico a proposito — un grano animado parpadea y en una
+   pantalla grande cuesta mas de lo que aporta. */
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* --- 4. Vinneta ----------------------------------------------------------- */
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 42%,
+    color-mix(in srgb, var(--color-primary) 55%, transparent) 100%
+  );
+}
+
+/* --- 5. Foco del cursor --------------------------------------------------- */
+/* Las coordenadas las escribe motion.js en dos variables. Empiezan en el
+   centro para que, si el raton nunca entra, el foco quede donde ya mira el
+   ojo en vez de en una esquina. */
+.hero-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out-quart);
+  background: radial-gradient(
+    circle 420px at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgba(255, 255, 255, 0.13) 0%,
+    transparent 65%
+  );
+}
+
+.hero-spotlight.is-lit {
+  opacity: 1;
+}
+
+/* --- 1. Revelado de cortina al cargar ------------------------------------- */
+/* La foto se descubre de abajo arriba en vez de aparecer de golpe.
+   Se anima clip-path, que no fuerza layout.
+
+   La clase la pone el JS DESPUES de la carga: si se hiciera desde el CSS, la
+   imagen del hero —que casi siempre es el elemento LCP— empezaria recortada
+   y empeoraria la metrica que Google mide. */
+.hero-curtain {
+  clip-path: inset(0 0 0 0);
+}
+
+.hero-curtain.is-drawing {
+  animation: hero-curtain 1100ms var(--ease-out-expo) both;
+}
+
+@keyframes hero-curtain {
+  from { clip-path: inset(28% 0 0 0); opacity: 0; }
+  to   { clip-path: inset(0 0 0 0);   opacity: 1; }
+}
+
+/* --- Brillo que recorre el titulo ----------------------------------------- */
+/* Una sola pasada, no en bucle: un brillo que se repite cada pocos segundos
+   pasa de elegante a molesto en el primer minuto.
+
+   CUIDADO CON background-clip: text.
+   El degradado solo se ve si el relleno del texto es transparente. Poner esa
+   transparencia en la regla base dejaria el titulo INVISIBLE en cuanto algo
+   fallara —el navegador no admite la propiedad, el CSS no llega, el JS no
+   arranca—, y ese titulo es lo primero que lee un visitante.
+
+   Por eso la transparencia vive SOLO dentro de .is-shining, que pone el JS al
+   empezar y quita al terminar. Fuera de ese segundo y medio el texto es texto
+   normal y opaco. Misma regla que gobierna toda la capa: se sirve visible.
+
+   El degradado tampoco usa currentColor: con el relleno en transparente,
+   currentColor valdria transparente y el brillo no se veria. */
+.hero-shine.is-shining {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-on-primary) 0%,
+    var(--color-on-primary) 40%,
+    color-mix(in srgb, var(--color-on-primary) 45%, white) 50%,
+    var(--color-on-primary) 60%,
+    var(--color-on-primary) 100%
+  );
+  background-size: 250% 100%;
+  background-position: 150% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hero-shine 1600ms var(--ease-out-quart) 900ms both;
+}
+
+@keyframes hero-shine {
+  to { background-position: -50% 0; }
+}
+
 /* ----------------------------------------------------------------------------
    Barra de progreso de lectura
    -------------------------------------------------------------------------- */
@@ -171,8 +351,32 @@
   }
 
   .is-ken-burns,
-  .area-pulse {
+  .area-pulse,
+  .hero-aurora::before,
+  .hero-aurora::after,
+  .hero-curtain.is-drawing {
     animation: none !important;
+  }
+
+  /* El brillo del titulo se anula DEVOLVIENDO el relleno opaco, no solo
+     parando la animacion.
+     .is-shining pone el relleno en transparente para que se vea el degradado,
+     y la quita el JS al recibir 'animationend'. Si aqui solo se cancelara la
+     animacion, ese evento no llegaria nunca, la clase se quedaria puesta y el
+     titulo del hero seria invisible — a quien pidio MENOS movimiento.
+     Detectado midiendo en el navegador: webkitTextFillColor daba
+     rgba(0,0,0,0) con la clase aun presente. */
+  .hero-shine.is-shining {
+    animation: none !important;
+    background-image: none !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+
+  /* La aurora, el grano y la vinneta se QUEDAN: son textura, no movimiento.
+     Quitarlas dejaria el hero peor a quien pidio menos animacion, que no es
+     lo que esa preferencia significa. Lo que se detiene es la deriva. */
+  .hero-spotlight {
+    display: none;
   }
 
   .scroll-progress {

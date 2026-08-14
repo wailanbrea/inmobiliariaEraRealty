@@ -102,6 +102,60 @@ it('el hero declara sus capas de parallax y el Ken Burns', function () {
         ->and($profundidades)->toContain('30');
 });
 
+it('el hero monta sus cinco capas', function () {
+    // La cortina envuelve a la foto, así que solo existe si hay portada.
+    ContentSection::where('page_key', 'home')->where('section_key', 'hero')
+        ->update(['image' => 'content/hero.webp']);
+    ContentSection::flushCache();
+
+    $html = $this->get('/')->getContent();
+
+    foreach (['hero-curtain', 'hero-aurora', 'hero-grain', 'hero-vignette', 'hero-spotlight'] as $capa) {
+        expect($html)->toContain($capa);
+    }
+});
+
+it('las capas decorativas del hero se ocultan al lector de pantalla', function () {
+    // Aurora, grano, viñeta y foco no aportan información: anunciarlas solo
+    // añade ruido a quien navega con NVDA.
+    $html = $this->get('/')->getContent();
+
+    preg_match_all('/<div class="hero-(aurora|grain|vignette|spotlight)"[^>]*>/', $html, $capas);
+
+    expect($capas[0])->toHaveCount(4);
+
+    foreach ($capas[0] as $capa) {
+        expect($capa)->toContain('aria-hidden="true"');
+    }
+});
+
+it('la aurora se pinta aunque no haya foto de portada', function () {
+    // Es lo único que separa el hero de un rectángulo azul plano mientras el
+    // cliente no suba la imagen.
+    ContentSection::where('page_key', 'home')->where('section_key', 'hero')
+        ->update(['image' => null]);
+    ContentSection::flushCache();
+
+    $html = $this->get('/')->getContent();
+
+    expect($html)->toContain('hero-aurora')
+        ->and($html)->not->toContain('data-ken-burns');
+});
+
+it('el titulo del hero se sirve opaco, sin depender del degradado', function () {
+    // .is-shining pone el relleno transparente para que se vea el brillo, y
+    // la quita el JS al terminar. Servirla de fábrica dejaría el título
+    // invisible en cuanto algo fallara.
+    $html = $this->get('/')->getContent();
+
+    preg_match('/<span data-hero-shine[^>]*>/', $html, $span);
+
+    expect($span)->not->toBeEmpty()
+        ->and($span[0])->toContain('text-on-primary')
+        ->and($span[0])->not->toContain('is-shining')
+        ->and($span[0])->not->toContain('text-transparent');
+});
+
 it('sin foto de portada no se pinta la capa de fondo ni el Ken Burns', function () {
     ContentSection::where('page_key', 'home')->where('section_key', 'hero')
         ->update(['image' => null]);
