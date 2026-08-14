@@ -29,7 +29,7 @@
 
     {{-- Las cinco capas del fondo, de atrás hacia delante. El detalle de cada
          una está en resources/css/motion.css, sección «Hero cinematográfico». --}}
-    <div class="absolute inset-0 z-0 overflow-hidden bg-primary">
+    <div class="absolute inset-0 z-0 overflow-hidden bg-black">
 
         {{-- 1 · Foto: Ken Burns dentro, parallax fuera, cortina al cargar --}}
         @if ($hero?->imageUrl())
@@ -40,16 +40,15 @@
             <div data-parallax="30" data-hero-curtain
                  class="hero-curtain absolute -top-[7.5%] left-0 h-[115%] w-full">
                 <div data-ken-burns
-                     class="size-full bg-cover bg-center opacity-[0.92]"
+                     class="size-full bg-cover bg-center"
                      style="background-image: url('{{ $hero->imageUrl() }}')"
                      role="img" aria-label="{{ $hero->title }}"></div>
             </div>
         @endif
 
-        {{-- 2 · Aurora. Se pinta SIEMPRE, haya foto o no: mientras no se suba
-             la portada es lo único que separa el hero de un rectángulo azul
-             plano, y con foto le añade profundidad de color. --}}
-        <div class="hero-aurora" aria-hidden="true"></div>
+        {{-- 2 · Aurora. Queda solo como fallback si no hay portada; con foto se
+             apaga para no teñir la imagen con el color de marca. --}}
+        <div @class(['hero-aurora', 'hero-aurora--on-image' => $hero?->imageUrl()]) aria-hidden="true"></div>
 
         {{-- 3 · Grano de película --}}
         <div class="hero-grain" aria-hidden="true"></div>
@@ -58,7 +57,7 @@
         <div class="hero-scrim" aria-hidden="true"></div>
 
         {{-- Degradado del diseño original: asienta el hero sobre lo que sigue --}}
-        <div class="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-primary/25"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/5"></div>
 
         {{-- 3.c · Barrido de luz: la animación que mantiene vivo el hero en
              cualquier momento, no solo al cargar --}}

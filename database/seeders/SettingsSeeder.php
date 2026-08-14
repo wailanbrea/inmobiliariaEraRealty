@@ -32,8 +32,8 @@ class SettingsSeeder extends Seeder
                 'es' => 'Bienes raíces en República Dominicana',
                 'en' => 'Real estate in the Dominican Republic',
             ]],
-            ['site_logo', 'image', 'general', true, false, false, null],
-            ['site_logo_dark', 'image', 'general', true, false, false, null],
+            ['site_logo', 'image', 'general', true, false, false, 'brand/era-mv-realty-logo-clean.webp'],
+            ['site_logo_dark', 'image', 'general', true, false, false, 'brand/era-mv-realty-logo-light-clean.webp'],
             ['site_favicon', 'image', 'general', true, false, false, null],
 
             // ---------------- Contacto ----------------

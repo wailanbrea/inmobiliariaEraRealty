@@ -17,57 +17,57 @@
    ========================================================================== */
 @theme {
   /* --- Superficies --- */
-  --color-surface:                    #f7f9fb;
-  --color-surface-dim:                #d8dadc;
-  --color-surface-bright:             #f7f9fb;
+  --color-surface:                    #f8fafa;
+  --color-surface-dim:                #d8dcdd;
+  --color-surface-bright:             #ffffff;
   --color-surface-container-lowest:   #ffffff;
-  --color-surface-container-low:      #f2f4f6;
-  --color-surface-container:          #eceef0;
-  --color-surface-container-high:     #e6e8ea;
-  --color-surface-container-highest:  #e0e3e5;
-  --color-surface-variant:            #e0e3e5;
-  --color-surface-tint:               #565e74;
-  --color-on-surface:                 #191c1e;
-  --color-on-surface-variant:         #45464d;
-  --color-inverse-surface:            #2d3133;
-  --color-inverse-on-surface:         #eff1f3;
-  --color-background:                 #f7f9fb;
-  --color-on-background:              #191c1e;
+  --color-surface-container-low:      #f1f4f4;
+  --color-surface-container:          #e8eded;
+  --color-surface-container-high:     #dfe5e5;
+  --color-surface-container-highest:  #d5dddd;
+  --color-surface-variant:            #dfe5e5;
+  --color-surface-tint:               #334062;
+  --color-on-surface:                 #171b20;
+  --color-on-surface-variant:         #5a5d62;
+  --color-inverse-surface:            #121413;
+  --color-inverse-on-surface:         #f8fafa;
+  --color-background:                 #f8fafa;
+  --color-on-background:              #171b20;
 
   /* --- Contornos --- */
-  --color-outline:                    #76777d;
-  --color-outline-variant:            #c6c6cd;
+  --color-outline:                    #6f7072;
+  --color-outline-variant:            #c8ced0;
 
-  /* --- Primary (navy de marca) --- */
-  --color-primary:                    #000000;
+  /* --- Primary (navy de marca, tomado del logo ERA MV Realty) --- */
+  --color-primary:                    #334062;
   --color-on-primary:                 #ffffff;
-  --color-primary-container:          #131b2e;
-  --color-on-primary-container:       #7c839b;
-  --color-inverse-primary:            #bec6e0;
-  --color-primary-fixed:              #dae2fd;
-  --color-primary-fixed-dim:          #bec6e0;
-  --color-on-primary-fixed:           #131b2e;
-  --color-on-primary-fixed-variant:   #3f465c;
+  --color-primary-container:          #26324f;
+  --color-on-primary-container:       #e6ebf7;
+  --color-inverse-primary:            #c2cbe0;
+  --color-primary-fixed:              #dce4f5;
+  --color-primary-fixed-dim:          #b7c2dc;
+  --color-on-primary-fixed:           #111a31;
+  --color-on-primary-fixed-variant:   #334062;
 
-  /* --- Secondary (azul interactivo: enlaces y foco) --- */
-  --color-secondary:                  #0058be;
+  /* --- Secondary (teal de marca: acentos, enlaces y foco) --- */
+  --color-secondary:                  #117f95;
   --color-on-secondary:               #ffffff;
-  --color-secondary-container:        #2170e4;
-  --color-on-secondary-container:     #fefcff;
-  --color-secondary-fixed:            #d8e2ff;
-  --color-secondary-fixed-dim:        #adc6ff;
-  --color-on-secondary-fixed:         #001a42;
-  --color-on-secondary-fixed-variant: #004395;
+  --color-secondary-container:        #1692aa;
+  --color-on-secondary-container:     #ffffff;
+  --color-secondary-fixed:            #d9f3f7;
+  --color-secondary-fixed-dim:        #9edce5;
+  --color-on-secondary-fixed:         #07343d;
+  --color-on-secondary-fixed-variant: #0d6577;
 
-  /* --- Tertiary (verde: disponible / confirmacion) --- */
-  --color-tertiary:                   #000000;
+  /* --- Tertiary (confirmacion suave basada en el teal de marca) --- */
+  --color-tertiary:                   #1692aa;
   --color-on-tertiary:                #ffffff;
-  --color-tertiary-container:         #002113;
-  --color-on-tertiary-container:      #009668;
-  --color-tertiary-fixed:             #6ffbbe;
-  --color-tertiary-fixed-dim:         #4edea3;
-  --color-on-tertiary-fixed:          #002113;
-  --color-on-tertiary-fixed-variant:  #005236;
+  --color-tertiary-container:         #0d6577;
+  --color-on-tertiary-container:      #ffffff;
+  --color-tertiary-fixed:             #d9f3f7;
+  --color-tertiary-fixed-dim:         #9edce5;
+  --color-on-tertiary-fixed:          #07343d;
+  --color-on-tertiary-fixed-variant:  #0d6577;
 
   /* --- Error (vendido) --- */
   --color-error:                      #ba1a1a;
@@ -169,9 +169,9 @@
   /* --- Sombras ambientales ---
      El #0f172a de la prosa de DESIGN.md vive aqui: es donde las maquetas
      lo aplican realmente. */
-  --shadow-ambient:       0 4px 20px rgba(15, 23, 42, 0.04);
-  --shadow-ambient-hover: 0 8px 24px rgba(15, 23, 42, 0.08);
-  --shadow-ambient-lg:    0 12px 32px rgba(15, 23, 42, 0.10);
+  --shadow-ambient:       0 4px 20px rgba(51, 64, 98, 0.05);
+  --shadow-ambient-hover: 0 8px 24px rgba(51, 64, 98, 0.10);
+  --shadow-ambient-lg:    0 12px 32px rgba(51, 64, 98, 0.12);
 
   /* --- Contenedor --- */
   --container-container-max: 1280px;
@@ -209,17 +209,17 @@
    referencian desde un style="" inline y el escaner de Tailwind no lo lee.
    ========================================================================== */
 @theme static {
-  --color-chart-views:    #d97706;
+  --color-chart-views:    #6f7072;
   --color-chart-whatsapp: #25d366;
-  --color-chart-leads:    #0058be;
+  --color-chart-leads:    #117f95;
 }
 
 @theme static {
-  --color-status-available:   #009668;
+  --color-status-available:   #117f95;
   --color-status-sold:        #ba1a1a;
-  --color-status-reserved:    #d97706;
-  --color-status-rented:      #0058be;
-  --color-status-unavailable: #76777d;
+  --color-status-reserved:    #6f7072;
+  --color-status-rented:      #334062;
+  --color-status-unavailable: #6f7072;
 }
 
 /* ============================================================================

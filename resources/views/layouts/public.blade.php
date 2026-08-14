@@ -188,10 +188,15 @@
                 py-xl md:grid-cols-4 md:px-gutter">
 
         <div>
-            <div class="mb-sm flex items-center gap-xs text-headline-md-mobile text-on-secondary-container">
-                <span class="material-symbols-outlined text-[32px]">real_estate_agent</span>
-                {{ setting('site_name') }}
-            </div>
+            @if (setting('site_logo_dark'))
+                <img src="{{ Storage::url(setting('site_logo_dark')) }}"
+                     alt="{{ setting('site_name') }}" class="mb-sm h-12 w-auto">
+            @else
+                <div class="mb-sm flex items-center gap-xs text-headline-md-mobile text-on-secondary-container">
+                    <span class="material-symbols-outlined text-[32px]">real_estate_agent</span>
+                    {{ setting('site_name') }}
+                </div>
+            @endif
             <p class="mb-md max-w-xs text-body-md text-on-primary-container/80">
                 {{ setting('footer_text') }}
             </p>

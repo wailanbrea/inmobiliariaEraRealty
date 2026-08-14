@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Crypt;
  */
 class SettingsService
 {
-    private const CACHE_KEY = 'settings.all';
+    private const CACHE_KEY = 'settings.all.v5';
 
     /** @var Collection<string, Setting>|null */
     private ?Collection $loaded = null;
