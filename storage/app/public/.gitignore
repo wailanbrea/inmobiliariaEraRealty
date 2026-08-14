@@ -1,2 +1,7 @@
+# Laravel ignora por defecto TODO lo que hay aqui. Se abre una excepcion para
+# las fotos del catalogo de demostracion, que si se versionan: ver la nota en
+# el .gitignore de la raiz.
 *
 !.gitignore
+!properties/
+!properties/**

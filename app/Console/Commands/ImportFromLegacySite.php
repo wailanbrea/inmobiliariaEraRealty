@@ -11,6 +11,7 @@ use App\Modules\Properties\Services\PropertyService;
 use App\Modules\PropertyImages\Models\PropertyImage;
 use App\Modules\PropertyTypes\Models\PropertyType;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -218,13 +219,28 @@ class ImportFromLegacySite extends Command
         // Se piden mas de las que se necesitan porque muchas se descartan:
         // vendidas, rentadas o sin el patron de referencia.
         while (count($todas) < $limite * 4 && $pagina <= 5) {
-            $respuesta = Http::timeout(45)
-                ->withHeaders(['User-Agent' => 'ERA Realty RD importer'])
-                ->get(self::ORIGEN.'/wp-json/wp/v2/properties', [
-                    'per_page' => 50,
-                    'page' => $pagina,
-                    'status' => 'publish',
-                ]);
+            try {
+                // Reintentos con espera: el servidor de origen corta la
+                // conexion cuando se le piden varias paginas seguidas.
+                $respuesta = Http::timeout(45)
+                    ->retry(3, 2000, throw: false)
+                    ->withHeaders(['User-Agent' => 'ERA Realty RD importer'])
+                    ->get(self::ORIGEN.'/wp-json/wp/v2/properties', [
+                        'per_page' => 50,
+                        'page' => $pagina,
+                        'status' => 'publish',
+                    ]);
+            } catch (\Throwable $e) {
+                // UNA pagina caida no puede tumbar la importacion entera.
+                //
+                // Paso: el catalogo tiene 122 fichas y el servidor reseteo la
+                // conexion en la pagina 3. Sin esto, la excepcion subia hasta
+                // el comando y se perdian las 100 fichas ya descargadas —y el
+                // trabajo de las que ya se habian guardado.
+                $this->warn('  Página '.$pagina.' no respondió ('.Str::limit($e->getMessage(), 50).').');
+                $this->comment('  Se continúa con las '.count($todas).' fichas ya leídas.');
+                break;
+            }
 
             if ($respuesta->failed()) {
                 break;
@@ -238,6 +254,9 @@ class ImportFromLegacySite extends Command
 
             $todas = array_merge($todas, $lote);
             $pagina++;
+
+            // Pausa entre paginas, por la misma razon que entre fichas.
+            usleep(700_000);
         }
 
         return $todas;
@@ -302,8 +321,112 @@ class ImportFromLegacySite extends Command
             'currency' => $moneda,
             'construction_area' => $this->leerMetros($texto, 'Construcci[oó]n'),
             'land_area' => $this->leerMetros($texto, 'Solar|Terreno'),
+
+            // Un solar no tiene habitaciones ni banos por mucho que el texto
+            // mencione «bano de servicio» del proyecto vecino.
+            'bedrooms' => $this->esResidencial($tipoSlug) ? $this->leerHabitaciones($titulo, $texto) : null,
+            'bathrooms' => $this->esResidencial($tipoSlug) ? $this->leerBanos($titulo, $texto) : null,
+            'parking_spaces' => $this->esResidencial($tipoSlug) ? $this->leerParqueos($texto) : null,
+
+            // FECHA REAL DE PUBLICACION, no la de la importacion.
+            //
+            // Con now() las 25 propiedades quedaban con el mismo instante y el
+            // listado «mas recientes» acababa ordenando por id, o sea por el
+            // orden en que las descargo el importador. La fecha del sitio
+            // anterior es la unica que significa «cuando se anadio».
+            'published_at' => isset($ficha['date'])
+                ? Carbon::parse($ficha['date'])
+                : now(),
+
             'link' => $ficha['link'] ?? null,
         ];
+    }
+
+    private function esResidencial(string $tipoSlug): bool
+    {
+        return in_array($tipoSlug, ['villa', 'apartamento', 'casa', 'penthouse'], true);
+    }
+
+    /**
+     * Habitaciones: primero en el TITULO, que es donde el dato aparece limpio
+     * («Apartamentos nuevos 1 Habitación», «Apartamento 2 habitaciones»).
+     *
+     * En el cuerpo el texto describe la casa habitacion por habitacion —«Dos
+     * habitaciones con bano y terraza», «Habitacion principal con jacuzzi»— y
+     * contar ahi da cifras que no son el total. Solo se recurre al cuerpo
+     * cuando el titulo no dice nada, y se toma el mayor numero mencionado.
+     */
+    private function leerHabitaciones(string $titulo, string $texto): ?int
+    {
+        foreach ([$titulo, $texto] as $fuente) {
+            if (preg_match_all('/(\d{1,2})\s*(?:hab|habitacion|habitaciones|habs?|dormitorios?)\b/iu', $fuente, $m)) {
+                $valores = array_map('intval', $m[1]);
+                $mayor = max($valores);
+
+                if ($mayor >= 1 && $mayor <= 12) {
+                    return $mayor;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Banos, SOLO cuando la ficha da una cifra explicita.
+     *
+     * El sitio anterior casi nunca da el total: describe la casa habitacion
+     * por habitacion —«Baño de visita», «Habitación principal con baño»,
+     * «2 habitaciones secundarias con baño», «Medio baño en área social»—.
+     * Contar esas menciones parece facil y da numeros equivocados: en una
+     * ficha real el recuento sale 5 cuando la respuesta es 4,5.
+     *
+     * Publicar un numero de banos inventado en una inmobiliaria es peor que
+     * no publicarlo: el cliente lo lee, va a ver la casa y encuentra otra
+     * cosa. Asi que solo se aceptan dos formas inequivocas:
+     *
+     *     «2.5 baños»        el numero delante
+     *     «Baños 1.5 y 2.5»  el numero detras (se toma el primero)
+     *
+     * El resto se deja vacio y lo rellena quien conoce la propiedad.
+     */
+    private function leerBanos(string $titulo, string $texto): ?float
+    {
+        $patrones = [
+            '/(\d{1,2}(?:[.,]\d)?)\s*ba[ñn]os?\b/iu',
+            '/\bba[ñn]os?\s*:?\s*(\d{1,2}(?:[.,]\d)?)/iu',
+        ];
+
+        foreach ([$titulo, $texto] as $fuente) {
+            foreach ($patrones as $patron) {
+                if (! preg_match_all($patron, $fuente, $m)) {
+                    continue;
+                }
+
+                $valores = array_filter(
+                    array_map(fn ($v) => (float) str_replace(',', '.', $v), $m[1]),
+                    fn ($v) => $v >= 0.5 && $v <= 12
+                );
+
+                if ($valores !== []) {
+                    return max($valores);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function leerParqueos(string $texto): ?int
+    {
+        if (preg_match('/(?:marquesina|parqueos?|estacionamientos?)[^.\n]{0,30}?(\d{1,2})\s*(?:veh|carro|auto|parqueo)/iu', $texto, $m)
+            || preg_match('/(\d{1,2})\s*(?:parqueos?|estacionamientos?)\b/iu', $texto, $m)) {
+            $n = (int) $m[1];
+
+            return $n >= 1 && $n <= 12 ? $n : null;
+        }
+
+        return null;
     }
 
     /**
@@ -405,7 +528,10 @@ class ImportFromLegacySite extends Command
             'address' => $datos['ubicacion'],
             'construction_area' => $datos['construction_area'],
             'land_area' => $datos['land_area'],
-            'published_at' => now(),
+            'bedrooms' => $datos['bedrooms'],
+            'bathrooms' => $datos['bathrooms'],
+            'parking_spaces' => $datos['parking_spaces'],
+            'published_at' => $datos['published_at'],
         ];
 
         $property = $existente
@@ -475,6 +601,18 @@ class ImportFromLegacySite extends Command
 
         if ($urls === []) {
             return 0;
+        }
+
+        // Se borran los FICHEROS ademas de las filas.
+        //
+        // Con solo ->delete() las fotos viejas se quedaban en disco: cada
+        // `--force` genera nombres aleatorios nuevos, asi que tras tres pasadas
+        // habia 1.477 ficheros para 488 referenciados. Casi 1.000 huerfanos
+        // que nadie iba a echar de menos hasta llenar el disco.
+        foreach ($property->images as $vieja) {
+            foreach ($vieja->allPaths() as $ruta) {
+                Storage::disk('public')->delete($ruta);
+            }
         }
 
         $property->images()->delete();

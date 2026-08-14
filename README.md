@@ -1,59 +1,308 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ERA Realty RD
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sitio web inmobiliario y panel de administración para **ERA Realty RD**
+(República Dominicana). Bilingüe español/inglés, doble moneda USD/DOP,
+100 % responsive y con una capa de efectos construida sobre el diseño
+`estate_elite`.
 
-## About Laravel
+Sustituye al sitio anterior en WordPress (`erarealtyrd.com`), del que se
+importa el catálogo con un comando incluido.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 1. Qué hay dentro
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| | |
+|---|---|
+| **Framework** | Laravel 12 · PHP 8.2 · MariaDB 11.4 |
+| **Frontend** | Blade + Livewire 3 + Alpine · Tailwind CSS 4 |
+| **Efectos** | GSAP + Lenis, cargados solo cuando aportan (ver §7) |
+| **Pruebas** | Pest 3 — **619 pruebas, 1 330 aserciones** |
+| **Idiomas** | Español (sin prefijo) e inglés (`/en`), con URL traducidas |
 
-## Learning Laravel
+### Sitio público
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Inicio · Propiedades con 18 filtros · Ficha de propiedad con galería y
+lightbox · Comparador de hasta 4 · Invierte · Sobre nosotros · Noticias ·
+Contáctanos · Publica tu propiedad.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Panel `/admin`
 
-## Laravel Sponsors
+Dashboard con métricas · Propiedades · Imágenes · Media · Noticias · Leads ·
+Agentes · Catálogo · Contenido editable · WhatsApp · Reportes · Auditoría ·
+Usuarios · Configuración.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 2. Instalación local
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Requiere PHP 8.2+, Composer, Node 20+ y MySQL/MariaDB.
 
-## Contributing
+```bash
+git clone https://github.com/wailanbrea/inmobiliariaEraRealty.git
+cd inmobiliariaEraRealty
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Crea la base de datos y ajusta `.env`:
 
-## Code of Conduct
+```
+DB_DATABASE=era_realty
+DB_USERNAME=root
+DB_PASSWORD=
+APP_URL=http://localhost:8000
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Luego:
 
-## Security Vulnerabilities
+```bash
+php artisan migrate --seed
+php artisan storage:link
+npm run build
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Abre **http://localhost:8000**.
 
-## License
+### Acceso al panel
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+`migrate --seed` crea un super administrador y **muestra su contraseña en la
+consola**:
+
+```
+Usuario administrador creado
+  Correo:     admin@erarealtyrd.com
+  Contrasena: k7Qm2xR9vT4nB8sL
+```
+
+| | |
+|---|---|
+| URL | http://localhost:8000/admin/login |
+| Correo | `admin@erarealtyrd.com` (o `ADMIN_EMAIL` del `.env`) |
+| Contraseña | La que imprime el seeder — **aleatoria en cada instalación** |
+
+Se pide cambiarla en el primer acceso.
+
+> Este README no publica ninguna contraseña a propósito: el repositorio es
+> público, y una credencial escrita aquí acabaría en producción tarde o
+> temprano.
+
+Si pierdes la contraseña o el seeder ya corrió:
+
+```bash
+php artisan admin:password admin@erarealtyrd.com
+```
+
+Genera una nueva, la muestra en pantalla y obliga a cambiarla al entrar.
+`--list` enseña los usuarios existentes y `--promote` da el rol de super
+administrador.
+
+**El panel no necesita correo configurado.** Un super administrador puede
+crear cuentas y restablecer contraseñas desde `/admin/usuarios`; la clave se
+genera y se muestra una sola vez. Ver §6.
+
+---
+
+## 3. Importar el catálogo del sitio anterior
+
+```bash
+php artisan era:import --dry-run          # simula, no escribe nada
+php artisan era:import --limit=45         # importa de verdad
+php artisan era:import --force            # reimporta las existentes
+```
+
+Lee la API REST de WordPress de `erarealtyrd.com`, interpreta las fichas y
+descarga la galería, convirtiéndola a WebP.
+
+**Qué importa y qué no.** El sitio anterior tiene los campos estructurados
+—«No. Habitaciones», «Baños»— **vacíos en las 122 fichas**; los datos van en
+texto libre. Se importa lo que se lee con certeza (título, descripción,
+referencia, ubicación, precio, moneda, operación, tipo, fecha) y se deja en
+blanco lo demás, en vez de inventarlo. El tipo sale del sufijo de la
+referencia: `735-V` villa, `733-A` apartamento, `727-S` solar.
+
+Al terminar, el comando enumera lo que necesita una decisión humana:
+
+- **Referencias repetidas en origen.** `719-A` está en dos fichas distintas.
+  Se importan ambas y a la segunda se le añade el id de WordPress.
+- **Precios por m².** Quince fichas dicen «US$55.00 x m²». Guardar 55 como
+  precio de un terreno de 30 491 m² publicaría una propiedad de casi dos
+  millones a 55 dólares, así que quedan sin precio y el dato literal va al
+  principio de la descripción.
+
+---
+
+## 4. Despliegue
+
+### 4.1 Requisitos del servidor
+
+| | |
+|---|---|
+| PHP | 8.2 o superior, con `gd`, `curl`, `openssl`, `mbstring`, `pdo_mysql`, `zip` |
+| Base de datos | MySQL 8 / MariaDB 10.6+ |
+| Servidor web | Apache o Nginx apuntando a `public/` |
+| Cron | Una línea, para las tareas programadas |
+
+### 4.2 Pasos
+
+```bash
+composer install --no-dev --optimize-autoloader
+npm ci && npm run build
+php artisan migrate --force
+php artisan storage:link
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+Cron del servidor:
+
+```
+* * * * * cd /ruta/al/proyecto && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Ejecuta semanalmente la poda del registro de auditoría y mensualmente la
+revisión de la biblioteca de medios.
+
+### 4.3 `.env` de producción
+
+```
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://erarealtyrd.com
+```
+
+`APP_DEBUG=false` **no es opcional**: con `true`, cualquier error muestra el
+código fuente y las variables de entorno al visitante.
+
+### 4.4 opcache: mide donde toca
+
+| Cómo se sirve | TTFB del listado |
+|---|--:|
+| `php artisan serve` | **420 ms** |
+| Apache + opcache | **51 ms** |
+
+La diferencia no es Apache: es **opcache**, que viene apagado en el SAPI de
+consola (`opcache.enable_cli=0`). Sin él, PHP recompila ~900 archivos en cada
+petición.
+
+**Nunca juzgues el rendimiento con `artisan serve`.** Comprueba en producción:
+
+```php
+opcache_get_status(false)['opcache_enabled']
+```
+
+### 4.5 Certificados TLS en Windows/XAMPP
+
+Si `era:import` o el envío de correo fallan con *«unable to get local issuer
+certificate»*, a `php.ini` le falta el paquete de certificados raíz:
+
+```ini
+curl.cainfo = "C:\xampp\php\extras\cacert.pem"
+openssl.cafile = "C:\xampp\php\extras\cacert.pem"
+```
+
+Sirve el que trae Git for Windows
+(`C:\Program Files\Git\mingw64\etc\ssl\certs\ca-bundle.crt`). **No desactives
+la verificación** como atajo.
+
+---
+
+## 5. Correo
+
+El sitio envía tres correos: aviso interno de lead, confirmación al interesado
+y recuperación de contraseña. **Ninguno es imprescindible** — el panel
+funciona sin correo (§6) y las respuestas a clientes salen del buzón o el
+WhatsApp del asesor.
+
+Tres formas de configurarlo, de mejor a peor entregabilidad:
+
+1. **API HTTP** (`resend`, `postmark`, `ses`). Ya están en `config/mail.php`;
+   solo falta el paquete y una clave. Sin SMTP de por medio.
+2. **SMTP** con las credenciales del hosting.
+3. **`sendmail`**, sin configuración. Sin SPF/DKIM, muchos correos caen en
+   spam.
+
+Se configura desde `/admin/configuracion/correo`, con envío de prueba
+incluido. La contraseña se guarda cifrada y **nunca aparece en la auditoría**.
+
+---
+
+## 6. Acceso sin depender del correo
+
+Tres capas, pensadas para que nadie se quede fuera del panel:
+
+1. **`/admin/usuarios`** — un super administrador crea cuentas y restablece
+   contraseñas. La clave se genera en formato `XXXX-XXXX-XXXX-XXXX`, sin
+   caracteres que se confundan al dictarla por teléfono, y se muestra una
+   sola vez.
+2. **Segundo super administrador.** No cuesta nada y cubre el caso realista.
+3. **`php artisan admin:password`** — la última red, con acceso al servidor.
+   Acepta `--list` y `--promote`.
+
+Reglas que el sistema impone y no se pueden saltar desde la interfaz:
+
+- Nadie puede quitarse a sí mismo el rol de super administrador.
+- Nadie puede desactivar su propia cuenta.
+- **El último super administrador activo es intocable.**
+
+---
+
+## 7. Rendimiento
+
+Medido sobre datos reales (45 propiedades, ~250 fotos):
+
+| Pantalla | TTFB | Consultas | HTML |
+|---|--:|--:|--:|
+| Listado | 51 ms | 11 | 94 KB |
+| Detalle con galería | 42 ms | 14 | 53 KB |
+| Sitemap (26 URL) | 23 ms | — | 25 KB |
+
+Navegador, listado completo: FCP 608 ms · carga 753 ms · **CLS 0,0000** ·
+723 KB, de los cuales 401 KB son imágenes.
+
+**El móvil no paga la capa de efectos.** GSAP solo hace falta para el
+parallax, y el presupuesto lo prohíbe por debajo de 768 px:
+
+| Módulo | Comprimido | Cuándo se descarga |
+|---|--:|---|
+| `motion.js` + `compare.js` | **2,3 KB** | Siempre |
+| `motion-scroll.js` (GSAP + Lenis) | 50,7 KB | **Solo ≥ 768 px** |
+
+Todo respeta `prefers-reduced-motion`: si el sistema operativo tiene las
+animaciones desactivadas, la capa entera no se descarga.
+
+---
+
+## 8. Documentación
+
+En [`docs/`](docs/) hay dieciséis documentos con las decisiones y su porqué:
+
+| | |
+|---|---|
+| [`01_ARCHITECTURE`](docs/01_ARCHITECTURE.md) | Estructura modular y mapa de rutas |
+| [`02_DATABASE_SCHEMA`](docs/02_DATABASE_SCHEMA.md) | Tablas e índices |
+| [`09_DEPLOYMENT`](docs/09_DEPLOYMENT.md) | Despliegue y respaldos |
+| [`11_CHANGELOG`](docs/11_CHANGELOG.md) | Historial de versiones |
+| [`13_MOTION_AND_EFFECTS`](docs/13_MOTION_AND_EFFECTS.md) | Capa de efectos |
+| [`14_RESPONSIVE`](docs/14_RESPONSIVE.md) | Método de verificación y defectos |
+| [`15_I18N`](docs/15_I18N.md) | Estrategia bilingüe |
+
+---
+
+## 9. Pruebas
+
+```bash
+php artisan test
+```
+
+619 pruebas. Vigilan, entre otras cosas, que:
+
+- Ninguna credencial llegue al registro de auditoría.
+- Borrar un asesor **no** borre sus propiedades.
+- El lead se guarde **antes** de intentar el correo.
+- El contenido sea legible **sin JavaScript**.
+- El listado no lance una consulta por tarjeta.

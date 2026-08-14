@@ -29,14 +29,22 @@ Homestead.yaml
 Thumbs.db
 
 # --- ERA Realty ---
-# Los archivos que suben los administradores no se versionan;
-# se respaldan aparte (ver docs/09_DEPLOYMENT.md seccion 5).
-/storage/app/public/properties/*
+# Lo que suben los administradores en produccion NO se versiona; se respalda
+# aparte (docs/09_DEPLOYMENT.md seccion 5).
 /storage/app/public/news/*
 /storage/app/public/agents/*
 /storage/app/public/settings/*
 /storage/app/public/media/*
 !/storage/app/public/*/.gitkeep
+
+# EXCEPCION: las fotos del catalogo de demostracion SI se versionan.
+#
+# Son las que importa `era:import` del sitio anterior, y van con
+# database/data/properties.json para que quien clone el repositorio tenga un
+# catalogo real sin depender de que erarealtyrd.com siga en pie.
+#
+# Pesan unos 49 MB. Si algun dia molestan, se quitan de aqui y se regeneran
+# con `php artisan era:import --force`.
 
 # Respaldos locales de configuracion de PHP/Apache
 *.bak-*
