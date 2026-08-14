@@ -5,6 +5,75 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.8.0] — 2026-08-14 — Cierre de la Fase 4 y fases 5, 6 y 7
+
+Entrega grande: se completan las páginas públicas que quedaban y entran los
+tres módulos que convierten el sitio en un negocio — captación, contenidos y
+equipo.
+
+### Añadido
+
+**Páginas públicas restantes de la Fase 4**
+
+- **Comparador** (`/comparar`, `/en/compare`) con tabla de scroll interno,
+  columna de etiquetas sticky y filtro «solo diferencias»
+- **Invierte** (`/invierte`) con motivos, línea temporal del proceso y
+  formulario de inversión
+- **Sobre nosotros** (`/sobre-nosotros`) con valores, equipo e iniciales
+  cuando el asesor no tiene foto
+- **Contáctanos** (`/contactanos`) y **Publica tu propiedad**
+  (`/publica-tu-propiedad`)
+- Marcadores de posición para `/privacidad` y `/terminos` — a la espera de los
+  textos legales reales
+
+**Fase 5 — Leads y WhatsApp**
+
+- Tabla `leads` con enums `LeadSource` y `LeadStatus`
+- Cuatro *form requests* distintos, uno por origen: contacto, inversión,
+  consulta sobre propiedad y publicación
+- `LeadService` con doble correo — confirmación al interesado y aviso al
+  equipo — y bandeja en el panel con exportación
+- Tabla `whatsapp_clicks` y su informe: se mide qué propiedades generan
+  conversación, no solo visitas
+
+**Fase 6 — Noticias**
+
+- `news_posts`, `news_post_translations` y `news_categories`
+- Blog bilingüe en `/informate` y `/en/insights`, con categorías y borradores
+- Gestión completa en el panel bajo el permiso `manage_news`
+
+**Fase 7 — Agentes**
+
+- `AgentManager`: alta, edición, foto, orden, activar/ocultar y borrado
+- Cargo y biografía traducibles con pestañas ES/EN
+- El asesor aparece en la ficha de propiedad y su WhatsApp sustituye al general
+
+**Recuperación de contraseña del panel**
+
+- `ForgotPasswordController` y `ResetPasswordController` con
+  `AdminResetPasswordNotification` y limitador de 5 intentos por minuto
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| El lead se guarda **antes** de intentar el correo | Un fallo de SMTP no puede costar un cliente potencial |
+| Borrar un asesor **no** borra sus propiedades | `agent_id` pasa a NULL. El modal avisa cuántas fichas quedarán sin asesor visible. Hay una prueba que lo vigila |
+| Un asesor oculto conserva sus propiedades | Ocultar es una decisión de visibilidad, no de datos |
+| Clics de WhatsApp en tabla propia, no en un contador | Permite informes por fecha y por propiedad |
+
+### Pruebas
+
+`php artisan test` → **437 pasadas, 921 aserciones**. Verificado en 375 y
+1440 px.
+
+### Pendiente
+
+- La foto del hero (Cap Cana) sigue sin subir desde `/admin/contenido`
+- Textos legales de privacidad y términos
+
+---
+
 ## [0.7.0] — 2026-08-14 — Fase 4 (parcial): inicio, listado y detalle
 
 ### Añadido

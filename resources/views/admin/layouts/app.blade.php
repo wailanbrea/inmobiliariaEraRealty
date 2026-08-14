@@ -44,7 +44,7 @@
                 ['photo_library',  'Media',         'admin.media.index', true, 'admin.media.*'],
                 ['article',        'Noticias',      'admin.news.posts.index', true, 'admin.news.*'],
                 ['contact_page',   'Leads',         'admin.leads.index', true, 'admin.leads.*'],
-                ['badge',          'Agentes',       null,              false, null],
+                ['badge',          'Agentes',       'admin.agents.index', true, 'admin.agents.*'],
                 ['category',       'Catálogo',      'admin.catalog.types', true, 'admin.catalog.*'],
                 ['description',    'Contenido',     'admin.content.index', true, 'admin.content.*'],
                 ['chat',           'WhatsApp',      'admin.whatsapp.index', true, 'admin.whatsapp.*'],

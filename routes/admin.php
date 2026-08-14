@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Agents\Controllers\Admin\AgentController;
 use App\Modules\Auth\Controllers\ForgotPasswordController;
 use App\Modules\Auth\Controllers\LoginController;
 use App\Modules\Auth\Controllers\ResetPasswordController;
@@ -117,7 +118,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('categorias/{category}', [NewsCategoryController::class, 'destroy'])->name('categories.destroy');
     });
 
-    // --- Contenido del inicio ---
+    // --- Agentes ---
+    Route::get('agentes', [AgentController::class, 'index'])->name('agents.index');
+
     // --- Leads ---
     Route::prefix('leads')->name('leads.')->group(function () {
         Route::get('/', [LeadController::class, 'index'])->name('index');
@@ -126,6 +129,7 @@ Route::middleware('auth')->group(function () {
         Route::put('{lead}', [LeadController::class, 'update'])->name('update');
     });
 
+    // --- Contenido editable de las paginas ---
     Route::get('contenido', [ContentController::class, 'index'])->name('content.index');
 
     // --- Analitica de WhatsApp ---

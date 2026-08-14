@@ -85,6 +85,7 @@ costó un diagnóstico en falso.
 | Comparador | ✅ | — | — | ✅ | 2026-08-14 | Tabla con scroll interno y columna de etiquetas sticky. Toggle «solo diferencias» |
 | Invierte | ✅ | — | — | ✅ | 2026-08-14 | Motivos 1→2 columnas. Línea temporal con numeración dentro de pantalla |
 | Sobre nosotros | ✅ | — | — | ✅ | 2026-08-14 | Valores 1→3 columnas. Equipo 1→4. Iniciales cuando el agente no tiene foto |
+| Agentes (panel) | ✅ | — | — | ✅ | 2026-08-14 | Fichas 1→3 columnas. Cero controles < 44 px. Los ocultos se atenúan |
 
 ---
 

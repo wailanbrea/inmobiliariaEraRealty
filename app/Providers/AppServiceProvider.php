@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Modules\Agents\Livewire\AgentManager;
 use App\Modules\Locations\Livewire\LocationManager;
 use App\Modules\Media\Livewire\MediaManager;
 use App\Modules\Pages\Livewire\ContentSectionManager;
@@ -50,5 +51,6 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('location-manager', LocationManager::class);
         Livewire::component('media-manager', MediaManager::class);
         Livewire::component('content-section-manager', ContentSectionManager::class);
+        Livewire::component('agent-manager', AgentManager::class);
     }
 }
