@@ -2,6 +2,7 @@
 
 use App\Enums\OperationType;
 use App\Enums\PropertyStatus;
+use App\Modules\Leads\Models\Lead;
 use App\Modules\Locations\Models\City;
 use App\Modules\Locations\Models\Province;
 use App\Modules\Pages\Models\ContentSection;
@@ -16,6 +17,7 @@ use Database\Seeders\ContentSectionSeeder;
 use Database\Seeders\LocationSeeder;
 use Database\Seeders\PropertyTypeSeeder;
 use Database\Seeders\SettingsSeeder;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\URL;
 
 beforeEach(function () {
@@ -409,4 +411,29 @@ it('el listado y el detalle usan la configuracion del sitio', function () {
 
     $this->get('/propiedades')->assertSee('Inmobiliaria XYZ', escape: false);
     $this->get('/propiedades/cualquiera')->assertSee('Inmobiliaria XYZ', escape: false);
+});
+
+it('guarda una consulta desde el detalle de propiedad', function () {
+    $property = propiedadPublicada([], 'Villa consultada');
+    $slug = $property->translation('es')->first()->slug;
+
+    $this->post('/propiedades/'.$slug, [
+        'name' => 'Cliente detalle',
+        'phone' => '8095550101',
+        'email' => 'cliente@example.com',
+        'message' => 'Quiero coordinar una visita a esta propiedad.',
+        'form_token' => Crypt::encryptString((string) now()->subSeconds(4)->timestamp),
+    ])->assertRedirect('/propiedades/'.$slug);
+
+    $lead = Lead::firstOrFail();
+    expect($lead->property_id)->toBe($property->id)
+        ->and($lead->source->value)->toBe('property_detail');
+});
+
+it('no acepta consultas para una propiedad no publicada', function () {
+    $property = propiedadPublicada();
+    $slug = $property->translation('es')->first()->slug;
+    $property->update(['status' => PropertyStatus::Sold]);
+
+    $this->post('/propiedades/'.$slug, ['name' => 'Cliente', 'phone' => '8095550101', 'message' => 'Consulta suficientemente larga', 'form_token' => Crypt::encryptString((string) now()->subSeconds(4)->timestamp)])->assertNotFound();
 });

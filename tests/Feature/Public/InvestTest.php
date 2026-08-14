@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Leads\Models\Lead;
 use App\Modules\Pages\Models\ContentSection;
 use App\Modules\Properties\Models\Property;
 use App\Modules\Properties\Services\PropertyService;
@@ -8,6 +9,7 @@ use App\Modules\Settings\Services\SettingsService;
 use Database\Seeders\ContentSectionSeeder;
 use Database\Seeders\PropertyTypeSeeder;
 use Database\Seeders\SettingsSeeder;
+use Illuminate\Support\Facades\Crypt;
 
 beforeEach(function () {
     $this->seed(SettingsSeeder::class);
@@ -199,4 +201,25 @@ it('rechaza una pagina de contenido inventada', function () {
     $admin = userWithRole('admin');
 
     $this->actingAs($admin)->get('/admin/contenido?pagina=inventada')->assertNotFound();
+});
+
+it('guarda una consulta de inversion', function () {
+    $this->post('/invierte', [
+        'name' => 'Inversionista',
+        'phone' => '8295550101',
+        'email' => 'invest@example.com',
+        'budget_range' => '250000-500000 USD',
+        'preferred_contact' => 'email',
+        'message' => 'Busco una propiedad para renta vacacional.',
+        'form_token' => Crypt::encryptString((string) now()->subSeconds(4)->timestamp),
+    ])->assertRedirect('/invierte');
+
+    $lead = Lead::firstOrFail();
+    expect($lead->source->value)->toBe('investment_page')
+        ->and($lead->interest_type)->toBe('invest')
+        ->and($lead->budget_range)->toBe('250000-500000 USD');
+});
+
+it('muestra el formulario de inversion en ingles', function () {
+    $this->get('/en/invest')->assertOk()->assertSee('Tell us about your investment', false);
 });

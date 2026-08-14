@@ -1,14 +1,20 @@
 <?php
 
+use App\Modules\Auth\Controllers\ForgotPasswordController;
 use App\Modules\Auth\Controllers\LoginController;
+use App\Modules\Auth\Controllers\ResetPasswordController;
 use App\Modules\Dashboard\Controllers\DashboardController;
+use App\Modules\Leads\Controllers\Admin\LeadController;
 use App\Modules\Locations\Controllers\Admin\LocationLookupController;
 use App\Modules\Media\Controllers\Admin\MediaController;
+use App\Modules\News\Controllers\Admin\NewsCategoryController;
+use App\Modules\News\Controllers\Admin\NewsPostController;
 use App\Modules\Pages\Controllers\Admin\ContentController;
 use App\Modules\Properties\Controllers\Admin\PropertyController;
 use App\Modules\PropertyImages\Controllers\Admin\PropertyImageController;
 use App\Modules\PropertyTypes\Controllers\Admin\CatalogController;
 use App\Modules\Settings\Controllers\Admin\SettingsController;
+use App\Modules\WhatsApp\Controllers\Admin\WhatsappReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +37,14 @@ Route::middleware('guest')->group(function () {
     Route::post('login', [LoginController::class, 'store'])
         ->name('login.store')
         ->middleware('throttle:20,1');
+
+    Route::get('olvide-contrasena', [ForgotPasswordController::class, 'create'])->name('password.request');
+    Route::post('olvide-contrasena', [ForgotPasswordController::class, 'store'])
+        ->middleware('throttle:5,1')->name('password.email');
+    Route::get('restablecer-contrasena/{token}', [ResetPasswordController::class, 'create'])
+        ->name('password.reset');
+    Route::post('restablecer-contrasena', [ResetPasswordController::class, 'store'])
+        ->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {
@@ -88,8 +102,34 @@ Route::middleware('auth')->group(function () {
         Route::get('sectores/{city:id}', [LocationLookupController::class, 'sectors'])->name('sectors');
     });
 
+    // --- Noticias ---
+    Route::prefix('noticias')->name('news.')->middleware('permission:manage_news')->group(function () {
+        Route::get('/', [NewsPostController::class, 'index'])->name('posts.index');
+        Route::get('crear', [NewsPostController::class, 'create'])->name('posts.create');
+        Route::post('/', [NewsPostController::class, 'store'])->name('posts.store');
+        Route::get('{post}/editar', [NewsPostController::class, 'edit'])->name('posts.edit');
+        Route::put('{post}', [NewsPostController::class, 'update'])->name('posts.update');
+        Route::delete('{post}', [NewsPostController::class, 'destroy'])->name('posts.destroy');
+
+        Route::get('categorias/listado', [NewsCategoryController::class, 'index'])->name('categories.index');
+        Route::post('categorias', [NewsCategoryController::class, 'store'])->name('categories.store');
+        Route::put('categorias/{category}', [NewsCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('categorias/{category}', [NewsCategoryController::class, 'destroy'])->name('categories.destroy');
+    });
+
     // --- Contenido del inicio ---
+    // --- Leads ---
+    Route::prefix('leads')->name('leads.')->group(function () {
+        Route::get('/', [LeadController::class, 'index'])->name('index');
+        Route::get('exportar', [LeadController::class, 'export'])->name('export');
+        Route::get('{lead}', [LeadController::class, 'show'])->name('show');
+        Route::put('{lead}', [LeadController::class, 'update'])->name('update');
+    });
+
     Route::get('contenido', [ContentController::class, 'index'])->name('content.index');
+
+    // --- Analitica de WhatsApp ---
+    Route::get('whatsapp', [WhatsappReportController::class, 'index'])->name('whatsapp.index');
 
     // --- Biblioteca de medios ---
     Route::get('media', [MediaController::class, 'index'])->name('media.index');
@@ -101,8 +141,7 @@ Route::middleware('auth')->group(function () {
         Route::get('ubicaciones', [CatalogController::class, 'locations'])->name('locations');
     });
 
-    // Fase 3: imagenes, media
-    // Fase 5: leads
+    // Fase 3: imagenes, media. Fase 5: leads
     // Fase 6: noticias
     // Fase 7: agentes
     // Fase 9: reportes, auditoria

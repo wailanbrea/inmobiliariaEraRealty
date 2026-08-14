@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Modules\Agents\Models\Agent;
+use App\Notifications\AdminResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -62,6 +63,11 @@ class User extends Authenticatable
     public function isSuperAdmin(): bool
     {
         return $this->hasRole('super_admin');
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new AdminResetPasswordNotification($token));
     }
 
     /**

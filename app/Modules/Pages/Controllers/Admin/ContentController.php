@@ -10,7 +10,7 @@ use Illuminate\View\View;
 class ContentController extends Controller
 {
     /** Paginas con bloques editables. */
-    public const PAGES = ['home', 'invest'];
+    public const PAGES = ['home', 'invest', 'about'];
 
     public function index(Request $request): View
     {

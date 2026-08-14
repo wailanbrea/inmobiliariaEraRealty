@@ -29,6 +29,7 @@ return [
     'pages' => [
         'home' => 'Inicio',
         'invest' => 'Invierte',
+        'about' => 'Sobre nosotros',
     ],
 
     'sections' => [
@@ -41,6 +42,9 @@ return [
         'process' => 'Cómo trabajamos',
         'disclaimer' => 'Aviso legal',
         'cta' => 'Llamada a la acción',
+        'story' => 'Quiénes somos',
+        'values' => 'Cómo trabajamos',
+        'team' => 'El equipo',
     ],
 
     'section_help' => [
@@ -53,6 +57,9 @@ return [
         'process' => 'Encabezado de los pasos. El contenido de cada paso se edita por ahora desde la base de datos.',
         'disclaimer' => 'Aviso de que la información no es asesoría legal ni fiscal. Escríbelo en el campo «Texto».',
         'cta' => 'La banda de contacto del final de la página.',
+        'story' => 'El texto principal de presentación. Escríbelo en el campo «Texto», separando párrafos con una línea en blanco.',
+        'values' => 'Encabezado de los tres compromisos. Los bloques se editan por ahora desde la base de datos.',
+        'team' => 'Encabezado del equipo. Las fichas salen de los agentes activos (Fase 7).',
     ],
 
     'status' => [

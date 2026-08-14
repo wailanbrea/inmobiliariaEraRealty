@@ -80,6 +80,108 @@ class ContentSectionSeeder extends Seeder
                     ],
                 ],
             ],
+            // ---------------- Sobre nosotros ----------------
+            [
+                'page_key' => 'about',
+                'section_key' => 'hero',
+                'sort_order' => 0,
+                'translations' => [
+                    'es' => [
+                        'title' => 'Sobre nosotros',
+                        'subtitle' => 'Acompañamos a quien compra, vende o invierte en República Dominicana.',
+                    ],
+                    'en' => [
+                        'title' => 'About us',
+                        'subtitle' => 'We guide people buying, selling or investing in the Dominican Republic.',
+                    ],
+                ],
+            ],
+            [
+                'page_key' => 'about',
+                'section_key' => 'story',
+                'sort_order' => 1,
+                'translations' => [
+                    'es' => [
+                        'title' => 'Quiénes somos',
+                        'content' => "Somos un equipo de asesores inmobiliarios en República Dominicana. Trabajamos con propiedades verificadas y acompañamos cada operación de principio a fin: desde la primera visita hasta la firma y el traspaso.\n\nNos mueve una idea sencilla: comprar una propiedad es una de las decisiones más grandes que toma una persona, y merece información clara y honesta, no presión comercial.",
+                    ],
+                    'en' => [
+                        'title' => 'Who we are',
+                        'content' => "We are a team of real estate advisers in the Dominican Republic. We work with verified listings and support every transaction from start to finish: from the first viewing through signing and transfer.\n\nOne simple idea drives us: buying a property is one of the biggest decisions a person makes, and it deserves clear, honest information rather than sales pressure.",
+                    ],
+                ],
+            ],
+            [
+                'page_key' => 'about',
+                'section_key' => 'values',
+                'sort_order' => 2,
+                'extra_json' => [
+                    [
+                        'icon' => 'verified',
+                        'title_es' => 'Propiedades verificadas',
+                        'title_en' => 'Verified listings',
+                        'text_es' => 'Comprobamos títulos y situación legal antes de publicar. Si algo no cuadra, no sale en la web.',
+                        'text_en' => 'We check title and legal status before publishing. If something does not add up, it does not go online.',
+                    ],
+                    [
+                        'icon' => 'handshake',
+                        'title_es' => 'Sin presión comercial',
+                        'title_en' => 'No sales pressure',
+                        'text_es' => 'Te decimos también lo que no encaja contigo. Una venta forzada no construye una relación.',
+                        'text_en' => 'We also tell you what does not suit you. A forced sale does not build a relationship.',
+                    ],
+                    [
+                        'icon' => 'translate',
+                        'title_es' => 'Atención en dos idiomas',
+                        'title_en' => 'Service in two languages',
+                        'text_es' => 'Atendemos en español e inglés, presencialmente o a distancia si estás fuera del país.',
+                        'text_en' => 'We work in Spanish and English, in person or remotely if you are abroad.',
+                    ],
+                ],
+                'translations' => [
+                    'es' => [
+                        'title' => 'Cómo trabajamos',
+                        'subtitle' => 'Tres compromisos que sostienen todo lo demás.',
+                    ],
+                    'en' => [
+                        'title' => 'How we work',
+                        'subtitle' => 'Three commitments that hold up everything else.',
+                    ],
+                ],
+            ],
+            [
+                'page_key' => 'about',
+                'section_key' => 'team',
+                'sort_order' => 3,
+                'translations' => [
+                    'es' => [
+                        'title' => 'El equipo',
+                        'subtitle' => 'Las personas que te acompañan.',
+                    ],
+                    'en' => [
+                        'title' => 'The team',
+                        'subtitle' => 'The people who work with you.',
+                    ],
+                ],
+            ],
+            [
+                'page_key' => 'about',
+                'section_key' => 'cta',
+                'sort_order' => 4,
+                'translations' => [
+                    'es' => [
+                        'title' => '¿Empezamos?',
+                        'subtitle' => 'Cuéntanos qué buscas y te decimos con franqueza si podemos ayudarte.',
+                        'button_text' => 'Contáctanos',
+                    ],
+                    'en' => [
+                        'title' => 'Shall we start?',
+                        'subtitle' => 'Tell us what you are looking for and we will be straight about whether we can help.',
+                        'button_text' => 'Contact us',
+                    ],
+                ],
+            ],
+
             // ---------------- Invierte ----------------
             [
                 'page_key' => 'invest',

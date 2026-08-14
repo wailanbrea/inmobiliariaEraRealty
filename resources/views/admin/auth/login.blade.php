@@ -113,9 +113,14 @@
                     </label>
 
                     {{-- Fase 0: recuperación de contraseña --}}
+                    <div class="hidden">
                     <span class="text-body-md text-outline" title="Disponible próximamente">
                         ¿Olvidaste tu contraseña?
                     </span>
+                    </div>
+                    <a href="{{ route('admin.password.request') }}" class="text-body-md text-secondary hover:underline">
+                        {{ __('admin/auth.forgot.title') }}
+                    </a>
                 </div>
 
                 <button type="submit"

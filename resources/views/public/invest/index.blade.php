@@ -172,6 +172,27 @@
     </section>
 @endif
 
+<section class="mx-auto max-w-3xl px-margin-mobile pb-xl md:px-gutter">
+    <div class="rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-md ambient-shadow md:p-lg">
+        <h2 class="mb-xs font-heading text-headline-md-mobile md:text-headline-md">{{ current_locale() === 'es' ? "Hablemos de tu inversi\u{00F3}n" : 'Tell us about your investment' }}</h2>
+        <p class="mb-md text-body-md text-on-surface-variant">{{ current_locale() === 'es' ? "Comparte tu objetivo y presupuesto para preparar una selecci\u{00F3}n realista." : 'Share your goal and budget so we can prepare a realistic shortlist.' }}</p>
+        @if (session('lead_success'))<div role="status" class="mb-sm rounded-lg bg-tertiary-fixed p-sm">{{ session('lead_success') }}</div>@endif
+        @if ($errors->any())<div role="alert" class="mb-sm rounded-lg bg-error-container p-sm text-on-error-container">{{ $errors->first() }}</div>@endif
+        <form method="POST" action="{{ lroute('invest.store') }}" class="grid gap-sm md:grid-cols-2">
+            @csrf
+            <input type="hidden" name="form_token" value="{{ app(\App\Modules\Leads\Services\LeadService::class)->formToken() }}">
+            <div class="hidden" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+            <label class="grid gap-1 text-label-md"><span>{{ __('leads.fields.name') }} *</span><input name="name" required value="{{ old('name') }}" class="min-h-11 rounded-lg border border-outline-variant bg-surface px-sm"></label>
+            <label class="grid gap-1 text-label-md"><span>{{ __('leads.fields.phone') }} *</span><input type="tel" name="phone" required value="{{ old('phone') }}" class="min-h-11 rounded-lg border border-outline-variant bg-surface px-sm"></label>
+            <label class="grid gap-1 text-label-md"><span>{{ __('leads.fields.email') }}</span><input type="email" name="email" value="{{ old('email') }}" class="min-h-11 rounded-lg border border-outline-variant bg-surface px-sm"></label>
+            <label class="grid gap-1 text-label-md"><span>{{ current_locale() === 'es' ? 'Presupuesto aproximado' : 'Approximate budget' }}</span><input name="budget_range" value="{{ old('budget_range') }}" class="min-h-11 rounded-lg border border-outline-variant bg-surface px-sm"></label>
+            <label class="grid gap-1 text-label-md"><span>{{ __('contact.preferred') }} *</span><select name="preferred_contact" required class="min-h-11 rounded-lg border border-outline-variant bg-surface px-sm">@foreach(__('contact.channels') as $value => $label)<option value="{{ $value }}" @selected(old('preferred_contact') === $value)>{{ $label }}</option>@endforeach</select></label>
+            <label class="grid gap-1 text-label-md md:col-span-2"><span>{{ __('contact.message') }} *</span><textarea name="message" required rows="5" class="rounded-lg border border-outline-variant bg-surface px-sm py-xs">{{ old('message') }}</textarea></label>
+            <button class="rounded-lg bg-primary-container px-md py-sm text-label-md font-semibold text-on-primary md:col-span-2">{{ __('contact.send') }}</button>
+        </form>
+    </div>
+</section>
+
 {{-- ============================ CTA ============================ --}}
 @if ($cta)
     <section class="bg-primary-container py-xl">

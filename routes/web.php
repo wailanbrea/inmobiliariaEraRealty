@@ -1,10 +1,16 @@
 <?php
 
 use App\Modules\Compare\Controllers\Public\CompareController;
+use App\Modules\Leads\Controllers\Public\LeadController;
+use App\Modules\News\Controllers\Public\NewsController;
+use App\Modules\Pages\Controllers\Public\AboutController;
+use App\Modules\Pages\Controllers\Public\ContactController;
 use App\Modules\Pages\Controllers\Public\HomeController;
 use App\Modules\Pages\Controllers\Public\InvestController;
 use App\Modules\Pages\Controllers\Public\PlaceholderController;
+use App\Modules\Pages\Controllers\Public\PublishPropertyController;
 use App\Modules\Properties\Controllers\Public\PropertyController;
+use App\Modules\WhatsApp\Controllers\Public\WhatsappClickController;
 use App\Support\Locale;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +25,12 @@ use Illuminate\Support\Facades\Route;
 |
 | En las vistas se usa lroute('properties.index'), que anade el prefijo del
 | idioma activo. Ver docs/15_I18N.md.
+
 */
+
+Route::post('wa/click', [WhatsappClickController::class, 'store'])
+    ->middleware('throttle:30,1')
+    ->name('whatsapp.click');
 
 foreach (Locale::codes() as $locale) {
 
@@ -35,6 +46,9 @@ foreach (Locale::codes() as $locale) {
             Route::get($seg('properties'), [PropertyController::class, 'index'])
                 ->name('properties.index');
 
+            Route::post($seg('properties').'/{slug}', [LeadController::class, 'property'])
+                ->middleware('throttle:5,1')
+                ->name('properties.inquiry');
             Route::get($seg('properties').'/{slug}', [PropertyController::class, 'show'])
                 ->name('properties.show');
 
@@ -52,21 +66,30 @@ foreach (Locale::codes() as $locale) {
 
             Route::get($seg('invest'), [InvestController::class, 'index'])
                 ->name('invest.index');
+            Route::post($seg('invest'), [LeadController::class, 'investment'])
+                ->middleware('throttle:5,1')
+                ->name('invest.store');
 
-            Route::get($seg('about'), [PlaceholderController::class, 'about'])
+            Route::get($seg('about'), [AboutController::class, 'index'])
                 ->name('about.index');
 
-            Route::get($seg('news'), [PlaceholderController::class, 'news'])
+            Route::get($seg('news'), [NewsController::class, 'index'])
                 ->name('news.index');
 
-            Route::get($seg('news').'/{slug}', [PlaceholderController::class, 'newsDetail'])
+            Route::get($seg('news').'/{slug}', [NewsController::class, 'show'])
                 ->name('news.show');
 
-            Route::get($seg('contact'), [PlaceholderController::class, 'contact'])
+            Route::get($seg('contact'), [ContactController::class, 'index'])
                 ->name('contact.index');
+            Route::post($seg('contact'), [ContactController::class, 'store'])
+                ->middleware('throttle:5,1')
+                ->name('contact.store');
 
-            Route::get($seg('publish'), [PlaceholderController::class, 'publish'])
+            Route::get($seg('publish'), [PublishPropertyController::class, 'index'])
                 ->name('publish.index');
+            Route::post($seg('publish'), [PublishPropertyController::class, 'store'])
+                ->middleware('throttle:5,1')
+                ->name('publish.store');
 
             Route::get($seg('privacy'), [PlaceholderController::class, 'privacy'])
                 ->name('privacy');

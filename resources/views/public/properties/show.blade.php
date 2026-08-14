@@ -264,6 +264,25 @@
                     @if ($property->status->acceptsLeads())
                         {{-- El formulario se conecta en la Fase 5 --}}
                         <div class="space-y-sm">
+                            @if (session('lead_success'))
+                                <div role="status" class="rounded-lg bg-tertiary-fixed p-sm text-body-md text-on-tertiary-fixed">{{ session('lead_success') }}</div>
+                            @endif
+                            @if ($errors->any())
+                                <div role="alert" class="rounded-lg bg-error-container p-sm text-body-md text-on-error-container">{{ $errors->first() }}</div>
+                            @endif
+                            <form method="POST" action="{{ lroute('properties.inquiry', ['slug' => $property->slug]) }}" class="space-y-xs">
+                                @csrf
+                                <input type="hidden" name="form_token" value="{{ app(\App\Modules\Leads\Services\LeadService::class)->formToken() }}">
+                                <div class="hidden" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+                                <label class="grid gap-1 text-label-md"><span>{{ __('leads.fields.name') }} *</span><input name="name" required value="{{ old('name') }}" class="min-h-11 rounded-lg border border-outline-variant bg-surface px-sm"></label>
+                                <label class="grid gap-1 text-label-md"><span>{{ __('leads.fields.phone') }} *</span><input type="tel" name="phone" required value="{{ old('phone') }}" class="min-h-11 rounded-lg border border-outline-variant bg-surface px-sm"></label>
+                                <label class="grid gap-1 text-label-md"><span>{{ __('leads.fields.email') }}</span><input type="email" name="email" value="{{ old('email') }}" class="min-h-11 rounded-lg border border-outline-variant bg-surface px-sm"></label>
+                                <label class="grid gap-1 text-label-md"><span>{{ __('contact.message') }} *</span><textarea name="message" required rows="4" class="rounded-lg border border-outline-variant bg-surface px-sm py-xs">{{ old('message', current_locale() === 'es' ? "Quiero informaci\u{00F3}n sobre ".$property->reference_code : 'I would like information about '.$property->reference_code) }}</textarea></label>
+                                <button type="submit" class="flex w-full items-center justify-center gap-xs rounded-lg bg-primary-container px-md py-sm text-label-md font-semibold text-on-primary">
+                                    <span class="material-symbols-outlined text-[20px]">send</span>{{ __('contact.send') }}
+                                </button>
+                            </form>
+
                             @php
                                 $mensajeWa = whatsapp()->propertyMessage([
                                     'reference_code' => $property->reference_code,
@@ -280,6 +299,8 @@
 
                             @if ($enlaceWa)
                                 <a href="{{ $enlaceWa }}" target="_blank" rel="noopener noreferrer"
+                                   data-whatsapp-source="property_detail"
+                                   data-whatsapp-property="{{ $property->id }}"
                                    data-touch-target
                                    class="flex w-full items-center justify-center gap-xs rounded-lg
                                           bg-whatsapp px-md py-sm text-label-md font-semibold text-white
@@ -375,6 +396,8 @@
         @if ($enlaceWa ?? null)
             <a href="{{ $enlaceWa }}" target="_blank" rel="noopener noreferrer"
                data-touch-target
+               data-whatsapp-source="property_mobile_bar"
+               data-whatsapp-property="{{ $property->id }}"
                class="flex flex-1 items-center justify-center gap-xs rounded-lg bg-whatsapp
                       py-xs text-label-md font-semibold text-white">
                 <span class="material-symbols-outlined text-[20px]">chat</span>
