@@ -89,6 +89,7 @@ costó un diagnóstico en falso.
 | Capa de efectos | ✅ | — | — | ✅ | 2026-08-14 | En 375 px **no se descarga GSAP** (medido con `performance.getEntriesByType`). Revelados y contadores sí funcionan. Ver §6 |
 | Auditoría (panel) | ✅ | — | — | ✅ | 2026-08-14 | Contenedor 343 px con tabla de 758: **scrollea la tabla, no la página**. Filtros 1→4 columnas. Cero controles < 44 px |
 | **Barrido completo** | ✅ | ✅ | ✅ | ✅ | 2026-08-14 | 195 combinaciones: 22 pantallas públicas (ES+EN) y 17 del panel × 5 anchos. Cero desbordes, cero solapes, cero controles < 44 px. Ver §6 |
+| Reportes y dashboard | ✅ | ✅ | ✅ | ✅ | 2026-08-14 | Tarjetas 1→2→4. Gráficos SVG que escalan al contenedor. Tabla con scroll interno |
 
 ---
 

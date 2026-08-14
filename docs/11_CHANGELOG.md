@@ -5,6 +5,57 @@ Versionado semántico. `0.x` = pre-lanzamiento.
 
 ---
 
+## [0.11.0] — 2026-08-14 — Fase 9 (2/2): reportes y dashboard
+
+Cierra la Fase 9. Con la auditoría de la entrega anterior, los once puntos.
+
+### Añadido
+
+- Tabla `property_views` y `ViewTracker`
+- `ReportService`: resumen con variación, serie diaria, más vistas, repartos
+  de leads y de WhatsApp
+- Pantalla `/admin/reportes` con rango de fechas, atajos de 7/30/90 días y
+  exportación CSV
+- **El dashboard deja de ser un marcador de posición**: avisos de lo que
+  reclama atención, métricas de 30 días, últimos leads, más vistas e inventario
+- Componente `<x-admin.sparkline>`: gráfico de línea en SVG generado en el
+  servidor
+- Factories de `Lead` y `WhatsappClick`
+- 25 pruebas nuevas
+
+### Decisiones
+
+| Decisión | Motivo |
+|---|---|
+| **Las visitas se agregan por día, sin IP ni identificador** | Una fila por visita obligaría a guardar algo que identifique al visitante, y eso convierte una tabla de estadísticas en un fichero de datos personales sujeto a la Ley 172-13. Para responder «qué interesa y en qué semanas» basta con contar |
+| El contador se escribe con un **UPSERT** | Dos visitantes en el mismo milisegundo harían que ambos vean «no existe fila», ambos inserten y uno reviente contra el índice único — un 500 en la ficha por culpa de la analítica |
+| El ranking lee de `property_views`, no de `views_count` | Una ficha de hace dos años con 900 visitas taparía siempre a la que despierta interés esta semana |
+| La variación se compara contra un periodo **de la misma duración** | Comparar 30 días contra 45 sería engañarse solo |
+| Sin variación cuando el periodo anterior fue cero | Un «+100 %» al pasar de 0 a 3 es un titular vacío. `null` deja que la vista diga «sin datos previos», que es la verdad |
+| Los días sin datos se rellenan con cero | Sin eso, una semana en blanco dibuja una recta entre dos puntos lejanos y parece actividad constante donde no la hubo |
+| Gráficos en SVG desde el servidor, **sin librería** | Chart.js son ~65 KB comprimidos para dibujar una polilínea. El SVG llega en el HTML y no depende de que el JavaScript arranque |
+| El CSV empieza con BOM UTF-8 | Sin él, Excel en Windows lo abre en ANSI y los acentos salen rotos |
+| Reportes solo para administradores | Cruzan leads y comportamiento: mismo criterio que la auditoría |
+
+### Corregido
+
+- **Un gráfico que mentía.** La tarjeta «Propiedades publicadas» dibujaba la
+  serie de *leads*, porque la serie diaria no tenía su propia clave. Ahora
+  cada tarjeta dibuja la suya.
+- **Líneas de gráfico invisibles.** `--color-tertiary` vale `#000000` en
+  `DESIGN.md`, y una línea negra sobre fondo claro se lee como un borde, no
+  como una serie. Se añadieron tres tokens `--color-chart-*` con tonos
+  distinguibles; el color nunca es el único canal, cada gráfico lleva su
+  etiqueta y su cifra al lado.
+
+### Pruebas
+
+`php artisan test` → **581 pasadas, 1 246 aserciones**.
+
+Verificado en 375 · 768 · 1024 · 1440 · 1920 px.
+
+---
+
 ## [0.10.0] — 2026-08-14 — Fase 9 (1/2): auditoría
 
 Primera mitad de la Fase 9. Los reportes y los gráficos del dashboard van en

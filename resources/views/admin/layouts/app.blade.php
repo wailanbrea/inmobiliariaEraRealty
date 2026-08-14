@@ -48,6 +48,10 @@
                 ['category',       'Catálogo',      'admin.catalog.types', true, 'admin.catalog.*'],
                 ['description',    'Contenido',     'admin.content.index', true, 'admin.content.*'],
                 ['chat',           'WhatsApp',      'admin.whatsapp.index', true, 'admin.whatsapp.*'],
+                // Los reportes cruzan leads, dinero y comportamiento: mismo
+                // criterio que la auditoría, solo administradores.
+                ['insights',       'Reportes',      'admin.reports.index',
+                    auth()->user()->hasAnyRole(['admin', 'super_admin']), 'admin.reports.*'],
                 // La auditoría solo la ven administradores: es información de
                 // seguridad (quién entró, desde qué IP), no de contenido. Un
                 // editor la vería deshabilitada, que es más honesto que

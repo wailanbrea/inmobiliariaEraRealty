@@ -194,6 +194,26 @@
    En un @theme normal los daria por no usados y los purgaria del CSS, dejando
    los chips de estado SIN color de fondo. Paso en la Fase 4.
    ========================================================================== */
+/* ============================================================================
+   COLORES DE GRAFICO
+   ============================================================================
+   Tres tonos deliberadamente distintos —azul, verde y ambar— para las tres
+   series de los reportes.
+
+   No se reutiliza --color-tertiary: vale #000000 en DESIGN.md, y una linea
+   negra sobre fondo claro no se lee como una serie sino como un borde.
+
+   El color NUNCA es el unico canal: cada grafico lleva su etiqueta y su cifra
+   al lado, asi que quien no distinga dos de estos tonos sigue sabiendo cual es
+   cual. Van en @theme static por el mismo motivo que los estados: se
+   referencian desde un style="" inline y el escaner de Tailwind no lo lee.
+   ========================================================================== */
+@theme static {
+  --color-chart-views:    #d97706;
+  --color-chart-whatsapp: #25d366;
+  --color-chart-leads:    #0058be;
+}
+
 @theme static {
   --color-status-available:   #009668;
   --color-status-sold:        #ba1a1a;

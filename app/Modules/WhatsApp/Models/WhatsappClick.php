@@ -3,11 +3,14 @@
 namespace App\Modules\WhatsApp\Models;
 
 use App\Modules\Properties\Models\Property;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WhatsappClick extends Model
 {
+    use HasFactory;
+
     public const UPDATED_AT = null;
 
     protected $fillable = [

@@ -15,6 +15,7 @@ use App\Modules\Pages\Controllers\Admin\ContentController;
 use App\Modules\Properties\Controllers\Admin\PropertyController;
 use App\Modules\PropertyImages\Controllers\Admin\PropertyImageController;
 use App\Modules\PropertyTypes\Controllers\Admin\CatalogController;
+use App\Modules\Reports\Controllers\Admin\ReportController;
 use App\Modules\Settings\Controllers\Admin\SettingsController;
 use App\Modules\WhatsApp\Controllers\Admin\WhatsappReportController;
 use Illuminate\Support\Facades\Route;
@@ -117,6 +118,12 @@ Route::middleware('auth')->group(function () {
         Route::post('categorias', [NewsCategoryController::class, 'store'])->name('categories.store');
         Route::put('categorias/{category}', [NewsCategoryController::class, 'update'])->name('categories.update');
         Route::delete('categorias/{category}', [NewsCategoryController::class, 'destroy'])->name('categories.destroy');
+    });
+
+    // --- Reportes ---
+    Route::prefix('reportes')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('exportar', [ReportController::class, 'export'])->name('export');
     });
 
     // --- Auditoria ---
