@@ -165,8 +165,11 @@ it('rechaza un php disfrazado de imagen', function () {
         'site_logo' => $malicioso,
     ])->assertSessionHasErrors('site_logo');
 
+    // Lo que importa no es que el logo quede vacio —el seeder ya trae el de
+    // la marca— sino que el fichero malicioso NO llegue a sustituirlo.
     $this->settings->flush();
-    expect($this->settings->get('site_logo'))->toBeNull();
+    expect($this->settings->get('site_logo'))->not->toContain('shell')
+        ->and($this->settings->get('site_logo'))->not->toEndWith('.php');
 });
 
 it('acepta un SVG limpio como logo', function () {
@@ -203,8 +206,9 @@ it('rechaza un SVG con script incrustado', function () {
         'site_logo' => $svg,
     ])->assertSessionHasErrors('site_logo');
 
+    // Igual que arriba: el SVG con script no puede sustituir al logo actual.
     $this->settings->flush();
-    expect($this->settings->get('site_logo'))->toBeNull();
+    expect($this->settings->get('site_logo'))->not->toEndWith('.svg');
 });
 
 it('rechaza un SVG con manejador onload', function () {

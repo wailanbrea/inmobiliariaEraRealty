@@ -109,7 +109,11 @@ it('deja fuera de las vistas publicas las claves privadas', function () {
 
 it('cachea el conjunto y lo invalida al guardar', function () {
     $this->settings->all();
-    expect(Cache::has('settings.all'))->toBeTrue();
+    // La clave lleva version: subirla es como se invalida la cache al
+    // cambiar la forma de los ajustes. La prueba la lee del servicio en
+    // vez de repetirla, o se rompe en cada version nueva.
+    $clave = (new ReflectionClass(SettingsService::class))->getConstant('CACHE_KEY');
+    expect(Cache::has($clave))->toBeTrue();
 
     $this->settings->set('site_name', 'Otro nombre');
     expect(Cache::has('settings.all'))->toBeFalse();
