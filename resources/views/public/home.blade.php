@@ -27,10 +27,14 @@
 
         {{-- 1 · Foto: Ken Burns dentro, parallax fuera, cortina al cargar --}}
         @if ($hero?->imageUrl())
+            {{-- 92 % y no 60 %: el contraste del texto lo resuelve el velo
+                 central (capa 3.b), que cobra solo donde hay letras. Apagar la
+                 foto entera para proteger el centro se paga con el sol y la
+                 villa iluminada, que es justo lo que se quiere lucir. --}}
             <div data-parallax="30" data-hero-curtain
                  class="hero-curtain absolute -top-[7.5%] left-0 h-[115%] w-full">
                 <div data-ken-burns
-                     class="size-full bg-cover bg-center opacity-60"
+                     class="size-full bg-cover bg-center opacity-[0.92]"
                      style="background-image: url('{{ $hero->imageUrl() }}')"
                      role="img" aria-label="{{ $hero->title }}"></div>
             </div>
@@ -44,8 +48,15 @@
         {{-- 3 · Grano de película --}}
         <div class="hero-grain" aria-hidden="true"></div>
 
-        {{-- Degradado del diseño original: sostiene la legibilidad del texto --}}
-        <div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent"></div>
+        {{-- 3.b · Velo de legibilidad: oscurece el centro, no la foto entera --}}
+        <div class="hero-scrim" aria-hidden="true"></div>
+
+        {{-- Degradado del diseño original: asienta el hero sobre lo que sigue --}}
+        <div class="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-primary/25"></div>
+
+        {{-- 3.c · Barrido de luz: la animación que mantiene vivo el hero en
+             cualquier momento, no solo al cargar --}}
+        <div class="hero-sweep" aria-hidden="true"></div>
 
         {{-- 4 · Viñeta --}}
         <div class="hero-vignette" aria-hidden="true"></div>

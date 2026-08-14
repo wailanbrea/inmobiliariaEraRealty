@@ -150,10 +150,24 @@ it('traduce tambien el titulo de las paginas internas', function () {
     $this->get('/en/invest')->assertSee('<title>Invest', escape: false);
 });
 
-it('no redirige automaticamente por el idioma del navegador', function () {
-    // Google penaliza la redireccion automatica al rastrear.
+it('solo la portada atiende al idioma del navegador; las demas paginas no', function () {
+    // DECISION REVISADA (petición del cliente, 14/08/2026).
+    //
+    // Esta prueba afirmaba que el sitio NUNCA redirige por Accept-Language,
+    // porque Google desaconseja hacerlo. El cliente pidió lo contrario: que
+    // la página cargue de entrada en el idioma del navegador.
+    //
+    // Se resolvió acotándolo en vez de descartarlo: la redirección ocurre
+    // solo en la raíz, solo en la primera visita, nunca para un rastreador y
+    // siempre con un 302. Así se cumple lo pedido sin que la portada española
+    // le devuelva un redirect eterno a Googlebot.
+    //
+    // El comportamiento completo vive en BrowserLocaleTest; aquí se fija lo
+    // que esta prueba defendía y sigue siendo cierto: una página interior
+    // jamás cambia de idioma sola, para que un enlace compartido se vea en el
+    // idioma en que se compartió.
     $this->withHeaders(['Accept-Language' => 'en-US,en;q=0.9'])
-        ->get('/')
+        ->get('/propiedades')
         ->assertOk()
         ->assertSee('Propiedades');
 });

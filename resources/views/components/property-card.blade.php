@@ -50,16 +50,32 @@
                 </div>
             @endif
 
-            {{-- Estado --}}
-            <x-status-chip :status="$property->status" class="absolute left-sm top-sm" />
+            {{--
+                Estado y marca de inversión en UNA fila flex, no en dos
+                elementos absolutos independientes.
 
-            {{-- Marcas --}}
-            @if ($property->is_investment)
-                <span class="absolute right-sm top-sm rounded-full bg-tertiary-fixed px-xs py-0.5
-                             text-caption font-bold uppercase tracking-wider text-on-tertiary-fixed shadow-sm">
-                    {{ __('property.labels.investment') }}
-                </span>
-            @endif
+                Antes cada uno se anclaba a su esquina —left-sm y right-sm— y
+                se solapaban en cuanto sus textos sumaban más ancho que la
+                tarjeta. Ocurría en inglés: «AVAILABLE» quedaba tapado por
+                «INVESTMENT OPPORTUNITY». No era un problema de traducción sino
+                de maquetación: dos cajas ancladas a la misma altura acaban
+                chocando con cualquier idioma lo bastante largo.
+
+                Con la fila, el estado nunca se comprime —es el dato que no se
+                puede perder— y la marca de inversión cede espacio truncándose.
+            --}}
+            <div class="pointer-events-none absolute inset-x-sm top-sm flex items-start justify-between gap-xs">
+                <x-status-chip :status="$property->status" class="shrink-0" />
+
+                @if ($property->is_investment)
+                    <span class="min-w-0 truncate rounded-full bg-tertiary-fixed px-xs py-0.5
+                                 text-caption font-bold uppercase tracking-wider
+                                 text-on-tertiary-fixed shadow-sm"
+                          title="{{ __('property.labels.investment') }}">
+                        {{ __('property.labels.investment_short') }}
+                    </span>
+                @endif
+            </div>
 
             {{-- Precio --}}
             <div class="absolute bottom-sm right-sm rounded bg-surface-container-lowest/90 px-sm py-xs

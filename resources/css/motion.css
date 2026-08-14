@@ -50,14 +50,68 @@
    Arranca despues del LCP: la clase la pone el JS, no el CSS, para no competir
    con la metrica que Google mide.
    -------------------------------------------------------------------------- */
+/*
+   Ken Burns: zoom Y PANEO, no solo zoom.
+   Un escalado puro casi no se percibe —el ojo no tiene contra que comparar—
+   mientras que un desplazamiento lateral hace que el encuadre cambie de
+   verdad. 24 s en ida y otros tantos en vuelta: lo bastante lento para que
+   nunca compita con el texto.
+*/
 @keyframes ken-burns {
-  from { transform: scale(1); }
-  to   { transform: scale(1.08); }
+  from { transform: scale(1.02) translate3d(0, 0, 0); }
+  to   { transform: scale(1.12) translate3d(-2.5%, -1.5%, 0); }
 }
 
 .is-ken-burns {
-  animation: ken-burns 20s var(--ease-in-out-quart) infinite alternate;
+  animation: ken-burns 24s var(--ease-in-out-quart) infinite alternate;
   will-change: transform;
+}
+
+/* --- Barrido de luz -------------------------------------------------------
+   Una banda diagonal de luz cruza el hero cada nueve segundos, como el
+   reflejo que recorre una superficie de cristal.
+
+   Es el efecto que hace que el hero se vea VIVO en cualquier momento, no
+   solo al cargar la pagina: el revelado de cortina y la entrada del titulo
+   pasan una vez y quien llega desplazandose desde otra pagina se los pierde.
+
+   Es agnostico de la foto —no depende de donde este el sol ni la villa—, asi
+   que sigue funcionando cuando el cliente cambie la imagen.
+
+   La banda vive dentro de un contenedor con overflow oculto, y se mueve solo
+   con translate: no hay repintado, solo composicion. */
+.hero-sweep {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-sweep::before {
+  content: '';
+  position: absolute;
+  inset-block: -60%;
+  inset-inline-start: -35%;
+  inline-size: 22%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.07) 40%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.07) 60%,
+    transparent 100%
+  );
+  transform: rotate(18deg) translate3d(0, 0, 0);
+  will-change: transform;
+  animation: hero-sweep 9s var(--ease-in-out-quart) infinite;
+}
+
+@keyframes hero-sweep {
+  /* Solo el primer 45 % del ciclo mueve la banda; el resto es pausa. Un
+     barrido continuo se lee como un parpadeo y cansa en un minuto. */
+  0%   { transform: rotate(18deg) translate3d(0, 0, 0); }
+  45%  { transform: rotate(18deg) translate3d(560%, 0, 0); }
+  100% { transform: rotate(18deg) translate3d(560%, 0, 0); }
 }
 
 /* ============================================================================
@@ -148,6 +202,33 @@
   opacity: 0.16;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* --- 3.b Velo de legibilidad ---------------------------------------------- */
+/*
+   Oscurece SOLO el centro, que es donde cae el texto, y deja los bordes con
+   la foto a plena intensidad.
+
+   Nace de una medicion, no de una intuicion: en la foto del atardecer la
+   franja donde se apoya el titulo tiene una luminancia de 0,70. Un titulo
+   blanco encima daba 2,2:1 de contraste, por debajo del 3:1 que WCAG exige
+   para texto grande.
+
+   La alternativa habitual —bajar la opacidad de la foto entera— arregla el
+   contraste apagando la imagen completa: se paga con la parte que se quiere
+   lucir (el sol, la villa iluminada) para proteger un texto que ocupa el
+   centro. Este velo cobra solo donde hace falta.
+*/
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 85% 60% at 50% 45%,
+    color-mix(in srgb, var(--color-primary) 72%, transparent) 0%,
+    color-mix(in srgb, var(--color-primary) 45%, transparent) 45%,
+    transparent 75%
+  );
 }
 
 /* --- 4. Vinneta ----------------------------------------------------------- */
@@ -354,8 +435,15 @@
   .area-pulse,
   .hero-aurora::before,
   .hero-aurora::after,
+  .hero-sweep::before,
   .hero-curtain.is-drawing {
     animation: none !important;
+  }
+
+  /* El barrido parado a medio camino dejaria una banda clara fija cruzando
+     la foto, que se lee como un defecto. Se retira entero. */
+  .hero-sweep {
+    display: none;
   }
 
   /* El brillo del titulo se anula DEVOLVIENDO el relleno opaco, no solo

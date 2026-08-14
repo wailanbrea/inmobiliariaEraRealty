@@ -69,6 +69,9 @@ return [
     'labels' => [
         'featured' => 'Featured',
         'investment' => 'Investment opportunity',
+        // Version corta para los chips de tarjeta: la larga desbordaba
+        // y tapaba al chip de estado. La completa sigue como tooltip.
+        'investment_short' => 'Investment',
         'project' => 'Under construction',
         'approximate_location' => 'Approximate location',
         'photos' => 'View :count photos',

@@ -28,6 +28,19 @@ class SetLocale
 
         app()->setLocale($locale);
 
-        return $next($request);
+        $response = $next($request);
+
+        // Se recuerda el idioma que el visitante esta viendo de verdad.
+        //
+        // No hace falta que el selector haga nada especial: al pulsar "ES" se
+        // navega a una URL espanola, esta linea escribe 'es', y a partir de
+        // ahi DetectBrowserLocale deja de redirigir la portada. La eleccion
+        // del visitante gana siempre sobre la del navegador, que es lo unico
+        // razonable una vez que ha elegido.
+        //
+        // Un ano de vida: la preferencia de idioma no caduca en una sesion.
+        return $response->withCookie(
+            cookie(DetectBrowserLocale::COOKIE, $locale, 60 * 24 * 365)
+        );
     }
 }
