@@ -4,6 +4,7 @@ namespace App\Modules\Properties\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Locations\Models\Province;
+use App\Modules\Locations\Models\Sector;
 use App\Modules\Properties\Models\Amenity;
 use App\Modules\Properties\Models\Property;
 use App\Modules\Properties\Services\PropertySearchService;
@@ -25,15 +26,32 @@ class PropertyController extends Controller
     {
         $filtros = $this->search->filtersFromRequest($request);
 
-        return view('public.properties.index', [
+        $data = [
             'properties' => $this->search->search($filtros),
             'filters' => $filtros,
             'hasFilters' => $this->search->hasActiveFilters($filtros),
+            'activeFilterCount' => $this->search->activeFilterCount($filtros),
             'types' => PropertyType::active()->get(),
             'provinces' => Province::active()->get(),
+            'sectors' => Sector::query()
+                ->active()
+                ->with('city.province')
+                ->get(),
+            'cities' => \App\Modules\Locations\Models\City::active()
+                ->with('province')
+                ->get(),
             'amenities' => Amenity::active()->get()->groupBy('category'),
             'sorts' => PropertySearchService::SORTS,
-        ]);
+        ];
+
+        // En AJAX se devuelve solo el bloque de resultados: la pagina entera se
+        // descarga y se parsea con DOMParser, y ese peso es lo que hace lento
+        // aplicar y limpiar filtros.
+        if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return view('public.properties.partials.results', $data);
+        }
+
+        return view('public.properties.index', $data);
     }
 
     public function show(Request $request, string $slug): View

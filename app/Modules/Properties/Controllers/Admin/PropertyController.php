@@ -8,6 +8,8 @@ use App\Enums\PropertyStatus;
 use App\Http\Controllers\Controller;
 use App\Modules\Agents\Models\Agent;
 use App\Modules\Locations\Models\Province;
+use App\Modules\Locations\Models\City;
+use App\Modules\Locations\Models\Sector;
 use App\Modules\Properties\Models\Amenity;
 use App\Modules\Properties\Models\Property;
 use App\Modules\Properties\Requests\PropertyRequest;
@@ -174,6 +176,8 @@ class PropertyController extends Controller
             'locales' => Locale::supported(),
             'types' => PropertyType::active()->get(),
             'provinces' => Province::active()->get(),
+            'locationCities' => City::active()->get(['id', 'province_id', 'name']),
+            'locationSectors' => Sector::active()->get(['id', 'city_id', 'name']),
             'agents' => Agent::active()->get(),
             'amenities' => Amenity::active()->get()->groupBy('category'),
             'statuses' => PropertyStatus::cases(),

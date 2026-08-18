@@ -5,6 +5,7 @@ use App\Enums\PropertyStatus;
 use App\Modules\Leads\Models\Lead;
 use App\Modules\Locations\Models\City;
 use App\Modules\Locations\Models\Province;
+use App\Modules\Locations\Models\Sector;
 use App\Modules\Pages\Models\ContentSection;
 use App\Modules\Properties\Models\Amenity;
 use App\Modules\Properties\Models\Property;
@@ -100,6 +101,19 @@ it('muestra el listado de propiedades', function () {
         ->assertSee('Apartamento en Piantini', escape: false);
 });
 
+it('busca por titulo codigo y ubicacion', function () {
+    $this->seed(LocationSeeder::class);
+    $provincia = Province::where('slug', 'la-vega')->first();
+
+    propiedadPublicada([
+        'province_id' => $provincia->id,
+        'address' => 'Jarabacoa',
+    ], 'Propiedad de montaña');
+
+    $this->get('/propiedades?q=Jarabacoa')
+        ->assertSee('Propiedad de montaña', escape: false);
+});
+
 it('no muestra borradores en el listado', function () {
     $borrador = Property::factory()->draft()->create(['property_type_id' => $this->tipo->id]);
     $this->service->syncTranslations($borrador, ['es' => ['title' => 'Borrador secreto']]);
@@ -151,6 +165,25 @@ it('filtra por provincia', function () {
     $this->get('/propiedades?provincia=la-altagracia')
         ->assertSee('En Punta Cana', escape: false)
         ->assertDontSee('En la capital', escape: false);
+});
+
+it('filtra por sector y permite combinarlo con la provincia', function () {
+    $this->seed(LocationSeeder::class);
+
+    $provincia = Province::where('slug', 'la-vega')->first();
+    $ciudad = City::where('province_id', $provincia->id)->first();
+    $sector = Sector::where('city_id', $ciudad->id)->first();
+
+    propiedadPublicada([
+        'province_id' => $provincia->id,
+        'city_id' => $ciudad->id,
+        'sector_id' => $sector->id,
+    ], 'En '.$sector->name);
+    propiedadPublicada([], 'Fuera del sector');
+
+    $this->get('/propiedades?provincia='.$provincia->slug.'&sector='.$sector->id)
+        ->assertSee('En '.$sector->name, escape: false)
+        ->assertDontSee('Fuera del sector', escape: false);
 });
 
 it('filtra por rango de precio', function () {
@@ -211,6 +244,19 @@ it('conserva los filtros al paginar', function () {
     $this->get('/propiedades?operacion=rent')
         ->assertOk()
         ->assertSee('operacion=rent', escape: false);
+});
+
+it('muestra nueve propiedades por pagina', function () {
+    Property::factory()->published()->count(10)->create([
+        'property_type_id' => $this->tipo->id,
+    ])->each(fn ($p) => app(PropertyService::class)->syncTranslations($p, [
+        'es' => ['title' => 'Pagina '.$p->id],
+    ]));
+
+    $respuesta = $this->get('/propiedades');
+
+    expect($respuesta->viewData('properties')->count())->toBe(9)
+        ->and($respuesta->viewData('properties')->perPage())->toBe(9);
 });
 
 it('marca noindex el listado filtrado', function () {
@@ -305,6 +351,16 @@ it('publica coordenadas cuando se autorizan', function () {
     ], 'Con coordenadas');
 
     $this->get('/propiedades/con-coordenadas')->assertSee('GeoCoordinates', escape: false);
+});
+
+it('muestra la amenidad linea blanca en el detalle', function () {
+    $this->seed(AmenitySeeder::class);
+    $property = propiedadPublicada([], 'Con linea blanca');
+    $lineaBlanca = Amenity::where('slug', 'linea-blanca')->firstOrFail();
+    $property->amenities()->attach($lineaBlanca);
+
+    $this->get('/propiedades/con-linea-blanca')
+        ->assertSee('Línea blanca', escape: false);
 });
 
 it('marca noindex una propiedad vendida', function () {

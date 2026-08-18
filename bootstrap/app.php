@@ -7,6 +7,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
@@ -55,5 +56,15 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Un formulario de login abierto durante mucho tiempo puede conservar
+        // un token CSRF anterior a la sesion actual. Se renueva solo el login;
+        // el resto del panel mantiene el 419 para no ocultar errores CSRF.
+        $exceptions->render(function (TokenMismatchException $exception, Request $request) {
+            if ($request->isMethod('post') && $request->is('admin/login')) {
+                return redirect()
+                    ->route('admin.login')
+                    ->withInput($request->only('email'))
+                    ->withErrors(['email' => __('admin/auth.session_expired')]);
+            }
+        });
     })->create();

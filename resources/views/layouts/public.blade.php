@@ -88,8 +88,8 @@
     ];
 @endphp
 
-{{-- data-header: motion.js le pone .is-condensed al pasar los 100 px de
-     scroll (80 -> 64 px de alto, fondo translucido con desenfoque). --}}
+{{-- data-header: motion.js lo condensa despues de 120 px y lo restaura bajo
+     80 px (80 -> 64 px de alto, fondo translucido con desenfoque). --}}
 <header data-header class="sticky top-0 z-50 w-full bg-surface-container-lowest shadow-sm">
     <div class="mx-auto flex h-20 w-full max-w-container-max items-center justify-between
                 px-margin-mobile md:px-gutter">

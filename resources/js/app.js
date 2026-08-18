@@ -9,6 +9,7 @@
 import Alpine from 'alpinejs'
 import gallery from './gallery'
 import { initWhatsappTracking } from './whatsapp-tracking'
+import { initPropertyFilters } from './property-filters'
 
 Alpine.data('gallery', gallery)
 
@@ -16,6 +17,7 @@ window.Alpine = Alpine
 Alpine.start()
 
 initWhatsappTracking()
+initPropertyFilters()
 
 /**
  * Capa de efectos (GSAP + Lenis).

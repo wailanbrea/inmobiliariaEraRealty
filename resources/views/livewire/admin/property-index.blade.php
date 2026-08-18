@@ -188,23 +188,33 @@
             </span>
 
             <div class="flex flex-wrap gap-xs">
-                <button wire:click="bulkPublish"
-                        class="rounded-lg bg-surface-container-lowest px-sm py-1 text-caption text-on-surface hover:shadow-sm">
-                    {{ __('admin/properties.bulk.publish') }}
-                </button>
-                <button wire:click="bulkPause"
-                        class="rounded-lg bg-surface-container-lowest px-sm py-1 text-caption text-on-surface hover:shadow-sm">
-                    {{ __('admin/properties.bulk.pause') }}
-                </button>
-                <button wire:click="bulkFeature(true)"
-                        class="rounded-lg bg-surface-container-lowest px-sm py-1 text-caption text-on-surface hover:shadow-sm">
-                    {{ __('admin/properties.bulk.feature') }}
-                </button>
-                <button wire:click="bulkDelete"
-                        wire:confirm="{{ __('admin/properties.bulk.confirm_delete') }}"
-                        class="rounded-lg bg-error-container px-sm py-1 text-caption text-on-error-container hover:shadow-sm">
-                    {{ __('admin/properties.bulk.delete') }}
-                </button>
+                @if ($trashed)
+                    @if (auth()->user()->hasRole('super_admin'))
+                        <button wire:click="bulkForceDelete"
+                                wire:confirm="{{ __('admin/properties.bulk.confirm_force_delete') }}"
+                                class="rounded-lg bg-error-container px-sm py-1 text-caption text-on-error-container hover:shadow-sm">
+                            {{ __('admin/properties.bulk.force_delete') }}
+                        </button>
+                    @endif
+                @else
+                    <button wire:click="bulkPublish"
+                            class="rounded-lg bg-surface-container-lowest px-sm py-1 text-caption text-on-surface hover:shadow-sm">
+                        {{ __('admin/properties.bulk.publish') }}
+                    </button>
+                    <button wire:click="bulkPause"
+                            class="rounded-lg bg-surface-container-lowest px-sm py-1 text-caption text-on-surface hover:shadow-sm">
+                        {{ __('admin/properties.bulk.pause') }}
+                    </button>
+                    <button wire:click="bulkFeature(true)"
+                            class="rounded-lg bg-surface-container-lowest px-sm py-1 text-caption text-on-surface hover:shadow-sm">
+                        {{ __('admin/properties.bulk.feature') }}
+                    </button>
+                    <button wire:click="bulkDelete"
+                            wire:confirm="{{ __('admin/properties.bulk.confirm_delete') }}"
+                            class="rounded-lg bg-error-container px-sm py-1 text-caption text-on-error-container hover:shadow-sm">
+                        {{ __('admin/properties.bulk.delete') }}
+                    </button>
+                @endif
             </div>
         </div>
     @endif

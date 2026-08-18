@@ -3,6 +3,9 @@
 namespace App\Modules\Properties\Services;
 
 use App\Enums\Currency;
+use App\Modules\Locations\Models\City;
+use App\Modules\Locations\Models\Province;
+use App\Modules\Locations\Models\Sector;
 use App\Modules\Properties\Models\Property;
 use App\Support\Locale;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -18,7 +21,7 @@ use Illuminate\Support\Collection;
  */
 class PropertySearchService
 {
-    public const PER_PAGE = 12;
+    public const PER_PAGE = 9;
 
     /** Ordenaciones admitidas. Cualquier otra cae en 'recent'. */
     public const SORTS = ['recent', 'price_asc', 'price_desc', 'area_desc', 'views'];
@@ -50,13 +53,20 @@ class PropertySearchService
 
                 $q->where(function (Builder $sub) use ($termino) {
                     $sub->where('reference_code', 'like', "%{$termino}%")
+                        ->orWhere('address', 'like', "%{$termino}%")
                         ->orWhereHas('translations', function (Builder $t) use ($termino) {
                             $t->where('locale', Locale::current())
                                 ->where(function (Builder $x) use ($termino) {
                                     $x->where('title', 'like', "%{$termino}%")
                                         ->orWhere('short_description', 'like', "%{$termino}%");
                                 });
-                        });
+                        })
+                        ->orWhereHas('province', fn (Builder $province) => $province
+                            ->where('name', 'like', "%{$termino}%"))
+                        ->orWhereHas('city', fn (Builder $city) => $city
+                            ->where('name', 'like', "%{$termino}%"))
+                        ->orWhereHas('sector', fn (Builder $sector) => $sector
+                            ->where('name', 'like', "%{$termino}%"));
                 });
             })
 
@@ -65,9 +75,75 @@ class PropertySearchService
             ->when($get('tipo'), fn (Builder $q, $v) => $q->whereHas('type', fn ($t) => $t->where('slug', $v)))
 
             // --- Ubicacion ---
-            ->when($get('provincia'), fn (Builder $q, $v) => $q->whereHas('province', fn ($p) => $p->where('slug', $v)))
-            ->when($get('ciudad'), fn (Builder $q, $v) => $q->whereHas('city', fn ($c) => $c->where('slug', $v)))
-            ->when($get('sector'), fn (Builder $q, $v) => $q->whereHas('sector', fn ($s) => $s->where('slug', $v)))
+             ->when($get('provincia'), function (Builder $q, $v) {
+                 $province = Province::where('slug', $v)->first();
+
+                 $q->where(function (Builder $location) use ($province) {
+                     if (! $province) {
+                         return $location->whereRaw('1 = 0');
+                     }
+
+                      $location->where('province_id', $province->id)
+                          ->orWhereHas('city', fn (Builder $city) => $city->where('province_id', $province->id))
+                          ->orWhereHas('sector', fn (Builder $sector) => $sector
+                              ->whereHas('city', fn (Builder $city) => $city->where('province_id', $province->id)))
+                          ->orWhere('address', 'like', "%{$province->name}%")
+                          ->orWhereHas('translations', fn (Builder $t) => $t
+                              ->where('title', 'like', "%{$province->name}%"));
+
+                      $lugares = City::where('province_id', $province->id)->pluck('name')
+                          ->merge(Sector::whereHas('city', fn (Builder $city) => $city
+                              ->where('province_id', $province->id))->pluck('name'))
+                          ->filter()
+                          ->unique();
+
+                      foreach ($lugares as $lugar) {
+                          $location->orWhere('address', 'like', "%{$lugar}%")
+                              ->orWhereHas('translations', fn (Builder $t) => $t
+                                  ->where('title', 'like', "%{$lugar}%"));
+                      }
+                  });
+              })
+             ->when($get('ciudad'), function (Builder $q, $v) {
+                 $city = City::where('slug', $v)->first();
+
+                 $q->where(function (Builder $location) use ($city, $v) {
+                     if (! $city) {
+                         return $location->whereHas('city', fn (Builder $related) => $related->where('slug', $v));
+                     }
+
+                     $location->where('city_id', $city->id)
+                         ->orWhereHas('city', fn (Builder $related) => $related->where('slug', $v))
+                         ->orWhereHas('sector', fn (Builder $sector) => $sector->where('city_id', $city->id))
+                         ->orWhere('address', 'like', "%{$city->name}%")
+                         ->orWhereHas('translations', fn (Builder $t) => $t
+                             ->where('title', 'like', "%{$city->name}%"));
+                 });
+             })
+             ->when($get('sector'), function (Builder $q, $v) {
+                 $sector = filter_var($v, FILTER_VALIDATE_INT) !== false
+                     ? Sector::with('city')->find($v)
+                     : Sector::with('city')->where('slug', $v)->first();
+
+                 $q->where(function (Builder $location) use ($sector, $v) {
+                     if (! $sector) {
+                         return $location->whereHas('sector', fn (Builder $related) => $related->where('slug', $v));
+                     }
+
+                      $location->where('sector_id', $sector->id)
+                          ->orWhere(function (Builder $legacy) use ($sector) {
+                              // Los registros legacy pueden no tener sector_id,
+                              // pero solo se incluyen si el nombre del sector
+                              // aparece realmente en su ubicación o título.
+                              $legacy->whereNull('sector_id')
+                                  ->where(function (Builder $text) use ($sector) {
+                                      $text->where('address', 'like', "%{$sector->name}%")
+                                          ->orWhereHas('translations', fn (Builder $t) => $t
+                                              ->where('title', 'like', "%{$sector->name}%"));
+                                  });
+                          });
+                 });
+             })
 
             // --- Precio ---
             // Se compara en la moneda pedida, convirtiendo el limite en vez de
@@ -147,7 +223,7 @@ class PropertySearchService
             'precio_min', 'precio_max', 'moneda',
             'habitaciones', 'banos', 'parqueos', 'area_min', 'area_max',
             'amenidades', 'destacadas', 'inversion', 'proyecto', 'amueblada',
-            'estado', 'orden',
+            'estado', 'orden', 'sector',
         ];
 
         return collect($request->only($claves))
@@ -164,6 +240,17 @@ class PropertySearchService
     public function hasActiveFilters(array $filters): bool
     {
         return collect($filters)->except('orden')->isNotEmpty();
+    }
+
+    /**
+     * Cuantos filtros "reales" estan activos. Excluye el orden y la moneda,
+     * que se envian siempre con el formulario y no son una eleccion del usuario.
+     *
+     * @param  array<string, mixed>  $filters
+     */
+    public function activeFilterCount(array $filters): int
+    {
+        return collect($filters)->except(['orden', 'moneda'])->count();
     }
 
     /**

@@ -37,6 +37,7 @@ class AmenitySeeder extends Seeder
             ['slug' => 'aire-acondicionado', 'es' => 'Aire acondicionado', 'en' => 'Air conditioning', 'icon' => 'ac_unit',    'category' => 'interior'],
             ['slug' => 'walk-in-closet',   'es' => 'Walk-in closet',     'en' => 'Walk-in closet',  'icon' => 'checkroom',      'category' => 'interior'],
             ['slug' => 'cocina-equipada',  'es' => 'Cocina equipada',    'en' => 'Fitted kitchen',  'icon' => 'kitchen',        'category' => 'interior'],
+            ['slug' => 'linea-blanca',     'es' => 'Línea blanca',       'en' => 'Home appliances', 'icon' => 'home_repair_service', 'category' => 'interior'],
             ['slug' => 'balcon',           'es' => 'Balcón',             'en' => 'Balcony',         'icon' => 'balcony',        'category' => 'interior'],
 
             // --- Entorno ---

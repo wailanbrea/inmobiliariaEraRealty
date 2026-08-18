@@ -11,7 +11,7 @@
         : route('admin.properties.update', $property);
 
     // Ciudades y sectores ya cargados, para que al reabrir el formulario los
-    // selects encadenados muestren la seleccion sin esperar a JavaScript.
+    // selects encadenados muestren la seleccion sin esperar a una peticion.
     $ciudades = $property->province_id
         ? \App\Modules\Locations\Models\City::where('province_id', $property->province_id)->active()->get()
         : collect();
@@ -564,13 +564,15 @@
 @push('scripts')
 <script>
     // Selects encadenados provincia -> ciudad -> sector.
-    // Se cargan por fetch en vez de volcar todas las ubicaciones del pais en
-    // el HTML: son 32 provincias con sus ciudades y sectores.
+    // El catalogo se precarga para que una respuesta fallida no deje los
+    // selects vacios al editar una propiedad.
     function selectsEncadenados(provinciaInicial, ciudadInicial, sectorInicial) {
         return {
             provincia: provinciaInicial || '',
             ciudad: ciudadInicial || '',
             sector: sectorInicial || '',
+            ciudadesTodas: @json($locationCities),
+            sectoresTodos: @json($locationSectors),
             ciudades: @json($ciudades->map->only(['id', 'name'])->values()),
             sectores: @json($sectores->map->only(['id', 'name'])->values()),
 
@@ -579,14 +581,14 @@
                 this.sector = '';
                 this.sectores = [];
                 this.ciudades = this.provincia
-                    ? await (await fetch(`/admin/ubicaciones/ciudades/${this.provincia}`)).json()
+                    ? this.ciudadesTodas.filter((ciudad) => String(ciudad.province_id) === String(this.provincia))
                     : [];
             },
 
-            async cargarSectores() {
+            cargarSectores() {
                 this.sector = '';
                 this.sectores = this.ciudad
-                    ? await (await fetch(`/admin/ubicaciones/sectores/${this.ciudad}`)).json()
+                    ? this.sectoresTodos.filter((sector) => String(sector.city_id) === String(this.ciudad))
                     : [];
             },
         }

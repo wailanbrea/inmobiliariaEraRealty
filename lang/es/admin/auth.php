@@ -28,5 +28,6 @@ return [
     ],
 
     'back' => 'Volver al inicio de sesión',
+    'session_expired' => 'La sesión de inicio expiró. Inténtalo de nuevo.',
 
 ];

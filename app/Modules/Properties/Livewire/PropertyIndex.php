@@ -8,6 +8,7 @@ use App\Modules\Agents\Models\Agent;
 use App\Modules\Locations\Models\Province;
 use App\Modules\Properties\Models\Property;
 use App\Modules\Properties\Services\PropertyService;
+use App\Modules\PropertyImages\Services\ImageProcessingService;
 use App\Modules\PropertyTypes\Models\PropertyType;
 use App\Support\Locale;
 use Illuminate\Database\Eloquent\Builder;
@@ -63,7 +64,7 @@ class PropertyIndex extends Component
     {
         // Cualquier cambio de filtro vuelve a la primera pagina: quedarse en
         // la 7 tras filtrar produce una pagina vacia y parece un error.
-        if (! in_array($property, ['selected', 'selectAll'], true)) {
+        if ($property !== 'selectAll' && ! str_starts_with($property, 'selected')) {
             $this->resetPage();
             $this->selected = [];
             $this->selectAll = false;
@@ -149,6 +150,27 @@ class PropertyIndex extends Component
         }
 
         $this->finishBulk(__('admin/properties.bulk_deleted', ['count' => $hechas]));
+    }
+
+    public function bulkForceDelete(ImageProcessingService $images): void
+    {
+        if ($this->selected === []) {
+            return;
+        }
+
+        $hechas = 0;
+
+        foreach ($this->selectedProperties() as $property) {
+            if (! auth()->user()->can('forceDelete', $property)) {
+                continue;
+            }
+
+            $images->deletePropertyFolder($property->id);
+            $property->forceDelete();
+            $hechas++;
+        }
+
+        $this->finishBulk(__('admin/properties.bulk_force_deleted', ['count' => $hechas]));
     }
 
     public function restore(int $id): void

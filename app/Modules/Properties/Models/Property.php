@@ -33,6 +33,17 @@ class Property extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected static function booted(): void
+    {
+        static::saving(function (self $property): void {
+            // Una propiedad publica sin fecha queda fuera de todos los scopes
+            // publicos. Los borradores si pueden conservar published_at en null.
+            if ($property->status?->isPublic() && $property->published_at === null) {
+                $property->published_at = now();
+            }
+        });
+    }
+
     protected $fillable = [
         'reference_code', 'operation_type', 'property_type_id', 'status',
         'price', 'currency', 'price_period', 'maintenance_fee',

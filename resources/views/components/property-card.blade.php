@@ -122,10 +122,17 @@
                         $property->bedrooms.' '.__('property.specs_short.bedrooms'),
                     ] : null,
                     $property->bathrooms ? [
-                        'shower',
+                        'bathtub',
                         __('property.specs.bathrooms'),
                         rtrim(rtrim(number_format($property->bathrooms, 1), '0'), '.')
                             .' '.__('property.specs_short.bathrooms'),
+                    ] : null,
+                    $property->parking_spaces ? [
+                        'directions_car',
+                        __('property.specs.parking'),
+                        $property->parking_spaces.' '.__($property->parking_spaces == 1
+                            ? 'property.specs_short.parking_one'
+                            : 'property.specs_short.parking_many'),
                     ] : null,
                     // En un terreno o un solar la cifra que importa es la
                     // superficie del terreno, no la construida.
@@ -134,12 +141,7 @@
                         __('property.specs.area'),
                         number_format($area, 0, ',', '.').' m²',
                     ] : null,
-                    $property->parking_spaces ? [
-                        'directions_car',
-                        __('property.specs.parking'),
-                        $property->parking_spaces.' '.__('property.specs_short.parking'),
-                    ] : null,
-                ])->filter()->take(3)->values();
+                ])->filter()->take(4)->values();
             @endphp
 
             @if ($specs->isNotEmpty())
@@ -148,15 +150,17 @@
                     'grid-cols-1' => $specs->count() === 1,
                     'grid-cols-2' => $specs->count() === 2,
                     'grid-cols-3' => $specs->count() === 3,
+                    'grid-cols-2 sm:grid-cols-4' => $specs->count() === 4,
                 ])>
                     @foreach ($specs as $spec)
                         <div @class([
-                            'flex flex-col items-center',
-                            'border-x border-surface-variant' => $specs->count() === 3 && $loop->index === 1,
+                            'flex min-w-0 flex-col items-center',
+                            'border-l border-surface-variant' => $specs->count() >= 3 && $loop->index > 0,
                         ])>
-                            <span class="material-symbols-outlined mb-1 text-[20px] text-outline">{{ $spec[0] }}</span>
+                            <span class="material-symbols-outlined mb-1 inline-flex size-5 shrink-0 items-center
+                                         justify-center text-[20px] leading-none text-outline">{{ $spec[0] }}</span>
                             <dt class="sr-only">{{ $spec[1] }}</dt>
-                            <dd class="text-label-md text-on-surface">{{ $spec[2] }}</dd>
+                            <dd class="whitespace-nowrap text-label-md text-on-surface">{{ $spec[2] }}</dd>
                         </div>
                     @endforeach
                 </dl>

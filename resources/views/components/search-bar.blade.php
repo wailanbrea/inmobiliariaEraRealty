@@ -1,10 +1,12 @@
-@props(['types' => null, 'provinces' => null, 'glass' => true])
+@props(['types' => null, 'provinces' => null, 'sectors' => null, 'glass' => true])
 
 @php
     $types ??= \App\Modules\PropertyTypes\Models\PropertyType::active()->get();
     $provinces ??= \App\Modules\Locations\Models\Province::active()
         ->whereHas('properties', fn ($q) => $q->published())
         ->get();
+    $sectors ??= \App\Modules\Locations\Models\Sector::active()->with('city.province')->get();
+    $cities ??= \App\Modules\Locations\Models\City::active()->with('province')->get();
 
     $trigger = 'flex h-12 w-full items-center justify-between rounded-lg border border-outline-variant
                 bg-surface-container-lowest py-xs pl-sm pr-sm text-left text-body-md text-on-surface
@@ -31,6 +33,23 @@
         ]))
         ->values();
 
+    $sectorOptions = collect([['value' => '', 'label' => __('home.search.anywhere')]])
+        ->merge($sectors->map(fn ($sector) => [
+            'value' => (string) $sector->id,
+            'label' => $sector->name,
+            'city' => $sector->city?->slug,
+            'province' => $sector->city?->province?->slug,
+        ]))
+        ->values();
+
+    $cityOptions = collect([['value' => '', 'label' => __('home.search.anywhere')]])
+        ->merge($cities->map(fn ($city) => [
+            'value' => $city->slug,
+            'label' => $city->name.($city->province ? ', '.$city->province->name : ''),
+            'province' => $city->province?->slug,
+        ]))
+        ->values();
+
     $filters = [
         [
             'id' => 's-operacion',
@@ -49,9 +68,23 @@
         [
             'id' => 's-provincia',
             'name' => 'provincia',
-            'label' => __('home.search.location'),
+            'label' => __('properties.filters.province'),
             'value' => request('provincia', ''),
             'options' => $provinceOptions,
+        ],
+        [
+            'id' => 's-zona',
+            'name' => 'ciudad',
+            'label' => __('properties.filters.zona'),
+            'value' => request('ciudad', ''),
+            'options' => $cityOptions,
+        ],
+        [
+            'id' => 's-sector',
+            'name' => 'sector',
+            'label' => __('properties.filters.sector'),
+            'value' => request('sector', ''),
+            'options' => $sectorOptions,
         ],
     ];
 @endphp
@@ -60,28 +93,59 @@
       {{ $attributes->merge(['class' => ($glass ? 'glass-panel ' : 'bg-surface-container-lowest ')
           . 'w-full rounded-xl p-sm ambient-shadow md:p-md']) }}>
 
-    <div class="flex flex-col gap-sm md:flex-row md:gap-gutter">
+    <div class="grid gap-sm md:grid-cols-3">
         @foreach ($filters as $filter)
-            <div class="flex-1"
+            <div class="min-w-0 {{ $filter['wrapperClass'] ?? '' }}"
                  x-data="{
                      open: false,
+                     name: @js($filter['name']),
                      value: @js($filter['value']),
-                     options: @js($filter['options']),
+                     allOptions: @js($filter['options']),
+                     get options() {
+                         const province = document.querySelector('[data-hero-filter=provincia]')?.value ?? '';
+                         const city = document.querySelector('[data-hero-filter=ciudad]')?.value ?? '';
+
+                         if (this.name === 'ciudad') {
+                             return this.allOptions.filter((option) => !province || option.province === province);
+                         }
+
+                         if (this.name === 'sector') {
+                             return this.allOptions.filter((option) => city
+                                 ? option.city === city
+                                 : (!province || option.province === province));
+                         }
+
+                         return this.allOptions;
+                     },
                      get selectedLabel() {
                          return this.options.find((option) => option.value === this.value)?.label ?? this.options[0].label;
                      },
                      choose(option) {
                          this.value = option.value;
                          this.open = false;
+                         if (this.name === 'provincia' || this.name === 'ciudad') {
+                             window.dispatchEvent(new CustomEvent('hero-location-changed', {
+                                 detail: { name: this.name },
+                             }));
+                         }
+                     },
+                     resetFromParent(event) {
+                         if ((event.detail.name === 'provincia' && ['ciudad', 'sector'].includes(this.name))
+                             || (event.detail.name === 'ciudad' && this.name === 'sector')) {
+                             this.value = '';
+                             this.open = false;
+                         }
                      },
                  }"
+                 @hero-location-changed.window="resetFromParent($event)"
                  @keydown.escape.window="open = false">
                 <label for="{{ $filter['id'] }}-button"
                        class="mb-base block text-caption uppercase tracking-wider text-on-surface-variant">
                     {{ $filter['label'] }}
                 </label>
                 <div class="relative">
-                    <input id="{{ $filter['id'] }}" type="hidden" name="{{ $filter['name'] }}" :value="value">
+                    <input id="{{ $filter['id'] }}" type="hidden" name="{{ $filter['name'] }}"
+                           data-hero-filter="{{ $filter['name'] }}" :value="value">
 
                     <button id="{{ $filter['id'] }}-button"
                             type="button"
@@ -120,11 +184,12 @@
             </div>
         @endforeach
 
-        <div class="mt-sm flex shrink-0 items-end md:mt-0">
+        <div class="mt-sm flex min-w-0 items-end md:mt-0">
             <button type="submit"
+                    title="{{ __('properties.filters.search_help') }}"
                     class="flex h-12 w-full items-center justify-center gap-xs rounded-lg
-                           bg-primary-container px-gutter text-label-md text-on-primary shadow-sm
-                           transition-colors hover:bg-primary-container/90 md:w-auto">
+                           bg-primary-container px-sm text-label-md text-on-primary shadow-sm
+                           transition-colors hover:bg-primary-container/90">
                 <span class="material-symbols-outlined">search</span>
                 {{ __('common.actions.search') }}
             </button>

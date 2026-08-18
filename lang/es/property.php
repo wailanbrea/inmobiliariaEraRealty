@@ -42,6 +42,8 @@ return [
         'bedrooms' => 'Habitaciones',
         'bathrooms' => 'Baños',
         'parking' => 'Parqueos',
+        'parking_one' => 'Parqueo',
+        'parking_many' => 'Parqueos',
         'area' => 'Metros cuadrados',
         'land_area' => 'Área de terreno',
         'floor' => 'Nivel',
@@ -55,6 +57,8 @@ return [
         'bedrooms' => 'Habs',
         'bathrooms' => 'Baños',
         'parking' => 'Parqueos',
+        'parking_one' => 'Parqueo',
+        'parking_many' => 'Parqueos',
     ],
 
     'sections' => [

@@ -42,6 +42,8 @@ return [
         'bedrooms' => 'Bedrooms',
         'bathrooms' => 'Bathrooms',
         'parking' => 'Parking',
+        'parking_one' => 'Parking space',
+        'parking_many' => 'Parking spaces',
         'area' => 'Square metres',
         'land_area' => 'Land area',
         'floor' => 'Floor',
@@ -55,6 +57,8 @@ return [
         'bedrooms' => 'Beds',
         'bathrooms' => 'Baths',
         'parking' => 'Parking',
+        'parking_one' => 'Parking space',
+        'parking_many' => 'Parking spaces',
     ],
 
     'sections' => [

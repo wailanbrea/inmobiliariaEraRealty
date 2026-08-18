@@ -73,6 +73,9 @@ return [
         'unfeature' => 'Quitar destacado',
         'delete' => 'Enviar a papelera',
         'confirm_delete' => '¿Enviar las propiedades seleccionadas a la papelera?',
+        'force_delete' => 'Eliminar definitivamente',
+        'confirm_force_delete' => '¿Eliminar definitivamente las propiedades seleccionadas? Esta acción no se puede deshacer.',
+        'bulk_force_deleted' => ':count propiedades eliminadas definitivamente.',
     ],
 
     'empty' => [

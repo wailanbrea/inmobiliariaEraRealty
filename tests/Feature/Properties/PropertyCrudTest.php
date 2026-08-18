@@ -109,6 +109,14 @@ it('crea la propiedad como borrador por defecto', function () {
         ->and(Property::first()->published_at)->toBeNull();
 });
 
+it('sella la fecha al crear una propiedad publica aunque no se envie', function () {
+    $this->actingAs($this->admin)->post('/admin/propiedades', datosPropiedad([
+        'status' => PropertyStatus::Available->value,
+    ]));
+
+    expect(Property::first()->published_at)->not->toBeNull();
+});
+
 it('asigna las amenidades marcadas', function () {
     $this->seed(AmenitySeeder::class);
     $ids = Amenity::limit(3)->pluck('id')->all();

@@ -343,7 +343,7 @@
 
 /* ----------------------------------------------------------------------------
    Cabecera adaptativa
-   80px -> 64px al pasar los 100px de scroll.
+   80px -> 64px despues de 120px de scroll; vuelve a 80px bajo 80px.
    -------------------------------------------------------------------------- */
 [data-header] {
   transition:

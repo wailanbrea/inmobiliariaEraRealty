@@ -23,9 +23,8 @@
      asome su borde inferior. Sin ese margen se veria la franja del `primary`
      por debajo de la foto. --}}
 <section data-parallax-scene
-         class="relative flex min-h-[600px] w-full flex-col items-center justify-center
-                overflow-hidden px-margin-mobile md:px-gutter"
-         style="height: 85vh">
+         class="relative flex min-h-[600px] h-auto w-full flex-col items-center justify-center
+                 overflow-hidden px-margin-mobile py-xl md:h-[85vh] md:px-gutter md:py-0">
 
     {{-- Las cinco capas del fondo, de atrás hacia delante. El detalle de cada
          una está en resources/css/motion.css, sección «Hero cinematográfico». --}}

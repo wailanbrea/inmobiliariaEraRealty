@@ -155,7 +155,8 @@
                 @foreach ([
                     ['bed', $property->bedrooms, 'property.specs.bedrooms'],
                     ['bathtub', $property->bathrooms ? rtrim(rtrim(number_format($property->bathrooms, 1), '0'), '.') : null, 'property.specs.bathrooms'],
-                    ['directions_car', $property->parking_spaces, 'property.specs.parking'],
+                    ['directions_car', $property->parking_spaces, $property->parking_spaces == 1
+                        ? 'property.specs.parking_one' : 'property.specs.parking_many'],
                     ['square_foot', $property->construction_area ? number_format($property->construction_area, 0) : null, 'property.specs.area'],
                 ] as $i => [$icono, $valor, $etiqueta])
                     <div @class([

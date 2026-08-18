@@ -153,12 +153,19 @@ function initScrollChrome() {
     document.body.appendChild(bar)
 
     let ticking = false
+    let condensed = false
 
     const update = () => {
         const y = window.scrollY
         const scrollable = document.documentElement.scrollHeight - window.innerHeight
 
-        if (header) header.classList.toggle('is-condensed', y > 100)
+        // Histeresis para que Lenis no alterne el header al oscilar cerca del
+        // umbral durante un desplazamiento lento.
+        if (header) {
+            if (!condensed && y > 120) condensed = true
+            if (condensed && y < 80) condensed = false
+            header.classList.toggle('is-condensed', condensed)
+        }
 
         bar.style.transform = `scaleX(${scrollable > 0 ? y / scrollable : 0})`
         ticking = false

@@ -15,57 +15,45 @@
 @section('content')
 
 {{-- Hero interno con migas, como en propiedades_era_realty_rd --}}
-<section class="border-b border-outline-variant/40 bg-surface-container-low py-lg">
+<section class="bg-primary-container py-xl">
     <div class="mx-auto max-w-container-max px-margin-mobile md:px-gutter">
-        <nav aria-label="breadcrumb" class="mb-xs text-caption text-on-surface-variant">
-            <a href="{{ lroute('home') }}" class="transition-colors hover:text-secondary">
+        <nav aria-label="breadcrumb" class="mb-sm text-caption text-on-primary-container">
+            <a href="{{ lroute('home') }}" class="transition-opacity hover:opacity-80">
                 {{ __('common.nav.home') }}
             </a>
             <span class="mx-1">/</span>
-            <span class="text-on-surface">{{ __('common.nav.properties') }}</span>
+            <span class="text-on-secondary-container">{{ __('common.nav.properties') }}</span>
         </nav>
 
-        <h1 class="font-heading text-headline-md-mobile text-on-surface md:text-headline-md">
+        <h1 class="font-display text-display-lg-mobile text-on-primary md:text-display-lg">
             {{ __('properties.index.title') }}
         </h1>
     </div>
 </section>
 
 <div class="mx-auto max-w-container-max px-margin-mobile py-lg md:px-gutter">
-    <div class="flex flex-col gap-gutter lg:flex-row">
+    <div class="flex flex-col gap-lg">
 
         {{-- ===================== FILTROS ===================== --}}
-        {{-- En escritorio es una columna pegajosa; en móvil, un panel que se
-             despliega, porque ocuparía toda la pantalla antes de los
-             resultados. --}}
-        <aside class="lg:w-72 lg:shrink-0" x-data="{ abierto: false }">
-
-            <button type="button" @click="abierto = !abierto"
-                    :aria-expanded="abierto"
-                    class="flex w-full items-center justify-between rounded-lg border
-                           border-outline-variant bg-surface-container-lowest px-sm py-xs
-                           text-label-md text-on-surface lg:hidden">
-                <span class="flex items-center gap-xs">
-                    <span class="material-symbols-outlined text-[20px]">tune</span>
+        <section aria-labelledby="property-filters-title">
+            <div class="mb-sm flex items-center gap-xs">
+                <span class="material-symbols-outlined text-secondary">tune</span>
+                <h2 id="property-filters-title" class="font-heading text-title-lg text-on-surface">
                     {{ __('properties.filters.title') }}
-                    @if ($hasFilters)
-                        <span class="rounded-full bg-secondary px-xs text-caption text-on-secondary">
-                            {{ count($filters) }}
-                        </span>
-                    @endif
-                </span>
-                <span class="material-symbols-outlined transition-transform"
-                      :class="abierto && 'rotate-180'">expand_more</span>
-            </button>
+                </h2>
+            </div>
 
             <form method="GET" action="{{ lroute('properties.index') }}"
-                  x-show="abierto || window.innerWidth >= 1024"
-                  x-cloak
-                  class="mt-sm space-y-md rounded-xl border border-outline-variant/40
-                         bg-surface-container-lowest p-sm ambient-shadow lg:sticky lg:top-24 lg:mt-0">
+                  data-property-filter-form
+                  x-data="{ mostrarFiltros: false }"
+                  @submit="mostrarFiltros = false"
+                  data-location-cascade
+                  class="space-y-sm rounded-xl border border-outline-variant/40
+                         bg-surface-container-lowest p-sm ambient-shadow md:p-md">
 
-                {{-- Búsqueda --}}
-                <div>
+                <div class="grid w-full items-end gap-sm md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6">
+                    {{-- Búsqueda --}}
+                    <div class="md:col-span-2 lg:col-span-1 xl:col-span-1">
                     <label for="f-q" class="mb-base block text-caption font-medium text-on-surface-variant">
                         {{ __('properties.filters.search') }}
                     </label>
@@ -74,11 +62,13 @@
                                      text-[20px] text-on-surface-variant">search</span>
                         <input id="f-q" type="search" name="q" value="{{ $filters['q'] ?? '' }}"
                                placeholder="{{ __('properties.filters.search_placeholder') }}"
+                               title="{{ __('properties.filters.search_help') }}"
                                class="w-full rounded-lg border border-outline-variant bg-surface-container-low
                                       py-xs pl-lg pr-sm text-body-md text-on-surface
                                       focus:border-secondary focus:ring-1 focus:ring-secondary">
-                    </div>
-                </div>
+                 </div>
+
+                 </div>
 
                 @php
                     $selectClase = 'w-full rounded-lg border border-outline-variant bg-surface-container-low
@@ -86,8 +76,7 @@
                                     focus:border-secondary focus:ring-1 focus:ring-secondary';
                 @endphp
 
-                {{-- Operación y tipo --}}
-                <div class="grid grid-cols-2 gap-sm lg:grid-cols-1">
+{{-- Operación --}}
                     <div>
                         <label for="f-operacion" class="mb-base block text-caption font-medium text-on-surface-variant">
                             {{ __('home.search.operation') }}
@@ -100,9 +89,10 @@
                                     {{ $operacion->label() }}
                                 </option>
                             @endforeach
-                        </select>
+                         </select>
                     </div>
 
+                    {{-- Tipo --}}
                     <div>
                         <label for="f-tipo" class="mb-base block text-caption font-medium text-on-surface-variant">
                             {{ __('home.search.type') }}
@@ -116,12 +106,11 @@
                             @endforeach
                         </select>
                     </div>
-                </div>
 
-                {{-- Ubicación --}}
-                <div>
+                    {{-- Ubicación --}}
+                    <div>
                     <label for="f-provincia" class="mb-base block text-caption font-medium text-on-surface-variant">
-                        {{ __('home.search.location') }}
+                         {{ __('properties.filters.province') }}
                     </label>
                     <select id="f-provincia" name="provincia" class="{{ $selectClase }}">
                         <option value="">{{ __('home.search.anywhere') }}</option>
@@ -131,11 +120,71 @@
                                 {{ $provincia->name }}
                             </option>
                         @endforeach
-                    </select>
+                     </select>
+                    </div>
+
+                    {{-- Zona --}}
+                    <div>
+                     <label for="f-zona" class="mb-base block text-caption font-medium text-on-surface-variant">
+                         {{ __('properties.filters.zona') }}
+                     </label>
+                     <select id="f-zona" name="ciudad" class="{{ $selectClase }}">
+                         <option value="">{{ __('home.search.anywhere') }}</option>
+                         @foreach ($cities as $ciudad)
+                             <option value="{{ $ciudad->slug }}"
+                                     data-province="{{ $ciudad->province?->slug }}"
+                                     @selected(($filters['ciudad'] ?? null) === $ciudad->slug)>
+                                 {{ $ciudad->name }}{{ $ciudad->province ? ', '.$ciudad->province->name : '' }}
+                             </option>
+                         @endforeach
+                     </select>
+                    </div>
+
+                    {{-- Sector --}}
+                    <div>
+                     <label for="f-sector" class="mb-base block text-caption font-medium text-on-surface-variant">
+                         {{ __('properties.filters.sector') }}
+                     </label>
+                     <select id="f-sector" name="sector" class="{{ $selectClase }}">
+                         <option value="">{{ __('home.search.anywhere') }}</option>
+                         @foreach ($sectors as $sector)
+                             <option value="{{ $sector->id }}"
+                                     data-city-id="{{ $sector->city_id }}"
+                                     data-province="{{ $sector->city?->province?->slug }}"
+                                     @selected((string) ($filters['sector'] ?? '') === (string) $sector->id)>
+                                 {{ $sector->name }}
+                             </option>
+                         @endforeach
+                     </select>
+                    </div>
+
                 </div>
 
-                {{-- Precio --}}
-                <fieldset>
+                <div class="relative flex w-full flex-wrap items-start justify-start gap-xs">
+                    <div class="group min-w-0 flex-1">
+                    <button type="button" @click="mostrarFiltros = !mostrarFiltros"
+                            :aria-expanded="mostrarFiltros.toString()"
+                            class="flex min-h-11 items-center gap-xs rounded-lg border
+                                   border-outline-variant bg-surface-container-low px-sm py-xs text-label-md
+                                   font-medium text-on-surface transition-colors hover:border-secondary">
+                        <span class="flex items-center gap-xs">
+                            <span class="material-symbols-outlined text-[20px] text-secondary">tune</span>
+                            {{ __('properties.filters.more') }}
+                            <span data-property-filter-count data-role="button"
+                                  class="rounded-full bg-secondary px-xs text-caption text-on-secondary {{ $activeFilterCount === 0 ? 'hidden' : '' }}">
+                                {{ $activeFilterCount }}
+                            </span>
+                        </span>
+                        <span class="material-symbols-outlined transition-transform"
+                              :class="mostrarFiltros && 'rotate-180'">expand_more</span>
+                    </button>
+
+                    <div x-show="mostrarFiltros" x-cloak
+                         class="mt-sm w-full rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-sm
+                                ambient-shadow md:p-md">
+                        <div class="grid gap-sm md:grid-cols-2 xl:grid-cols-3">
+                        {{-- Precio --}}
+                        <fieldset>
                     <legend class="mb-base text-caption font-medium text-on-surface-variant">
                         {{ __('properties.filters.price') }}
                     </legend>
@@ -160,10 +209,10 @@
                             </option>
                         @endforeach
                     </select>
-                </fieldset>
+                        </fieldset>
 
-                {{-- Características --}}
-                <fieldset>
+                        {{-- Características --}}
+                        <fieldset>
                     <legend class="mb-base text-caption font-medium text-on-surface-variant">
                         {{ __('properties.filters.specs') }}
                     </legend>
@@ -188,11 +237,11 @@
                             </div>
                         @endforeach
                     </div>
-                </fieldset>
+                        </fieldset>
 
-                {{-- Amenidades --}}
-                @if ($amenities->isNotEmpty())
-                    <fieldset>
+                        {{-- Amenidades --}}
+                        @if ($amenities->isNotEmpty())
+                            <fieldset>
                         <legend class="mb-base text-caption font-medium text-on-surface-variant">
                             {{ __('property.sections.amenities') }}
                         </legend>
@@ -206,102 +255,36 @@
                                 </label>
                             @endforeach
                         </div>
-                    </fieldset>
-                @endif
+                            </fieldset>
+                        @endif
+                        </div>
+                    </div>
+                    </div>
+
+                    <button type="submit"
+                            class="h-11 max-h-11 shrink-0 self-start whitespace-nowrap rounded-lg bg-primary-container px-sm py-xs text-label-md
+                                   font-semibold text-on-primary transition-all hover:shadow-ambient-hover">
+                        {{ __('properties.filters.apply') }}
+                    </button>
+
+                    <a href="{{ lroute('properties.index') }}"
+                       data-property-filter-clear
+                       class="inline-flex min-h-11 items-center rounded-lg border border-outline-variant
+                              px-sm py-xs text-label-md text-on-surface transition-colors
+                              hover:bg-surface-container-low">
+                        {{ __('properties.filters.clear') }}
+                    </a>
+                </div>
 
                 {{-- Se conserva el orden al aplicar filtros --}}
                 @if (isset($filters['orden']))
                     <input type="hidden" name="orden" value="{{ $filters['orden'] }}">
                 @endif
 
-                <div class="flex gap-xs pt-xs">
-                    <button type="submit"
-                            class="flex-1 rounded-lg bg-primary-container px-sm py-xs text-label-md
-                                   font-semibold text-on-primary transition-all hover:shadow-ambient-hover">
-                        {{ __('properties.filters.apply') }}
-                    </button>
-
-                    @if ($hasFilters)
-                        <a href="{{ lroute('properties.index') }}"
-                           class="rounded-lg border border-outline-variant px-sm py-xs text-label-md
-                                  text-on-surface transition-colors hover:bg-surface-container-low">
-                            {{ __('properties.filters.clear') }}
-                        </a>
-                    @endif
-                </div>
             </form>
-        </aside>
+        </section>
 
-        {{-- ===================== RESULTADOS ===================== --}}
-        <div class="min-w-0 flex-1">
-
-            <div class="mb-md flex flex-col gap-sm sm:flex-row sm:items-center sm:justify-between">
-                <p class="text-body-md text-on-surface-variant">
-                    {{ trans_choice('properties.index.count', $properties->total(), ['count' => $properties->total()]) }}
-                </p>
-
-                <form method="GET" action="{{ lroute('properties.index') }}" class="flex items-center gap-xs">
-                    @foreach ($filters as $clave => $valor)
-                        @continue($clave === 'orden')
-                        @if (is_array($valor))
-                            @foreach ($valor as $v)
-                                <input type="hidden" name="{{ $clave }}[]" value="{{ $v }}">
-                            @endforeach
-                        @else
-                            <input type="hidden" name="{{ $clave }}" value="{{ $valor }}">
-                        @endif
-                    @endforeach
-
-                    <label for="orden" class="text-caption text-on-surface-variant">
-                        {{ __('properties.sort.label') }}
-                    </label>
-                    <select id="orden" name="orden" onchange="this.form.submit()"
-                            class="rounded-lg border border-outline-variant bg-surface-container-lowest
-                                   px-sm py-xs text-body-md text-on-surface
-                                   focus:border-secondary focus:ring-1 focus:ring-secondary">
-                        @foreach ($sorts as $opcion)
-                            <option value="{{ $opcion }}" @selected(($filters['orden'] ?? 'recent') === $opcion)>
-                                {{ __("properties.sort.{$opcion}") }}
-                            </option>
-                        @endforeach
-                    </select>
-                </form>
-            </div>
-
-            @if ($properties->isEmpty())
-                <div class="rounded-xl border border-outline-variant/40 bg-surface-container-lowest
-                            p-xl text-center ambient-shadow">
-                    <span class="material-symbols-outlined text-[48px] text-outline-variant">search_off</span>
-                    <h2 class="mt-sm font-heading text-title-lg text-on-surface">
-                        {{ __('properties.index.empty_title') }}
-                    </h2>
-                    <p class="mt-base text-body-md text-on-surface-variant">
-                        {{ $hasFilters
-                            ? __('properties.index.empty_filtered')
-                            : __('properties.index.empty_body') }}
-                    </p>
-
-                    @if ($hasFilters)
-                        <a href="{{ lroute('properties.index') }}"
-                           class="mt-md inline-flex items-center gap-xs rounded-lg border border-outline-variant
-                                  px-sm py-xs text-label-md text-on-surface transition-colors
-                                  hover:bg-surface-container-low">
-                            {{ __('properties.filters.clear') }}
-                        </a>
-                    @endif
-                </div>
-            @else
-                <div class="grid grid-cols-1 gap-gutter md:grid-cols-2 xl:grid-cols-3">
-                    @foreach ($properties as $index => $property)
-                        <x-property-card :property="$property" :eager="$index < 3" />
-                    @endforeach
-                </div>
-
-                <div class="mt-lg">
-                    {{ $properties->links() }}
-                </div>
-            @endif
-        </div>
+        @include('public.properties.partials.results')
     </div>
 </div>
 
