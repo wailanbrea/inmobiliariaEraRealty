@@ -101,6 +101,22 @@ it('muestra el listado de propiedades', function () {
         ->assertSee('Apartamento en Piantini', escape: false);
 });
 
+it('prioriza las propiedades disponibles antes de las vendidas en cualquier orden', function () {
+    propiedadPublicada([
+        'status' => PropertyStatus::Sold,
+        'price' => 100000,
+    ], 'Vendida para ordenar');
+    propiedadPublicada([
+        'status' => PropertyStatus::Available,
+        'price' => 200000,
+    ], 'Disponible para ordenar');
+
+    $contenido = $this->get('/propiedades?orden=price_asc')->getContent();
+
+    expect(strpos($contenido, 'Disponible para ordenar'))
+        ->toBeLessThan(strpos($contenido, 'Vendida para ordenar'));
+});
+
 it('busca por titulo codigo y ubicacion', function () {
     $this->seed(LocationSeeder::class);
     $provincia = Province::where('slug', 'la-vega')->first();

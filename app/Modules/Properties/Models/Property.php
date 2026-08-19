@@ -259,14 +259,13 @@ class Property extends Model
     // Ubicacion
     // ------------------------------------------------------------------
 
-    /** "Piantini, Santo Domingo" — como en el diseno. */
+    /** "Piantini, Santo Domingo": solo sector y ciudad. */
     public function locationLabel(): string
     {
         return collect([
             $this->sector?->name,
             $this->city?->name,
-            $this->province?->name,
-        ])->filter()->take(2)->implode(', ');
+        ])->filter()->implode(', ');
     }
 
     /** Solo se exponen coordenadas si el administrador lo autorizo. */

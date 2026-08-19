@@ -177,8 +177,8 @@
                         {{ __('property.sections.description') }}
                     </h2>
                     <div class="space-y-4 text-body-md text-on-surface-variant">
-                        @foreach (preg_split('/\n\s*\n/', trim($property->description)) as $parrafo)
-                            <p>{{ $parrafo }}</p>
+                        @foreach (preg_split('/\n\s*\n/', str_replace(["\r\n", "\r"], "\n", trim($property->description))) as $parrafo)
+                            <p class="whitespace-pre-line">{{ $parrafo }}</p>
                         @endforeach
                     </div>
                 </section>

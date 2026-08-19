@@ -47,6 +47,7 @@
                   data-property-filter-form
                   x-data="{ mostrarFiltros: false }"
                   @submit="mostrarFiltros = false"
+                  @property-filters-clear.window="mostrarFiltros = false"
                   data-location-cascade
                   class="space-y-sm rounded-xl border border-outline-variant/40
                          bg-surface-container-lowest p-sm ambient-shadow md:p-md">

@@ -299,8 +299,7 @@ it('oculta los datos del propietario al serializar', function () {
         ->and($json)->not->toHaveKey('internal_notes');
 });
 
-it('arma la etiqueta de ubicacion como en el diseno', function () {
-    // El diseno muestra "Piantini, Santo Domingo": sector y ciudad.
+it('arma la etiqueta de ubicacion con sector y ciudad', function () {
     $this->seed(LocationSeeder::class);
 
     $sector = Sector::where('slug', 'piantini')->first();
@@ -314,10 +313,10 @@ it('arma la etiqueta de ubicacion como en el diseno', function () {
     expect($property->fresh()->locationLabel())->toBe('Piantini, Santo Domingo');
 });
 
-it('cae a ciudad y provincia cuando la propiedad no tiene sector', function () {
+it('cae solo a ciudad cuando la propiedad no tiene sector', function () {
     $property = Property::factory()->inSantoDomingo()->create();
 
-    expect($property->fresh()->locationLabel())->toBe('Santo Domingo, Distrito Nacional');
+    expect($property->fresh()->locationLabel())->toBe('Santo Domingo');
 });
 
 /*

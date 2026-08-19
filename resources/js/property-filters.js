@@ -75,7 +75,20 @@ export function initPropertyFilters() {
         const clear = event.target.closest?.('[data-property-filter-clear]')
         if (clear) {
             event.preventDefault()
-            document.querySelector('[data-property-filter-form]')?.reset()
+            const form = document.querySelector('[data-property-filter-form]')
+
+            form?.reset()
+            form?.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+                input.checked = false
+            })
+            form?.querySelectorAll('input:not([type="hidden"]):not([type="checkbox"])').forEach((input) => {
+                input.value = ''
+            })
+            form?.querySelectorAll('select').forEach((select) => {
+                select.selectedIndex = 0
+                select.dispatchEvent(new Event('change', { bubbles: true }))
+            })
+            form?.dispatchEvent(new CustomEvent('property-filters-clear'))
             loadResults(clear.href)
             return
         }

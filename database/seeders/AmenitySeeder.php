@@ -44,6 +44,25 @@ class AmenitySeeder extends Seeder
             ['slug' => 'vista-al-mar',     'es' => 'Vista al mar',       'en' => 'Ocean view',      'icon' => 'waves',          'category' => 'location'],
             ['slug' => 'playa-privada',    'es' => 'Playa privada',      'en' => 'Private beach',   'icon' => 'beach_access',   'category' => 'location'],
             ['slug' => 'campo-de-golf',    'es' => 'Campo de golf',      'en' => 'Golf course',     'icon' => 'golf_course',    'category' => 'location'],
+            // --- Acabados y equipamiento ---
+            ['slug' => 'galeria',                  'es' => 'Galería',                 'en' => 'Gallery/veranda',        'icon' => 'deck',              'category' => 'interior'],
+            ['slug' => 'patio',                    'es' => 'Patio',                   'en' => 'Patio',                  'icon' => 'yard',              'category' => 'interior'],
+            ['slug' => 'pisos-porcelanato',        'es' => 'Pisos en porcelanato',     'en' => 'Porcelain flooring',      'icon' => 'grid_view',         'category' => 'interior'],
+            ['slug' => 'pisos-ceramica',           'es' => 'Pisos en cerámica',        'en' => 'Ceramic flooring',        'icon' => 'grid_on',           'category' => 'interior'],
+            ['slug' => 'pisos-marmol',             'es' => 'Pisos en mármol',          'en' => 'Marble flooring',         'icon' => 'texture',            'category' => 'interior'],
+            ['slug' => 'pisos-granito',            'es' => 'Pisos en granito',         'en' => 'Granite flooring',        'icon' => 'view_quilt',        'category' => 'interior'],
+            ['slug' => 'cocina-modular',           'es' => 'Cocina modular',           'en' => 'Modular kitchen',         'icon' => 'kitchen',            'category' => 'interior'],
+            ['slug' => 'cocina-fria',              'es' => 'Cocina fría',              'en' => 'Cold kitchen',            'icon' => 'kitchen',            'category' => 'interior'],
+            ['slug' => 'tope-granito-natural',     'es' => 'Tope de granito natural',  'en' => 'Natural granite counter', 'icon' => 'countertops',       'category' => 'interior'],
+            ['slug' => 'tope-marmol',              'es' => 'Tope de mármol',           'en' => 'Marble counter',          'icon' => 'countertops',       'category' => 'interior'],
+            ['slug' => 'tope-marmolite',           'es' => 'Tope de marmolite',        'en' => 'Marmolite counter',       'icon' => 'countertops',       'category' => 'interior'],
+            ['slug' => 'madera-preciosa',          'es' => 'Madera preciosa',          'en' => 'Fine wood',               'icon' => 'forest',             'category' => 'interior'],
+            ['slug' => 'bano-visitas',             'es' => 'Baño de visitas',          'en' => 'Guest bathroom',          'icon' => 'bathroom',           'category' => 'interior'],
+            ['slug' => 'calentador',               'es' => 'Calentador',               'en' => 'Water heater',             'icon' => 'water_heater',       'category' => 'services'],
+            ['slug' => 'camara-seguridad',         'es' => 'Cámara de seguridad',      'en' => 'Security camera',          'icon' => 'videocam',           'category' => 'services'],
+            ['slug' => 'sistema-contra-incendios', 'es' => 'Sistema contra incendios', 'en' => 'Fire protection system',  'icon' => 'fire_extinguisher', 'category' => 'services'],
+            ['slug' => 'area-juegos-ninos',         'es' => 'Área de juegos para niños', 'en' => 'Children\'s play area',      'icon' => 'toys',              'category' => 'building'],
+            ['slug' => 'cuarto-servicio',            'es' => 'Cuarto de servicio',        'en' => 'Service room',              'icon' => 'room_service',       'category' => 'interior'],
         ];
     }
 

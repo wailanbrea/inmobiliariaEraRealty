@@ -239,7 +239,7 @@
                 <label for="city_id" class="mb-base block text-caption font-medium text-on-surface-variant">
                     {{ __('admin/properties.fields.city') }}
                 </label>
-                <select id="city_id" name="city_id" x-model="ciudad" @change="cargarSectores()"
+                <select id="city_id" name="city_id" x-ref="citySelect" x-model="ciudad" @change="cargarSectores()"
                         :disabled="!provincia"
                         class="w-full rounded-lg border border-outline-variant bg-surface-container-low
                                px-sm py-xs text-body-md text-on-surface disabled:opacity-50
@@ -248,8 +248,8 @@
                         <span x-text="provincia ? '{{ __('admin/properties.select.choose') }}'
                                               : '{{ __('admin/properties.select.province_first') }}'"></span>
                     </option>
-                    <template x-for="c in ciudades" :key="c.id">
-                        <option :value="c.id" x-text="c.name"></option>
+                         <template x-for="c in ciudades" :key="c.id">
+                             <option :value="String(c.id)" x-text="c.name"></option>
                     </template>
                 </select>
             </div>
@@ -258,13 +258,13 @@
                 <label for="sector_id" class="mb-base block text-caption font-medium text-on-surface-variant">
                     {{ __('admin/properties.fields.sector') }}
                 </label>
-                <select id="sector_id" name="sector_id" x-model="sector" :disabled="!ciudad"
+                <select id="sector_id" name="sector_id" x-ref="sectorSelect" x-model="sector" :disabled="!ciudad"
                         class="w-full rounded-lg border border-outline-variant bg-surface-container-low
                                px-sm py-xs text-body-md text-on-surface disabled:opacity-50
                                focus:border-secondary focus:ring-1 focus:ring-secondary">
                     <option value="">{{ __('admin/properties.select.choose') }}</option>
-                    <template x-for="s in sectores" :key="s.id">
-                        <option :value="s.id" x-text="s.name"></option>
+                        <template x-for="s in sectores" :key="s.id">
+                            <option :value="String(s.id)" x-text="s.name"></option>
                     </template>
                 </select>
             </div>
@@ -568,13 +568,20 @@
     // selects vacios al editar una propiedad.
     function selectsEncadenados(provinciaInicial, ciudadInicial, sectorInicial) {
         return {
-            provincia: provinciaInicial || '',
-            ciudad: ciudadInicial || '',
-            sector: sectorInicial || '',
+            provincia: String(provinciaInicial || ''),
+            ciudad: String(ciudadInicial || ''),
+            sector: String(sectorInicial || ''),
             ciudadesTodas: @json($locationCities),
             sectoresTodos: @json($locationSectors),
             ciudades: @json($ciudades->map->only(['id', 'name'])->values()),
             sectores: @json($sectores->map->only(['id', 'name'])->values()),
+
+            init() {
+                this.$nextTick(() => {
+                    this.$refs.citySelect.value = this.ciudad;
+                    this.$refs.sectorSelect.value = this.sector;
+                });
+            },
 
             async cargarCiudades() {
                 this.ciudad = '';

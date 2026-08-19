@@ -3,6 +3,7 @@
 namespace App\Modules\Properties\Services;
 
 use App\Enums\Currency;
+use App\Enums\PropertyStatus;
 use App\Modules\Locations\Models\City;
 use App\Modules\Locations\Models\Province;
 use App\Modules\Locations\Models\Sector;
@@ -173,7 +174,8 @@ class PropertySearchService
 
             ->when($get('estado'), fn (Builder $q, $v) => $q->where('status', $v))
 
-            ->tap(fn (Builder $q) => $this->applySort($q, (string) $get('orden', 'recent')));
+             ->tap(fn (Builder $q) => $this->applyStatusPriority($q))
+             ->tap(fn (Builder $q) => $this->applySort($q, (string) $get('orden', 'recent')));
     }
 
     /**
@@ -209,6 +211,19 @@ class PropertySearchService
             'views' => $query->orderByDesc('views_count'),
             default => $query->orderByDesc('published_at')->orderByDesc('id'),
         };
+    }
+
+    private function applyStatusPriority(Builder $query): Builder
+    {
+        return $query->orderByRaw(
+            'CASE status WHEN ? THEN 0 WHEN ? THEN 1 WHEN ? THEN 2 WHEN ? THEN 3 ELSE 4 END',
+            [
+                PropertyStatus::Available->value,
+                PropertyStatus::Reserved->value,
+                PropertyStatus::Rented->value,
+                PropertyStatus::Sold->value,
+            ],
+        );
     }
 
     /**
