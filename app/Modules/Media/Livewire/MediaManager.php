@@ -6,6 +6,7 @@ use App\Modules\Media\Models\MediaFile;
 use App\Modules\Media\Services\MediaLibraryService;
 use App\Rules\RealImage;
 use App\Support\Concerns\NotifiesInline;
+use App\Support\Concerns\UsesSitePagination;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
@@ -16,7 +17,7 @@ use Livewire\WithPagination;
 
 class MediaManager extends Component
 {
-    use NotifiesInline, WithFileUploads, WithPagination;
+    use NotifiesInline, UsesSitePagination, WithFileUploads, WithPagination;
 
     #[Url(as: 'q', except: '')]
     public string $search = '';

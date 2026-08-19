@@ -5,6 +5,7 @@ namespace App\Modules\Audit\Livewire;
 use App\Enums\AuditAction;
 use App\Models\User;
 use App\Modules\Audit\Models\AuditLog;
+use App\Support\Concerns\UsesSitePagination;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
@@ -21,7 +22,7 @@ use Livewire\WithPagination;
  */
 class AuditLogIndex extends Component
 {
-    use WithPagination;
+    use UsesSitePagination, WithPagination;
 
     #[Url(except: '')]
     public string $action = '';

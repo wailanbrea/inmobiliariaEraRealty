@@ -62,7 +62,38 @@ it('un terreno muestra la superficie del terreno, no la construida', function ()
     fichaConDatos(['bedrooms' => null, 'bathrooms' => null,
         'construction_area' => null, 'land_area' => 19000, 'parking_spaces' => null]);
 
-    expect($this->get('/propiedades')->getContent())->toContain('19.000 m²');
+    expect($this->get('/propiedades')->getContent())->toContain('19,000 m²');
+});
+
+/**
+ * La superficie separa los miles igual que el precio que aparece encima, en
+ * la misma tarjeta. Antes usaba el convenio contrario —«19.000 m²» junto a
+ * «US$ 180,000»— y en ingles esa cifra se lee como diecinueve.
+ */
+it('la superficie y el precio usan el mismo separador de miles', function () {
+    fichaConDatos(['price' => 180000, 'construction_area' => 19000]);
+
+    foreach (['es' => '/propiedades', 'en' => '/en/properties'] as $ruta) {
+        $html = $this->get($ruta)->assertOk()->getContent();
+
+        expect($html)->toContain('19,000 m²')
+            ->and($html)->toContain('180,000')
+            ->and($html)->not->toContain('19.000 m²');
+    }
+});
+
+/**
+ * Las etiquetas de la rejilla van bajo un icono, en una columna estrecha y
+ * de ancho fijo. Si una crece —«Parking space»— se derrama sobre la vecina.
+ */
+it('las etiquetas cortas en ingles caben en su columna', function () {
+    fichaConDatos(['bathrooms' => 1.5, 'parking_spaces' => 1, 'construction_area' => 80]);
+
+    $html = $this->get('/en/properties')->assertOk()->getContent();
+
+    expect($html)->toContain('1 Parking')
+        ->and($html)->not->toContain('Parking space')
+        ->and($html)->not->toContain('whitespace-nowrap text-label-md');
 });
 
 /*

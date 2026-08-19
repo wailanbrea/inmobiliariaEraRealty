@@ -10,6 +10,7 @@ use App\Modules\Properties\Models\Property;
 use App\Modules\Properties\Services\PropertyService;
 use App\Modules\PropertyImages\Services\ImageProcessingService;
 use App\Modules\PropertyTypes\Models\PropertyType;
+use App\Support\Concerns\UsesSitePagination;
 use App\Support\Locale;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -26,7 +27,7 @@ use Livewire\WithPagination;
  */
 class PropertyIndex extends Component
 {
-    use WithPagination;
+    use UsesSitePagination, WithPagination;
 
     #[Url(as: 'q', except: '')]
     public string $search = '';

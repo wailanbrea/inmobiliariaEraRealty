@@ -136,10 +136,15 @@
                     ] : null,
                     // En un terreno o un solar la cifra que importa es la
                     // superficie del terreno, no la construida.
+                    // La superficie usa el MISMO separador de miles que el
+                    // precio de la propia tarjeta y que el comparador: la coma.
+                    // Con el punto salia «1.408 m²» junto a «US$ 180,000», dos
+                    // convenios distintos en la misma ficha, y en ingles esa
+                    // cifra se lee como uno coma cuatro.
                     ($area = $property->construction_area ?: $property->land_area) ? [
                         'square_foot',
                         __('property.specs.area'),
-                        number_format($area, 0, ',', '.').' m²',
+                        number_format($area, 0, '.', ',').' m²',
                     ] : null,
                 ])->filter()->take(4)->values();
             @endphp
@@ -160,7 +165,16 @@
                             <span class="material-symbols-outlined mb-1 inline-flex size-5 shrink-0 items-center
                                          justify-center text-[20px] leading-none text-outline">{{ $spec[0] }}</span>
                             <dt class="sr-only">{{ $spec[1] }}</dt>
-                            <dd class="whitespace-nowrap text-label-md text-on-surface">{{ $spec[2] }}</dd>
+                            {{--
+                                Sin whitespace-nowrap. La columna mide lo mismo
+                                para las cuatro cifras, asi que una etiqueta
+                                larga no podia encogerse y se derramaba sobre la
+                                de al lado: en ingles se leia «1.5 Baths1
+                                Parking space». Ahora, si algun idioma vuelve a
+                                pasarse de ancho, parte la linea en lugar de
+                                invadir la columna vecina.
+                            --}}
+                            <dd class="text-center text-label-md text-on-surface">{{ $spec[2] }}</dd>
                         </div>
                     @endforeach
                 </dl>

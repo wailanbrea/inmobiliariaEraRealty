@@ -53,12 +53,16 @@ return [
         'furnished' => 'Furnished',
     ],
 
+    // Estas etiquetas van bajo un icono, en una columna de la tarjeta: tienen
+    // que ser CORTAS. 'Parking space' y 'Parking spaces' no lo eran y se
+    // salian de su columna hasta chocar con la cifra vecina. La forma larga,
+    // para leer suelta, sigue estando en 'specs'.
     'specs_short' => [
         'bedrooms' => 'Beds',
         'bathrooms' => 'Baths',
         'parking' => 'Parking',
-        'parking_one' => 'Parking space',
-        'parking_many' => 'Parking spaces',
+        'parking_one' => 'Parking',
+        'parking_many' => 'Parking',
     ],
 
     'sections' => [
