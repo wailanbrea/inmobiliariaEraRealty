@@ -1,6 +1,6 @@
 @if ($paginator->hasPages())
     @php
-        $isLivewire = method_exists($this, 'gotoPage');
+        $isLivewire = isset($__livewire) && method_exists($__livewire, 'gotoPage');
         $pageName = $paginator->getPageName();
     @endphp
 
